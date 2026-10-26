@@ -3,87 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#162523" />
-    <meta name="description" content="Explore five viewpoints along a residential corridor, its floor plan, and the flat entrance." />
-    <title>Corridor Explorer</title>
+    <title>Concrete Memories</title>
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="scene.css" />
   </head>
   <body>
-    <main class="explorer" id="explorer">
-      <div class="scene" id="scene" aria-label="Interactive corridor view">
-        <div class="corridor-stage" id="corridor-stage">
-          <div class="corridor-camera" id="corridor-camera">
-            <img class="scene-frame is-active" id="frame-a" src="assets/stop-01.jpg" data-stop="0" alt="View down the corridor from the entrance" draggable="false" />
-            <img class="scene-frame" id="frame-b" src="assets/stop-02.jpg" data-stop="1" alt="" aria-hidden="true" draggable="false" />
-          </div>
-        </div>
-        <div class="artifact-stage" id="artifact-stage" aria-hidden="true">
-          <img class="artifact-backdrop" id="artifact-backdrop" src="assets/floor_plan_view.jpg" alt="" draggable="false" />
-          <img class="artifact-photo" id="artifact-photo" src="assets/floor_plan_view.jpg" alt="Floor plan sign with its block and floor label blurred" draggable="false" />
-        </div>
-        <div class="scene-shade" aria-hidden="true"></div>
-        <div class="scene-vignette" aria-hidden="true"></div>
-      </div>
-
-      <div class="map-prompt glass" id="map-prompt">
-        <div class="prompt-heading">
-          <span class="prompt-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2V6Zm6-2v14m6-12v14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          <div><span class="eyebrow">AT THE START</span><strong>Floor plan</strong></div>
-        </div>
-        <button id="view-floor-plan" class="prompt-action" type="button">View floor plan <span aria-hidden="true">↗</span></button>
-      </div>
-
-      <button class="icon-button glass info-button" id="info-button" type="button" aria-label="About this explorer" title="About this explorer">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 10.5V16.5M12 7.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-
-      <div class="view-controls glass" aria-label="View controls">
-        <button class="control-button" id="zoom-in" type="button" aria-label="Zoom in" title="Zoom in">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
-        <button class="control-button" id="zoom-out" type="button" aria-label="Zoom out" title="Zoom out">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
-        <span class="control-divider" aria-hidden="true"></span>
-        <button class="control-button" id="reset-view" type="button" aria-label="Reset view" title="Reset view">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 11a8 8 0 1 1 2.2 6.5M4 16v-5h5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <button class="control-button" id="fullscreen" type="button" aria-label="Enter full screen" title="Full screen">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M4 15v5h5M20 15v5h-5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-
-      <button class="floor-arrow" id="floor-arrow" type="button" aria-label="Move forward along the corridor">
-        <span class="floor-arrow-ring"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 15 6-6 6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <span class="floor-arrow-label">MOVE FORWARD</span>
-      </button>
-
-      <button class="corridor-back glass" id="back-button" type="button" aria-label="Move back along the corridor" title="Move back" disabled>
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 5-7 7 7 7M7 12h13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-
-      <div class="destination-card glass" id="destination-card" role="dialog" aria-modal="false" aria-labelledby="destination-title" hidden>
-        <div class="destination-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 20V6.5L12 3l7 3.5V20M9 20v-5h6v5M8.5 8.5h.01M12 8.5h.01M15.5 8.5h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="destination-copy"><span class="eyebrow">DESTINATION REACHED</span><strong id="destination-title">You've arrived at the flat</strong></div>
-        <button id="see-flat" class="prompt-action" type="button">See the flat <span aria-hidden="true">↖</span></button>
-      </div>
-
-      <div class="artifact-return glass" id="artifact-return" role="dialog" aria-modal="false" aria-labelledby="artifact-title" hidden>
-        <span class="eyebrow" id="artifact-title">FLOOR PLAN</span>
-        <button id="return-to-corridor" class="prompt-action" type="button"><span aria-hidden="true">←</span> Back to corridor</button>
-      </div>
-
-      <div class="info-panel glass" id="info-panel" role="dialog" aria-modal="false" aria-labelledby="info-title" hidden>
-        <button class="info-close" id="info-close" type="button" aria-label="Close information">×</button>
-        <span class="eyebrow">ABOUT THIS EXPLORER</span>
-        <h2 id="info-title">Explore the corridor</h2>
-        <p>Move through five still viewpoints from the corridor footage. View the floor plan at the first stop and the flat entrance at the last. Drag or zoom to inspect details.</p>
-        <p class="info-keys">Keyboard: <kbd>↑</kbd> forward <kbd>↓</kbd> back <kbd>←</kbd><kbd>→</kbd> look around <kbd>Esc</kbd> return</p>
-      </div>
-
-      <div class="sr-only" id="announcement" role="status" aria-live="polite"></div>
+    <main>
+      <h1>Concrete Memories</h1>
+      <a class="button" href="act-1.html">Start</a>
     </main>
-    <script src="app.js"></script>
   </body>
 </html>
