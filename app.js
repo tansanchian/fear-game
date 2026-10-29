@@ -19,6 +19,18 @@ const artifacts = {
     alt: 'Entrance gate of the flat',
     position: stops.length - 1,
   },
+  power: {
+    image: 'assets/power_box.jpg',
+    title: 'POWER BOX',
+    alt: 'Power box outside the unit',
+    position: stops.length - 1,
+  },
+  powerClose: {
+    image: 'assets/close_up_power_box.jpg',
+    title: 'METER NUMBER',
+    alt: 'Close-up of the meter display and serial number',
+    position: stops.length - 1,
+  },
 };
 
 const explorer = document.getElementById('explorer');
@@ -41,12 +53,14 @@ const frameB = document.getElementById('frame-b');
 const backButton = document.getElementById('back-button');
 const floorArrow = document.getElementById('floor-arrow');
 const mapPrompt = document.getElementById('map-prompt');
+const powerPrompt = document.getElementById('power-prompt');
 const destinationCard = document.getElementById('destination-card');
 const artifactReturn = document.getElementById('artifact-return');
 const artifactTitle = document.getElementById('artifact-title');
 const returnButton = document.getElementById('return-to-corridor');
 const returnIcon = document.getElementById('return-icon');
 const returnLabel = document.getElementById('return-label');
+const viewPowerCloseButton = document.getElementById('view-power-close');
 const replayButton = document.getElementById('replay-lift');
 const infoButton = document.getElementById('info-button');
 const infoPanel = document.getElementById('info-panel');
@@ -101,16 +115,19 @@ function renderCamera() {
 
 function render() {
   const busy = transitioning || turning;
+  explorer.classList.toggle('is-power-artifact', artifact === 'power' || artifact === 'powerClose');
   liftPrompt.hidden = busy || !introActive || (liftPosition === 0 && !liftReady);
   liftPromptLocation.textContent = liftPosition === 0 ? 'INSIDE THE LIFT' : 'LIFT LOBBY';
   liftPromptTitle.textContent = liftPosition === 0 ? 'The doors are open' : 'You are out of the lift';
   liftNextLabel.textContent = liftPosition === 0 ? 'Step out of the lift' : 'View floor plan';
   mapPrompt.hidden = busy || introActive || Boolean(artifact) || position !== 0;
+  powerPrompt.hidden = busy || introActive || Boolean(artifact) || position !== stops.length - 1;
   destinationCard.hidden = busy || introActive || Boolean(artifact) || position !== stops.length - 1;
   artifactReturn.hidden = busy || !artifact;
+  viewPowerCloseButton.hidden = busy || artifact !== 'power';
   replayButton.hidden = busy || artifact !== 'map' || !fromIntro;
   returnIcon.textContent = fromIntro ? '→' : '←';
-  returnLabel.textContent = fromIntro ? 'Continue to corridor' : 'Back to corridor';
+  returnLabel.textContent = fromIntro ? 'Continue to corridor' : artifact === 'powerClose' ? 'Back to power box' : 'Back to corridor';
   backButton.disabled = busy || Boolean(artifact) || (introActive ? liftPosition === 0 : position === 0);
   floorArrow.disabled = busy || introActive || Boolean(artifact) || position === stops.length - 1;
   document.querySelector('.view-controls').hidden = introActive;
@@ -295,16 +312,64 @@ async function openArtifact(kind) {
   corridorStage.setAttribute('aria-hidden', 'true');
   artifactStage.setAttribute('aria-hidden', 'false');
   render();
-  announcement.textContent = kind === 'map' ? 'Showing the floor plan.' : 'Showing the flat entrance.';
+  announcement.textContent = kind === 'map' ? 'Showing the floor plan.' : kind === 'power' ? 'Showing the power box.' : 'Showing the flat entrance.';
   window.setTimeout(() => {
     turning = false;
     render();
-    returnButton.focus();
+    (kind === 'power' ? viewPowerCloseButton : returnButton).focus();
   }, turnDuration());
+}
+
+async function showPowerView(nextKind) {
+  if (!['power', 'powerClose'].includes(artifact) || !['power', 'powerClose'].includes(nextKind) || artifact === nextKind || turning) return;
+  turning = true;
+  render();
+  const target = artifacts[nextKind];
+  const preload = new Image();
+  preload.src = target.image;
+  try {
+    if (preload.decode) await preload.decode();
+  } catch {
+    turning = false;
+    render();
+    announcement.textContent = 'This image could not be loaded.';
+    return;
+  }
+
+  const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 220;
+  const fadeOut = artifactPhoto.animate([
+    { opacity: 1, filter: 'blur(0px)' },
+    { opacity: 0, filter: 'blur(4px)' },
+  ], { duration, easing: 'ease-in', fill: 'forwards' });
+  await fadeOut.finished;
+  artifactPhoto.style.opacity = '0';
+  fadeOut.cancel();
+  artifactPhoto.src = target.image;
+  artifactBackdrop.src = target.image;
+  artifactPhoto.alt = target.alt;
+  artifactPhoto.dataset.kind = nextKind;
+  artifactTitle.textContent = target.title;
+  artifact = nextKind;
+  zoom = 1;
+  lookX = 0;
+  lookY = 0;
+  renderCamera();
+  const fadeIn = artifactPhoto.animate([
+    { opacity: 0, filter: 'blur(4px)' },
+    { opacity: 1, filter: 'blur(0px)' },
+  ], { duration, easing: 'ease-out', fill: 'forwards' });
+  await fadeIn.finished;
+  artifactPhoto.style.opacity = '';
+  fadeIn.cancel();
+  turning = false;
+  render();
+  (nextKind === 'power' ? viewPowerCloseButton : returnButton).focus();
+  announcement.textContent = nextKind === 'power' ? 'Back at the power box.' : 'Showing the meter number close-up.';
 }
 
 function returnFromArtifact() {
   if (!artifact || turning) return;
+  if (artifact === 'powerClose') { void showPowerView('power'); return; }
   const previousArtifact = artifact;
   turning = true;
   render();
@@ -319,7 +384,7 @@ function returnFromArtifact() {
   window.setTimeout(() => {
     turning = false;
     render();
-    (previousArtifact === 'map' ? document.getElementById('view-floor-plan') : document.getElementById('see-flat')).focus();
+    (previousArtifact === 'map' ? document.getElementById('view-floor-plan') : previousArtifact === 'power' ? document.getElementById('view-power-box') : document.getElementById('see-flat')).focus();
   }, turnDuration());
   announcement.textContent = `Returned to ${stops[position].label.toLowerCase()}.`;
 }
@@ -357,6 +422,8 @@ liftVideo.addEventListener('error', () => {
 document.getElementById('lift-next').addEventListener('click', () => { if (liftPosition === 0) void moveLift(1); else void finishIntro(); });
 document.getElementById('view-floor-plan').addEventListener('click', () => { void openArtifact('map'); });
 document.getElementById('see-flat').addEventListener('click', () => { void openArtifact('flat'); });
+document.getElementById('view-power-box').addEventListener('click', () => { void openArtifact('power'); });
+viewPowerCloseButton.addEventListener('click', () => { void showPowerView('powerClose'); });
 returnButton.addEventListener('click', returnFromArtifact);
 replayButton.addEventListener('click', replayLift);
 zoomInButton.addEventListener('click', () => { zoom = Math.round(clamp(zoom + .2, 1, artifact === 'map' ? 3 : 1.6) * 10) / 10; renderCamera(); });
