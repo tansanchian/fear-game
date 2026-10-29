@@ -16,6 +16,7 @@
           <div class="corridor-camera" id="corridor-camera">
             <img class="scene-frame is-active" id="frame-a" src="assets/stop-01.jpg" data-stop="0" alt="View down the corridor from the entrance" draggable="false" />
             <img class="scene-frame" id="frame-b" src="assets/stop-02.jpg" data-stop="1" alt="" aria-hidden="true" draggable="false" />
+            <button class="power-hotspot" id="view-power-box" type="button" aria-label="View the power box outside the unit" title="View power box" hidden></button>
           </div>
         </div>
         <div class="artifact-stage" id="artifact-stage" aria-hidden="true">
@@ -80,14 +81,6 @@
         <button id="see-flat" class="prompt-action" type="button">See the flat <span aria-hidden="true">↖</span></button>
       </div>
 
-      <div class="power-prompt glass" id="power-prompt" hidden>
-        <span class="eyebrow">OUTSIDE THE UNIT</span>
-        <button id="view-power-box" class="power-preview" type="button" aria-label="View the power box photo">
-          <img src="assets/power_box.jpg" alt="Power box outside the unit" draggable="false" />
-          <span>Power box <span aria-hidden="true">↗</span></span>
-        </button>
-      </div>
-
       <div class="artifact-return glass" id="artifact-return" role="dialog" aria-modal="false" aria-labelledby="artifact-title" hidden>
         <span class="eyebrow" id="artifact-title">FLOOR PLAN</span>
         <button id="view-power-close" class="prompt-action" type="button" hidden>View number close-up <span aria-hidden="true">↗</span></button>
@@ -99,7 +92,7 @@
         <button class="info-close" id="info-close" type="button" aria-label="Close information">×</button>
         <span class="eyebrow">ABOUT THIS EXPLORER</span>
         <h2 id="info-title">Explore the corridor</h2>
-        <p>Start by stepping out of the lift, then view the floor plan and explore five corridor viewpoints. The flat entrance and power box are at the last stop. Drag or zoom to inspect details.</p>
+        <p>Start by stepping out of the lift, then view the floor plan and explore five corridor viewpoints. At the last stop, hover over the power box beside the unit to inspect it. Drag or zoom to inspect details.</p>
         <p class="info-keys">Keyboard: <kbd>↑</kbd> forward <kbd>↓</kbd> back <kbd>←</kbd><kbd>→</kbd> look around <kbd>Esc</kbd> return</p>
       </div>
 

@@ -50,10 +50,10 @@ const artifactPhoto = document.getElementById('artifact-photo');
 const artifactBackdrop = document.getElementById('artifact-backdrop');
 const frameA = document.getElementById('frame-a');
 const frameB = document.getElementById('frame-b');
+const powerHotspot = document.getElementById('view-power-box');
 const backButton = document.getElementById('back-button');
 const floorArrow = document.getElementById('floor-arrow');
 const mapPrompt = document.getElementById('map-prompt');
-const powerPrompt = document.getElementById('power-prompt');
 const destinationCard = document.getElementById('destination-card');
 const artifactReturn = document.getElementById('artifact-return');
 const artifactTitle = document.getElementById('artifact-title');
@@ -113,6 +113,21 @@ function renderCamera() {
   zoomOutButton.disabled = zoom <= 1;
 }
 
+function layoutPowerHotspot() {
+  const width = corridorCamera.clientWidth;
+  const height = corridorCamera.clientHeight;
+  if (!width || !height) return;
+  const imageScale = Math.max(width / 1280, height / 720);
+  const positionPercent = parseFloat(getComputedStyle(activeFrame).objectPosition);
+  const imagePositionX = Number.isFinite(positionPercent) ? positionPercent / 100 : .5;
+  const offsetX = (width - 1280 * imageScale) * imagePositionX;
+  const offsetY = (height - 720 * imageScale) / 2;
+  powerHotspot.style.left = `${offsetX + 430 * imageScale}px`;
+  powerHotspot.style.top = `${offsetY + 52 * imageScale}px`;
+  powerHotspot.style.width = `${70 * imageScale}px`;
+  powerHotspot.style.height = `${165 * imageScale}px`;
+}
+
 function render() {
   const busy = transitioning || turning;
   explorer.classList.toggle('is-power-artifact', artifact === 'power' || artifact === 'powerClose');
@@ -121,7 +136,7 @@ function render() {
   liftPromptTitle.textContent = liftPosition === 0 ? 'The doors are open' : 'You are out of the lift';
   liftNextLabel.textContent = liftPosition === 0 ? 'Step out of the lift' : 'View floor plan';
   mapPrompt.hidden = busy || introActive || Boolean(artifact) || position !== 0;
-  powerPrompt.hidden = busy || introActive || Boolean(artifact) || position !== stops.length - 1;
+  powerHotspot.hidden = busy || introActive || Boolean(artifact) || position !== stops.length - 1;
   destinationCard.hidden = busy || introActive || Boolean(artifact) || position !== stops.length - 1;
   artifactReturn.hidden = busy || !artifact;
   viewPowerCloseButton.hidden = busy || artifact !== 'power';
@@ -132,6 +147,7 @@ function render() {
   floorArrow.disabled = busy || introActive || Boolean(artifact) || position === stops.length - 1;
   document.querySelector('.view-controls').hidden = introActive;
   infoButton.hidden = introActive;
+  layoutPowerHotspot();
   renderCamera();
 }
 
@@ -447,7 +463,7 @@ document.addEventListener('fullscreenchange', () => {
 });
 
 scene.addEventListener('pointerdown', (event) => {
-  if (event.button !== 0) return;
+  if (event.button !== 0 || event.target.closest('button')) return;
   pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, lookX, lookY };
   scene.setPointerCapture(event.pointerId);
   scene.classList.add('dragging');
@@ -465,6 +481,7 @@ function endDrag(event) {
 }
 scene.addEventListener('pointerup', endDrag);
 scene.addEventListener('pointercancel', endDrag);
+window.addEventListener('resize', layoutPowerHotspot);
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && !infoPanel.hidden) { infoPanel.hidden = true; return; }

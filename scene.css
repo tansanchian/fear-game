@@ -77,6 +77,48 @@
 
 .scene-frame.is-active { opacity: 1; }
 
+.power-hotspot {
+  position: absolute;
+  z-index: 3;
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  cursor: zoom-in;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.power-hotspot[hidden] { display: none; }
+
+.power-hotspot:is(:hover, :focus-visible) {
+  background: rgba(255, 255, 255, .1);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, .9), 0 0 0 7px rgba(28, 95, 65, .23);
+}
+
+.power-hotspot::after {
+  content: 'View power box';
+  position: absolute;
+  top: calc(100% + 9px);
+  left: 50%;
+  padding: 6px 9px;
+  border-radius: 7px;
+  background: rgba(22, 49, 37, .92);
+  color: white;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -4px);
+  transition: opacity .16s ease, transform .16s ease;
+}
+
+.power-hotspot:is(:hover, :focus-visible)::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
 .artifact-stage {
   opacity: 0;
   pointer-events: none;

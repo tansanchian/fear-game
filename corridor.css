@@ -187,51 +187,13 @@ button:focus-visible { outline: 3px solid #e8b75d; outline-offset: 3px; }
 .corridor-back svg { width: 23px; height: 23px; }
 
 .map-prompt,
-.power-prompt,
 .destination-card,
 .artifact-return { position: absolute; z-index: 5; padding: 12px; border-radius: 16px; }
 
 .map-prompt { top: 24px; left: 24px; width: 224px; animation: pop-in 360ms ease both; }
 .map-prompt[hidden],
-.power-prompt[hidden],
 .destination-card[hidden],
 .artifact-return[hidden] { display: none; }
-
-.power-prompt {
-  top: 24px;
-  left: 24px;
-  width: 190px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  animation: pop-in 360ms ease both;
-}
-
-.power-preview {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #24483d;
-  text-align: left;
-  font-weight: 750;
-  cursor: pointer;
-}
-
-.power-preview img {
-  display: block;
-  width: 100%;
-  height: 180px;
-  border-radius: 9px;
-  background: #e8e9e2;
-  object-fit: contain;
-}
-
-.power-preview > span { display: flex; justify-content: space-between; padding: 0 3px 1px; font-size: 12px; }
-.power-preview:hover > span { color: #1d7851; }
 
 .prompt-heading {
   display: flex;
@@ -361,8 +323,6 @@ kbd { display: inline-block; padding: 2px 5px; margin: 0 1px; border: 1px solid 
   .explorer { min-height: 0; }
   .lift-prompt { top: 12px; left: 12px; width: 218px; }
   .map-prompt { top: 12px; left: 12px; width: 218px; }
-  .power-prompt { top: 12px; left: 12px; width: 154px; }
-  .power-preview img { height: 150px; }
   .info-button { top: 12px; right: 12px; }
   .view-controls { top: 91px; right: 12px; transform: none; }
   .control-button { width: 38px; height: 38px; }
