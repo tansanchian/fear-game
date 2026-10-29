@@ -26,6 +26,7 @@ const scene = document.getElementById('scene');
 const introStage = document.getElementById('intro-stage');
 const liftFrameA = document.getElementById('lift-frame-a');
 const liftFrameB = document.getElementById('lift-frame-b');
+const liftVideo = liftFrameA;
 const liftPrompt = document.getElementById('lift-prompt');
 const liftPromptLocation = document.getElementById('lift-prompt-location');
 const liftPromptTitle = document.getElementById('lift-prompt-title');
@@ -59,6 +60,7 @@ let activeFrame = frameA;
 let inactiveFrame = frameB;
 let introActive = true;
 let liftPosition = 0;
+let liftReady = false;
 let activeLiftFrame = liftFrameA;
 let inactiveLiftFrame = liftFrameB;
 let fromIntro = false;
@@ -99,9 +101,9 @@ function renderCamera() {
 
 function render() {
   const busy = transitioning || turning;
-  liftPrompt.hidden = busy || !introActive;
+  liftPrompt.hidden = busy || !introActive || (liftPosition === 0 && !liftReady);
   liftPromptLocation.textContent = liftPosition === 0 ? 'INSIDE THE LIFT' : 'LIFT LOBBY';
-  liftPromptTitle.textContent = liftPosition === 0 ? 'Lift doors ahead' : 'You are out of the lift';
+  liftPromptTitle.textContent = liftPosition === 0 ? 'The doors are open' : 'You are out of the lift';
   liftNextLabel.textContent = liftPosition === 0 ? 'Step out of the lift' : 'View floor plan';
   mapPrompt.hidden = busy || introActive || Boolean(artifact) || position !== 0;
   destinationCard.hidden = busy || introActive || Boolean(artifact) || position !== stops.length - 1;
@@ -116,17 +118,31 @@ function render() {
   renderCamera();
 }
 
+function playLiftOpening() {
+  void liftVideo.play().catch(() => {
+    liftReady = true;
+    render();
+    announcement.textContent = 'The lift video could not play. Step out of the lift to continue.';
+  });
+}
+
 async function moveLift(next) {
-  if (!introActive || transitioning || turning || next === liftPosition || next < 0 || next > 1) return;
+  if (!introActive || transitioning || turning || next === liftPosition || next < 0 || next > 1 || (next === 1 && !liftReady)) return;
   transitioning = true;
   render();
 
   const incoming = inactiveLiftFrame;
   const outgoing = activeLiftFrame;
-  incoming.src = next === 0 ? 'assets/lift-inside.jpg' : 'assets/lift-lobby.jpg';
-  incoming.alt = next === 0 ? 'Looking at the doors from inside the lift' : 'Lift lobby with bicycles and a walkway ahead';
+  if (next === 0) {
+    liftReady = false;
+    liftVideo.pause();
+    liftVideo.currentTime = 0;
+  } else {
+    incoming.src = 'assets/lift-lobby.jpg';
+    incoming.alt = 'Lift lobby with bicycles and a walkway ahead';
+  }
   try {
-    if (incoming.decode) await incoming.decode();
+    if (incoming instanceof HTMLImageElement && incoming.decode) await incoming.decode();
   } catch {
     transitioning = false;
     render();
@@ -161,8 +177,13 @@ async function moveLift(next) {
   liftPosition = next;
   transitioning = false;
   render();
-  document.getElementById('lift-next').focus();
-  announcement.textContent = next === 0 ? 'Inside the lift.' : 'At the lift lobby. View the floor plan to continue.';
+  if (next === 0) {
+    playLiftOpening();
+    announcement.textContent = 'Inside the lift. The doors are opening.';
+  } else {
+    document.getElementById('lift-next').focus();
+    announcement.textContent = 'At the lift lobby. View the floor plan to continue.';
+  }
 }
 
 async function transitionTo(next) {
@@ -322,6 +343,17 @@ function replayLift() {
 
 backButton.addEventListener('click', () => { if (introActive) void moveLift(0); else void transitionTo(position - 1); });
 floorArrow.addEventListener('click', () => { void transitionTo(position + 1); });
+liftVideo.addEventListener('ended', () => {
+  liftVideo.pause();
+  liftReady = true;
+  render();
+  announcement.textContent = 'The lift doors are open. Step out of the lift to continue.';
+});
+liftVideo.addEventListener('error', () => {
+  liftReady = true;
+  render();
+  announcement.textContent = 'The lift video could not load. Step out of the lift to continue.';
+});
 document.getElementById('lift-next').addEventListener('click', () => { if (liftPosition === 0) void moveLift(1); else void finishIntro(); });
 document.getElementById('view-floor-plan').addEventListener('click', () => { void openArtifact('map'); });
 document.getElementById('see-flat').addEventListener('click', () => { void openArtifact('flat'); });
@@ -382,3 +414,4 @@ document.addEventListener('keydown', (event) => {
 });
 
 render();
+playLiftOpening();
