@@ -256,6 +256,19 @@ button:focus-visible { outline: 3px solid #e8b75d; outline-offset: 3px; }
 .destination-copy strong { font-size: 12px; line-height: 1.2; }
 .destination-card .prompt-action { grid-column: 1 / -1; }
 
+.object-note {
+  position: absolute;
+  z-index: 6;
+  width: 170px;
+  padding: 13px 31px 13px 14px;
+  border-radius: 13px;
+  animation: pop-in 220ms ease both;
+}
+
+.object-note[hidden] { display: none; }
+.object-note strong { display: block; font-size: 14px; }
+.object-note-close { position: absolute; top: 5px; right: 7px; border: 0; background: transparent; color: #587264; font-size: 22px; cursor: pointer; }
+
 .artifact-return {
   bottom: 30px;
   left: 50%;

@@ -16,7 +16,9 @@
           <div class="corridor-camera" id="corridor-camera">
             <img class="scene-frame is-active" id="frame-a" src="assets/stop-01.jpg" data-stop="0" alt="View down the corridor from the entrance" draggable="false" />
             <img class="scene-frame" id="frame-b" src="assets/stop-02.jpg" data-stop="1" alt="" aria-hidden="true" draggable="false" />
-            <button class="power-hotspot" id="view-power-box" type="button" aria-label="View the power box outside the unit" title="View power box" hidden></button>
+            <button class="scene-hotspot" id="view-shoe-cabinet" type="button" aria-label="Inspect the shoe cabinet" data-hint="Shoe cabinet" hidden></button>
+            <button class="scene-hotspot" id="view-plant" type="button" aria-label="Inspect the plant" data-hint="Plant" hidden></button>
+            <button class="scene-hotspot" id="view-power-box" type="button" aria-label="View the power box outside the unit" data-hint="View power box" hidden></button>
           </div>
         </div>
         <div class="artifact-stage" id="artifact-stage" aria-hidden="true">
@@ -81,6 +83,11 @@
         <button id="see-flat" class="prompt-action" type="button">See the flat <span aria-hidden="true">↖</span></button>
       </div>
 
+      <div class="object-note glass" id="object-note" role="dialog" aria-modal="false" aria-labelledby="object-note-title" hidden>
+        <button class="object-note-close" id="object-note-close" type="button" aria-label="Dismiss object note">×</button>
+        <strong id="object-note-title">A plant</strong>
+      </div>
+
       <div class="artifact-return glass" id="artifact-return" role="dialog" aria-modal="false" aria-labelledby="artifact-title" hidden>
         <span class="eyebrow" id="artifact-title">FLOOR PLAN</span>
         <button id="view-power-close" class="prompt-action" type="button" hidden>View number close-up <span aria-hidden="true">↗</span></button>
@@ -92,7 +99,7 @@
         <button class="info-close" id="info-close" type="button" aria-label="Close information">×</button>
         <span class="eyebrow">ABOUT THIS EXPLORER</span>
         <h2 id="info-title">Explore the corridor</h2>
-        <p>Start by stepping out of the lift, then view the floor plan and explore five corridor viewpoints. At the last stop, hover over the power box beside the unit to inspect it. Drag or zoom to inspect details.</p>
+        <p>Start by stepping out of the lift, then view the floor plan and explore five corridor viewpoints. Hover over the cabinet or plant at the first stop, or the power box at the last stop, to inspect them. Drag or zoom to inspect details.</p>
         <p class="info-keys">Keyboard: <kbd>↑</kbd> forward <kbd>↓</kbd> back <kbd>←</kbd><kbd>→</kbd> look around <kbd>Esc</kbd> return</p>
       </div>
 

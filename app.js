@@ -51,6 +51,9 @@ const artifactBackdrop = document.getElementById('artifact-backdrop');
 const frameA = document.getElementById('frame-a');
 const frameB = document.getElementById('frame-b');
 const powerHotspot = document.getElementById('view-power-box');
+const objectNote = document.getElementById('object-note');
+const objectNoteTitle = document.getElementById('object-note-title');
+const objectNoteClose = document.getElementById('object-note-close');
 const backButton = document.getElementById('back-button');
 const floorArrow = document.getElementById('floor-arrow');
 const mapPrompt = document.getElementById('map-prompt');
@@ -68,6 +71,11 @@ const announcement = document.getElementById('announcement');
 const zoomInButton = document.getElementById('zoom-in');
 const zoomOutButton = document.getElementById('zoom-out');
 const fullscreenButton = document.getElementById('fullscreen');
+const sceneHotspots = [
+  { button: document.getElementById('view-shoe-cabinet'), stop: 0, title: 'A shoe cabinet', bounds: { x: 382, y: 185, width: 118, height: 525 } },
+  { button: document.getElementById('view-plant'), stop: 0, title: 'A plant', bounds: { x: 666, y: 360, width: 166, height: 330 } },
+  { button: powerHotspot, stop: stops.length - 1, bounds: { x: 430, y: 52, width: 70, height: 165 } },
+];
 
 let position = 0;
 let activeFrame = frameA;
@@ -86,6 +94,7 @@ let lookX = 0;
 let lookY = 0;
 let savedView = null;
 let pointer = null;
+let notedObject = null;
 
 for (const stop of stops.slice(1)) {
   const preload = new Image();
@@ -113,7 +122,7 @@ function renderCamera() {
   zoomOutButton.disabled = zoom <= 1;
 }
 
-function layoutPowerHotspot() {
+function layoutSceneHotspots() {
   const width = corridorCamera.clientWidth;
   const height = corridorCamera.clientHeight;
   if (!width || !height) return;
@@ -122,21 +131,53 @@ function layoutPowerHotspot() {
   const imagePositionX = Number.isFinite(positionPercent) ? positionPercent / 100 : .5;
   const offsetX = (width - 1280 * imageScale) * imagePositionX;
   const offsetY = (height - 720 * imageScale) / 2;
-  powerHotspot.style.left = `${offsetX + 430 * imageScale}px`;
-  powerHotspot.style.top = `${offsetY + 52 * imageScale}px`;
-  powerHotspot.style.width = `${70 * imageScale}px`;
-  powerHotspot.style.height = `${165 * imageScale}px`;
+  for (const { button, bounds } of sceneHotspots) {
+    button.style.left = `${offsetX + bounds.x * imageScale}px`;
+    button.style.top = `${offsetY + bounds.y * imageScale}px`;
+    button.style.width = `${bounds.width * imageScale}px`;
+    button.style.height = `${bounds.height * imageScale}px`;
+  }
+}
+
+function positionObjectNote() {
+  if (!notedObject || objectNote.hidden) return;
+  const rect = notedObject.button.getBoundingClientRect();
+  const host = explorer.getBoundingClientRect();
+  const noteWidth = objectNote.offsetWidth;
+  const nextToObject = rect.right - host.left + 12;
+  const left = nextToObject + noteWidth < host.width - 12 ? nextToObject : Math.max(12, rect.left - host.left - noteWidth - 12);
+  objectNote.style.left = `${left}px`;
+  objectNote.style.top = `${clamp(rect.top - host.top + 18, 12, host.height - objectNote.offsetHeight - 12)}px`;
+}
+
+function dismissObjectNote(restoreFocus = false) {
+  const previous = notedObject;
+  notedObject = null;
+  objectNote.hidden = true;
+  if (restoreFocus && previous && !previous.button.hidden) previous.button.focus();
+}
+
+function showObjectNote(item) {
+  if (introActive || transitioning || turning || artifact || position !== item.stop) return;
+  if (notedObject === item) { dismissObjectNote(true); return; }
+  notedObject = item;
+  objectNoteTitle.textContent = item.title;
+  objectNote.hidden = false;
+  positionObjectNote();
+  objectNoteClose.focus();
+  announcement.textContent = item.title;
 }
 
 function render() {
   const busy = transitioning || turning;
+  if (notedObject && (busy || introActive || artifact || position !== notedObject.stop)) dismissObjectNote();
   explorer.classList.toggle('is-power-artifact', artifact === 'power' || artifact === 'powerClose');
   liftPrompt.hidden = busy || !introActive || (liftPosition === 0 && !liftReady);
   liftPromptLocation.textContent = liftPosition === 0 ? 'INSIDE THE LIFT' : 'LIFT LOBBY';
   liftPromptTitle.textContent = liftPosition === 0 ? 'The doors are open' : 'You are out of the lift';
   liftNextLabel.textContent = liftPosition === 0 ? 'Step out of the lift' : 'View floor plan';
   mapPrompt.hidden = busy || introActive || Boolean(artifact) || position !== 0;
-  powerHotspot.hidden = busy || introActive || Boolean(artifact) || position !== stops.length - 1;
+  for (const item of sceneHotspots) item.button.hidden = busy || introActive || Boolean(artifact) || position !== item.stop;
   destinationCard.hidden = busy || introActive || Boolean(artifact) || position !== stops.length - 1;
   artifactReturn.hidden = busy || !artifact;
   viewPowerCloseButton.hidden = busy || artifact !== 'power';
@@ -147,7 +188,7 @@ function render() {
   floorArrow.disabled = busy || introActive || Boolean(artifact) || position === stops.length - 1;
   document.querySelector('.view-controls').hidden = introActive;
   infoButton.hidden = introActive;
-  layoutPowerHotspot();
+  layoutSceneHotspots();
   renderCamera();
 }
 
@@ -438,13 +479,15 @@ liftVideo.addEventListener('error', () => {
 document.getElementById('lift-next').addEventListener('click', () => { if (liftPosition === 0) void moveLift(1); else void finishIntro(); });
 document.getElementById('view-floor-plan').addEventListener('click', () => { void openArtifact('map'); });
 document.getElementById('see-flat').addEventListener('click', () => { void openArtifact('flat'); });
+for (const item of sceneHotspots.filter(item => item.title)) item.button.addEventListener('click', () => showObjectNote(item));
+objectNoteClose.addEventListener('click', () => dismissObjectNote(true));
 document.getElementById('view-power-box').addEventListener('click', () => { void openArtifact('power'); });
 viewPowerCloseButton.addEventListener('click', () => { void showPowerView('powerClose'); });
 returnButton.addEventListener('click', returnFromArtifact);
 replayButton.addEventListener('click', replayLift);
-zoomInButton.addEventListener('click', () => { zoom = Math.round(clamp(zoom + .2, 1, artifact === 'map' ? 3 : 1.6) * 10) / 10; renderCamera(); });
-zoomOutButton.addEventListener('click', () => { zoom = Math.round(clamp(zoom - .2, 1, artifact === 'map' ? 3 : 1.6) * 10) / 10; renderCamera(); });
-document.getElementById('reset-view').addEventListener('click', () => { zoom = 1; lookX = 0; lookY = 0; renderCamera(); });
+zoomInButton.addEventListener('click', () => { dismissObjectNote(); zoom = Math.round(clamp(zoom + .2, 1, artifact === 'map' ? 3 : 1.6) * 10) / 10; renderCamera(); });
+zoomOutButton.addEventListener('click', () => { dismissObjectNote(); zoom = Math.round(clamp(zoom - .2, 1, artifact === 'map' ? 3 : 1.6) * 10) / 10; renderCamera(); });
+document.getElementById('reset-view').addEventListener('click', () => { dismissObjectNote(); zoom = 1; lookX = 0; lookY = 0; renderCamera(); });
 document.getElementById('info-button').addEventListener('click', () => { infoPanel.hidden = !infoPanel.hidden; });
 document.getElementById('info-close').addEventListener('click', () => { infoPanel.hidden = true; });
 
@@ -464,6 +507,7 @@ document.addEventListener('fullscreenchange', () => {
 
 scene.addEventListener('pointerdown', (event) => {
   if (event.button !== 0 || event.target.closest('button')) return;
+  dismissObjectNote();
   pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, lookX, lookY };
   scene.setPointerCapture(event.pointerId);
   scene.classList.add('dragging');
@@ -481,10 +525,11 @@ function endDrag(event) {
 }
 scene.addEventListener('pointerup', endDrag);
 scene.addEventListener('pointercancel', endDrag);
-window.addEventListener('resize', layoutPowerHotspot);
+window.addEventListener('resize', () => { layoutSceneHotspots(); positionObjectNote(); });
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && !infoPanel.hidden) { infoPanel.hidden = true; return; }
+  if (event.key === 'Escape' && !objectNote.hidden) { dismissObjectNote(true); return; }
   if (introActive) {
     if (event.key === 'ArrowUp' || event.key.toLowerCase() === 'w') { event.preventDefault(); if (liftPosition === 0) void moveLift(1); else void finishIntro(); }
     if (event.key === 'ArrowDown' || event.key.toLowerCase() === 's') { event.preventDefault(); void moveLift(0); }
@@ -493,8 +538,8 @@ document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && artifact) { returnFromArtifact(); return; }
   if (event.key === 'ArrowUp' || event.key.toLowerCase() === 'w') { event.preventDefault(); void transitionTo(position + 1); }
   if (event.key === 'ArrowDown' || event.key.toLowerCase() === 's') { event.preventDefault(); if (artifact) returnFromArtifact(); else void transitionTo(position - 1); }
-  if (event.key === 'ArrowLeft') { event.preventDefault(); lookX -= 4; renderCamera(); }
-  if (event.key === 'ArrowRight') { event.preventDefault(); lookX += 4; renderCamera(); }
+  if (event.key === 'ArrowLeft') { event.preventDefault(); dismissObjectNote(); lookX -= 4; renderCamera(); }
+  if (event.key === 'ArrowRight') { event.preventDefault(); dismissObjectNote(); lookX += 4; renderCamera(); }
 });
 
 render();

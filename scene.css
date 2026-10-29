@@ -77,7 +77,7 @@
 
 .scene-frame.is-active { opacity: 1; }
 
-.power-hotspot {
+.scene-hotspot {
   position: absolute;
   z-index: 3;
   display: block;
@@ -89,15 +89,15 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.power-hotspot[hidden] { display: none; }
+.scene-hotspot[hidden] { display: none; }
 
-.power-hotspot:is(:hover, :focus-visible) {
+.scene-hotspot:is(:hover, :focus-visible) {
   background: rgba(255, 255, 255, .1);
   box-shadow: 0 0 0 2px rgba(255, 255, 255, .9), 0 0 0 7px rgba(28, 95, 65, .23);
 }
 
-.power-hotspot::after {
-  content: 'View power box';
+.scene-hotspot::after {
+  content: attr(data-hint);
   position: absolute;
   top: calc(100% + 9px);
   left: 50%;
@@ -114,10 +114,26 @@
   transition: opacity .16s ease, transform .16s ease;
 }
 
-.power-hotspot:is(:hover, :focus-visible)::after {
+.scene-hotspot:is(:hover, :focus-visible)::after {
   opacity: 1;
   transform: translate(-50%, 0);
 }
+
+.scene-hotspot[data-hint="Shoe cabinet"]::after {
+  top: 12px;
+  left: calc(100% + 8px);
+  transform: translateY(-4px);
+}
+
+.scene-hotspot[data-hint="Shoe cabinet"]:is(:hover, :focus-visible)::after { transform: translateY(0); }
+
+.scene-hotspot[data-hint="Plant"]::after {
+  top: 12px;
+  left: 12px;
+  transform: translateY(-4px);
+}
+
+.scene-hotspot[data-hint="Plant"]:is(:hover, :focus-visible)::after { transform: translateY(0); }
 
 .artifact-stage {
   opacity: 0;
@@ -183,6 +199,7 @@
   }
   .lift-prompt { z-index: 4; }
   .scene-frame { object-position: 48% center; }
+  .scene-frame[data-stop="0"] { object-position: 45% center; }
   .scene-frame[data-stop="4"] { object-position: 38% center; }
   .floor-arrow { left: 55%; }
 }
