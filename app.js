@@ -23,6 +23,13 @@ const artifacts = {
 
 const explorer = document.getElementById('explorer');
 const scene = document.getElementById('scene');
+const introStage = document.getElementById('intro-stage');
+const liftFrameA = document.getElementById('lift-frame-a');
+const liftFrameB = document.getElementById('lift-frame-b');
+const liftPrompt = document.getElementById('lift-prompt');
+const liftPromptLocation = document.getElementById('lift-prompt-location');
+const liftPromptTitle = document.getElementById('lift-prompt-title');
+const liftNextLabel = document.getElementById('lift-next-label');
 const corridorStage = document.getElementById('corridor-stage');
 const corridorCamera = document.getElementById('corridor-camera');
 const artifactStage = document.getElementById('artifact-stage');
@@ -37,6 +44,10 @@ const destinationCard = document.getElementById('destination-card');
 const artifactReturn = document.getElementById('artifact-return');
 const artifactTitle = document.getElementById('artifact-title');
 const returnButton = document.getElementById('return-to-corridor');
+const returnIcon = document.getElementById('return-icon');
+const returnLabel = document.getElementById('return-label');
+const replayButton = document.getElementById('replay-lift');
+const infoButton = document.getElementById('info-button');
 const infoPanel = document.getElementById('info-panel');
 const announcement = document.getElementById('announcement');
 const zoomInButton = document.getElementById('zoom-in');
@@ -46,6 +57,11 @@ const fullscreenButton = document.getElementById('fullscreen');
 let position = 0;
 let activeFrame = frameA;
 let inactiveFrame = frameB;
+let introActive = true;
+let liftPosition = 0;
+let activeLiftFrame = liftFrameA;
+let inactiveLiftFrame = liftFrameB;
+let fromIntro = false;
 let artifact = null;
 let transitioning = false;
 let turning = false;
@@ -83,16 +99,74 @@ function renderCamera() {
 
 function render() {
   const busy = transitioning || turning;
-  mapPrompt.hidden = busy || Boolean(artifact) || position !== 0;
-  destinationCard.hidden = busy || Boolean(artifact) || position !== stops.length - 1;
+  liftPrompt.hidden = busy || !introActive;
+  liftPromptLocation.textContent = liftPosition === 0 ? 'INSIDE THE LIFT' : 'LIFT LOBBY';
+  liftPromptTitle.textContent = liftPosition === 0 ? 'Lift doors ahead' : 'You are out of the lift';
+  liftNextLabel.textContent = liftPosition === 0 ? 'Step out of the lift' : 'View floor plan';
+  mapPrompt.hidden = busy || introActive || Boolean(artifact) || position !== 0;
+  destinationCard.hidden = busy || introActive || Boolean(artifact) || position !== stops.length - 1;
   artifactReturn.hidden = busy || !artifact;
-  backButton.disabled = busy || Boolean(artifact) || position === 0;
-  floorArrow.disabled = busy || Boolean(artifact) || position === stops.length - 1;
+  replayButton.hidden = busy || artifact !== 'map' || !fromIntro;
+  returnIcon.textContent = fromIntro ? '→' : '←';
+  returnLabel.textContent = fromIntro ? 'Continue to corridor' : 'Back to corridor';
+  backButton.disabled = busy || Boolean(artifact) || (introActive ? liftPosition === 0 : position === 0);
+  floorArrow.disabled = busy || introActive || Boolean(artifact) || position === stops.length - 1;
+  document.querySelector('.view-controls').hidden = introActive;
+  infoButton.hidden = introActive;
   renderCamera();
 }
 
+async function moveLift(next) {
+  if (!introActive || transitioning || turning || next === liftPosition || next < 0 || next > 1) return;
+  transitioning = true;
+  render();
+
+  const incoming = inactiveLiftFrame;
+  const outgoing = activeLiftFrame;
+  incoming.src = next === 0 ? 'assets/lift-inside.jpg' : 'assets/lift-lobby.jpg';
+  incoming.alt = next === 0 ? 'Looking at the doors from inside the lift' : 'Lift lobby with bicycles and a walkway ahead';
+  try {
+    if (incoming.decode) await incoming.decode();
+  } catch {
+    transitioning = false;
+    render();
+    announcement.textContent = 'The lift viewpoint could not be loaded.';
+    return;
+  }
+
+  const forward = next > liftPosition;
+  const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 650;
+  incoming.style.zIndex = '2';
+  outgoing.style.zIndex = '1';
+  const outgoingAnimation = outgoing.animate([
+    { opacity: 1, transform: 'scale(1)', filter: 'blur(0px)' },
+    { opacity: 0, transform: forward ? 'scale(1.15)' : 'scale(.9)', filter: 'blur(5px)' },
+  ], { duration, easing: 'cubic-bezier(.2, .72, .2, 1)', fill: 'forwards' });
+  const incomingAnimation = incoming.animate([
+    { opacity: 0, transform: forward ? 'scale(.92)' : 'scale(1.1)', filter: 'blur(5px)' },
+    { opacity: 1, transform: 'scale(1)', filter: 'blur(0px)' },
+  ], { duration, easing: 'cubic-bezier(.2, .72, .2, 1)', fill: 'forwards' });
+
+  await Promise.allSettled([outgoingAnimation.finished, incomingAnimation.finished]);
+  outgoing.classList.remove('is-active');
+  outgoing.setAttribute('aria-hidden', 'true');
+  incoming.classList.add('is-active');
+  incoming.removeAttribute('aria-hidden');
+  outgoingAnimation.cancel();
+  incomingAnimation.cancel();
+  outgoing.style.zIndex = '';
+  incoming.style.zIndex = '';
+  activeLiftFrame = incoming;
+  inactiveLiftFrame = outgoing;
+  liftPosition = next;
+  transitioning = false;
+  render();
+  document.getElementById('lift-next').focus();
+  announcement.textContent = next === 0 ? 'Inside the lift.' : 'At the lift lobby. View the floor plan to continue.';
+}
+
 async function transitionTo(next) {
-  if (transitioning || turning || artifact || next === position || next < 0 || next >= stops.length) return;
+  if (introActive || transitioning || turning || artifact || next === position || next < 0 || next >= stops.length) return;
   transitioning = true;
   render();
 
@@ -142,9 +216,38 @@ async function transitionTo(next) {
   announcement.textContent = `${stops[position].label}. Stop ${position + 1} of ${stops.length}.`;
 }
 
+async function finishIntro() {
+  if (!introActive || liftPosition !== 1 || turning || transitioning) return;
+  turning = true;
+  render();
+  try {
+    if (artifactPhoto.decode) await artifactPhoto.decode();
+  } catch {
+    turning = false;
+    render();
+    announcement.textContent = 'The floor plan could not be loaded. Try again.';
+    return;
+  }
+
+  introActive = false;
+  fromIntro = true;
+  artifact = 'map';
+  explorer.classList.remove('is-intro');
+  explorer.classList.add('has-left-intro', 'is-at-artifact');
+  introStage.setAttribute('aria-hidden', 'true');
+  artifactStage.setAttribute('aria-hidden', 'false');
+  render();
+  announcement.textContent = 'Arrived at the floor plan. Continue to the corridor when ready.';
+  window.setTimeout(() => {
+    turning = false;
+    render();
+    returnButton.focus();
+  }, turnDuration());
+}
+
 async function openArtifact(kind) {
   const target = artifacts[kind];
-  if (!target || position !== target.position || transitioning || turning || artifact) return;
+  if (!target || introActive || position !== target.position || transitioning || turning || artifact) return;
   turning = true;
   render();
   artifactPhoto.src = target.image;
@@ -165,6 +268,7 @@ async function openArtifact(kind) {
   zoom = 1;
   lookX = 0;
   lookY = 0;
+  fromIntro = false;
   artifact = kind;
   explorer.classList.add('is-at-artifact');
   corridorStage.setAttribute('aria-hidden', 'true');
@@ -184,6 +288,7 @@ function returnFromArtifact() {
   turning = true;
   render();
   artifact = null;
+  fromIntro = false;
   explorer.classList.remove('is-at-artifact');
   corridorStage.setAttribute('aria-hidden', 'false');
   artifactStage.setAttribute('aria-hidden', 'true');
@@ -198,11 +303,30 @@ function returnFromArtifact() {
   announcement.textContent = `Returned to ${stops[position].label.toLowerCase()}.`;
 }
 
-backButton.addEventListener('click', () => { void transitionTo(position - 1); });
+function replayLift() {
+  if (artifact !== 'map' || !fromIntro || turning) return;
+  turning = true;
+  render();
+  artifact = null;
+  fromIntro = false;
+  introActive = true;
+  explorer.classList.remove('is-at-artifact', 'has-left-intro');
+  explorer.classList.add('is-intro');
+  introStage.setAttribute('aria-hidden', 'false');
+  artifactStage.setAttribute('aria-hidden', 'true');
+  infoPanel.hidden = true;
+  render();
+  window.setTimeout(() => { turning = false; render(); document.getElementById('lift-next').focus(); }, turnDuration());
+  announcement.textContent = 'Returned to the lift lobby.';
+}
+
+backButton.addEventListener('click', () => { if (introActive) void moveLift(0); else void transitionTo(position - 1); });
 floorArrow.addEventListener('click', () => { void transitionTo(position + 1); });
+document.getElementById('lift-next').addEventListener('click', () => { if (liftPosition === 0) void moveLift(1); else void finishIntro(); });
 document.getElementById('view-floor-plan').addEventListener('click', () => { void openArtifact('map'); });
 document.getElementById('see-flat').addEventListener('click', () => { void openArtifact('flat'); });
 returnButton.addEventListener('click', returnFromArtifact);
+replayButton.addEventListener('click', replayLift);
 zoomInButton.addEventListener('click', () => { zoom = Math.round(clamp(zoom + .2, 1, artifact === 'map' ? 3 : 1.6) * 10) / 10; renderCamera(); });
 zoomOutButton.addEventListener('click', () => { zoom = Math.round(clamp(zoom - .2, 1, artifact === 'map' ? 3 : 1.6) * 10) / 10; renderCamera(); });
 document.getElementById('reset-view').addEventListener('click', () => { zoom = 1; lookX = 0; lookY = 0; renderCamera(); });
@@ -245,6 +369,11 @@ scene.addEventListener('pointercancel', endDrag);
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && !infoPanel.hidden) { infoPanel.hidden = true; return; }
+  if (introActive) {
+    if (event.key === 'ArrowUp' || event.key.toLowerCase() === 'w') { event.preventDefault(); if (liftPosition === 0) void moveLift(1); else void finishIntro(); }
+    if (event.key === 'ArrowDown' || event.key.toLowerCase() === 's') { event.preventDefault(); void moveLift(0); }
+    return;
+  }
   if (event.key === 'Escape' && artifact) { returnFromArtifact(); return; }
   if (event.key === 'ArrowUp' || event.key.toLowerCase() === 'w') { event.preventDefault(); void transitionTo(position + 1); }
   if (event.key === 'ArrowDown' || event.key.toLowerCase() === 's') { event.preventDefault(); if (artifact) returnFromArtifact(); else void transitionTo(position - 1); }

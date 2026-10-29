@@ -5,6 +5,47 @@
   inset: 0;
 }
 
+.intro-stage {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  overflow: hidden;
+  background: #101b19;
+  opacity: 1;
+  transform-origin: center;
+  transition: opacity 650ms ease, transform 650ms cubic-bezier(.2, .72, .2, 1);
+}
+
+.lift-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  user-select: none;
+  pointer-events: none;
+  will-change: opacity, transform, filter;
+}
+
+.lift-frame.is-active { opacity: 1; }
+
+.intro-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(0, 0, 0, .23), transparent 22%, transparent 74%, rgba(0, 0, 0, .55));
+}
+
+.explorer.is-intro .corridor-stage { opacity: 0; }
+
+.explorer.has-left-intro .intro-stage {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.12);
+}
+
 .corridor-stage {
   opacity: 1;
   transform-origin: 43% 50%;
@@ -42,6 +83,11 @@
   transform: perspective(1100px) translateX(-35%) rotateY(20deg) scale(1.06);
   transform-origin: right center;
   transition: opacity 700ms ease, transform 900ms cubic-bezier(.2, .72, .2, 1);
+}
+
+.explorer.is-intro .artifact-stage {
+  transform: scale(.94);
+  transform-origin: center;
 }
 
 .artifact-backdrop,
@@ -86,6 +132,7 @@
 @media (prefers-reduced-motion: reduce) {
   .corridor-stage,
   .artifact-stage,
+  .intro-stage,
   .corridor-camera,
   .artifact-photo { transition: none; }
 }

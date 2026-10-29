@@ -10,9 +10,9 @@
     <link rel="stylesheet" href="scene.css" />
   </head>
   <body>
-    <main class="explorer" id="explorer">
+    <main class="explorer is-intro" id="explorer">
       <div class="scene" id="scene" aria-label="Interactive corridor view">
-        <div class="corridor-stage" id="corridor-stage">
+        <div class="corridor-stage" id="corridor-stage" aria-hidden="true">
           <div class="corridor-camera" id="corridor-camera">
             <img class="scene-frame is-active" id="frame-a" src="assets/stop-01.jpg" data-stop="0" alt="View down the corridor from the entrance" draggable="false" />
             <img class="scene-frame" id="frame-b" src="assets/stop-02.jpg" data-stop="1" alt="" aria-hidden="true" draggable="false" />
@@ -24,6 +24,17 @@
         </div>
         <div class="scene-shade" aria-hidden="true"></div>
         <div class="scene-vignette" aria-hidden="true"></div>
+      </div>
+
+      <div class="intro-stage" id="intro-stage" aria-label="Lift arrival viewpoint">
+        <img class="lift-frame is-active" id="lift-frame-a" src="assets/lift-inside.jpg" alt="Looking at the doors from inside the lift" draggable="false" />
+        <img class="lift-frame" id="lift-frame-b" src="assets/lift-lobby.jpg" alt="Lift lobby with bicycles and a walkway ahead" aria-hidden="true" draggable="false" />
+        <div class="intro-shade" aria-hidden="true"></div>
+        <div class="lift-prompt glass" id="lift-prompt">
+          <span class="eyebrow" id="lift-prompt-location">INSIDE THE LIFT</span>
+          <strong id="lift-prompt-title">Lift doors ahead</strong>
+          <button id="lift-next" class="prompt-action" type="button"><span id="lift-next-label">Step out of the lift</span><span aria-hidden="true">→</span></button>
+        </div>
       </div>
 
       <div class="map-prompt glass" id="map-prompt">
@@ -71,14 +82,15 @@
 
       <div class="artifact-return glass" id="artifact-return" role="dialog" aria-modal="false" aria-labelledby="artifact-title" hidden>
         <span class="eyebrow" id="artifact-title">FLOOR PLAN</span>
-        <button id="return-to-corridor" class="prompt-action" type="button"><span aria-hidden="true">←</span> Back to corridor</button>
+        <button id="return-to-corridor" class="prompt-action" type="button"><span id="return-icon" aria-hidden="true">→</span><span id="return-label">Continue to corridor</span></button>
+        <button id="replay-lift" class="replay-action" type="button" hidden>← Back to lift lobby</button>
       </div>
 
       <div class="info-panel glass" id="info-panel" role="dialog" aria-modal="false" aria-labelledby="info-title" hidden>
         <button class="info-close" id="info-close" type="button" aria-label="Close information">×</button>
         <span class="eyebrow">ABOUT THIS EXPLORER</span>
         <h2 id="info-title">Explore the corridor</h2>
-        <p>Move through five still viewpoints from the corridor footage. View the floor plan at the first stop and the flat entrance at the last. Drag or zoom to inspect details.</p>
+        <p>Start by stepping out of the lift, then view the floor plan and explore five corridor viewpoints. The flat entrance is at the last stop. Drag or zoom to inspect details.</p>
         <p class="info-keys">Keyboard: <kbd>↑</kbd> forward <kbd>↓</kbd> back <kbd>←</kbd><kbd>→</kbd> look around <kbd>Esc</kbd> return</p>
       </div>
 
