@@ -253,6 +253,9 @@
   .scene-frame[data-stop="1"] { object-position: 40% center; }
   .scene-frame[data-stop="3"] { object-position: 34% center; }
   .scene-frame[data-stop="4"] { object-position: 38% center; }
+  .explorer[data-day="2"] .scene-frame[data-stop="0"] { object-position: 50% center; }
+  .explorer[data-day="2"] .scene-frame[data-stop="2"] { object-position: 40% center; }
+  .explorer[data-day="2"] .scene-frame[data-stop="3"] { object-position: 55% center; }
   .floor-arrow { left: 55%; }
 }
 

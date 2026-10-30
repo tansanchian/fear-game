@@ -98,6 +98,12 @@ const sceneHotspots = [
   { button: document.getElementById('view-hanging-clothes'), stop: 4, title: 'Hanging clothes', bounds: { x: 585, y: 145, width: 105, height: 275 } },
   { button: flatDoorHotspot, stop: stops.length - 1, bounds: { x: 478, y: 220, width: 74, height: 420 } },
   { button: powerHotspot, stop: stops.length - 1, bounds: { x: 430, y: 52, width: 70, height: 165 } },
+  { button: document.getElementById('day2-plant'), stop: 0, title: 'A plant', bounds: { x: 675, y: 380, width: 150, height: 235 } },
+  { button: document.getElementById('day2-red-furnace'), stop: 0, title: 'A red furnace', bounds: { x: 490, y: 464, width: 30, height: 82 } },
+  { button: document.getElementById('day2-shoe-cabinet-stop2'), stop: 1, title: 'A shoe cabinet', bounds: { x: 218, y: 487, width: 292, height: 233 } },
+  { button: document.getElementById('day2-shoe-cabinet-stop3'), stop: 2, title: 'A shoe cabinet', bounds: { x: 18, y: 495, width: 463, height: 225 } },
+  { button: document.getElementById('day2-plants-stop4'), stop: 3, title: 'Plants', bounds: { x: 640, y: 310, width: 140, height: 107 } },
+  { button: document.getElementById('day2-railing-pots'), stop: 3, title: 'Potted objects along the railing', bounds: { x: 644, y: 420, width: 114, height: 145 } },
 ];
 
 let position = 0;
@@ -234,6 +240,7 @@ function showDoorPrompt() {
 
 function render() {
   const busy = transitioning || turning;
+  explorer.dataset.day = String(Discovery.day());
   if (position !== stops.length - 1) doorPromptOpen = false;
   if (notedObject && (busy || introActive || artifact || position !== notedObject.stop)) dismissObjectNote();
   explorer.classList.toggle('is-power-artifact', artifact === 'power' || artifact === 'powerClose');

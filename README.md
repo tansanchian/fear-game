@@ -18,7 +18,7 @@ After the eighth inspection, the player can finish reading. Closing the last not
 
 Day 2 starts with fresh inspections, reveal progress and camera state. **Day 1 artifacts are no longer interactable**, whether collected or missed. The notebook retains collected Day 1 entries with day labels; missed evidence is never added. The floor plan and flat entrance remain shared navigation. Physical objects already in the base photographs stay visible.
 
-The separate artifact sets and inspection limits are configured in `day-content.js`. Day 2 currently has an **empty set and no cutoff**, awaiting its new assets. To add an artifact, give it a unique ID in that day's `evidence`, register its button and reveal pass in `hotspots`, and add its image/view and hotspot coordinates in `app.js` and `visit.html`. Dummy objects only need a numeric hotspot rule and a scene hotspot. Never reuse a Day 1 evidence ID for different Day 2 content: notebook images must remain accurate.
+The separate artifact sets and inspection limits are configured in `day-content.js`. Day 2 currently has six dummy objects and no cutoff; its important evidence is still to be added. To add an artifact, give it a unique ID in that day's `evidence`, register its button and reveal pass in `hotspots`, and add its image/view and hotspot coordinates in `app.js` and `visit.html`. Dummy objects only need a numeric hotspot rule and a scene hotspot. Never reuse a Day 1 evidence ID for different Day 2 content: notebook images must remain accurate.
 
 The active day, story phase, inspection history, warning and notebook survive refreshes in the same tab. Refresh during the final image keeps it readable; refresh during a story card returns to that card. Older saves retain their discoveries and count already recorded evidence as inspected. “New game” resets both days and the notebook.
 
@@ -33,6 +33,16 @@ The explorer unlocks interactions across three walks. A pass advances only after
 | 3 | Unit 491 sign, hanging clothes, filming request at the flat entrance |
 
 The floor plan and flat entrance are always accessible. Existing photographed objects stay visible; their hotspots activate on the specified pass. Added props such as the flyer and unit sign appear when unlocked. Edit the day's `hotspots` and `evidence` in `day-content.js` to change the schedule or add notebook evidence. The table above describes Day 1; all interactions are subject to that day's inspection allowance.
+
+Day 2's incidental objects use the same hover cues and dismissible text notes, without adding notebook entries:
+
+| Pass | Newly available Day 2 objects |
+| --- | --- |
+| 1 | Plant (stop 1), shoe cabinet (stop 2) |
+| 2 | Red furnace (stop 1), plants (stop 4) |
+| 3 | Shoe cabinet (stop 3), potted objects along the railing (stop 4) |
+
+The red furnace hotspot covers the small red burner beside the cabinet at stop 1. At stop 4, the foliage and the pots/rack below it have separate targets. Day 2 uses adjusted mobile framing at stops 1, 3 and 4 to keep these objects reachable.
 
 Opening an important image records it automatically after a successful load. The notebook groups the meter close-up with the power box, and shows only images already inspected. Dummy objects do not create entries. Notebook image enlargement and review do not change the corridor camera or position. Players can open the notebook at any time. The first arrival at the corridor's end shows one dismissible hint that another walk may reveal new items. The game does not display pass counts or announce later unlocks; subsequent exploration is left to the player.
 

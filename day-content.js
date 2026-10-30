@@ -17,9 +17,13 @@ const DAY_CONTENT = {
     },
   },
   2: {
-    // Supply the new day's assets and interactions here; Day 1 never carries over.
+    // Day 2's incidental objects; important evidence can be added separately.
     inspectionLimit: null,
     evidence: {},
-    hotspots: {},
+    hotspots: {
+      'day2-plant': 1, 'day2-shoe-cabinet-stop2': 1,
+      'day2-red-furnace': 2, 'day2-plants-stop4': 2,
+      'day2-shoe-cabinet-stop3': 3, 'day2-railing-pots': 3,
+    },
   },
 };
