@@ -33,6 +33,7 @@
             <button class="scene-hotspot" id="day2-shoe-cabinet-stop3" type="button" aria-label="Inspect the shoe cabinet" data-hint="Shoe cabinet" hidden></button>
             <button class="scene-hotspot" id="day2-plants-stop4" type="button" aria-label="Inspect the plants" data-hint="Plants" hidden></button>
             <button class="scene-hotspot" id="day2-railing-pots" type="button" aria-label="Inspect the potted objects along the railing" data-hint="Potted objects" hidden></button>
+            <button class="scene-hotspot scene-prop newspaper-prop" id="day2-murder-article" type="button" aria-label="Read the newspaper article" data-hint="Read newspaper" hidden><img src="assets/murder_article.png" alt="" draggable="false" /></button>
           </div>
         </div>
         <div class="artifact-stage" id="artifact-stage" aria-hidden="true">
@@ -70,6 +71,9 @@
       </button>
 
       <div class="view-controls glass" aria-label="View controls">
+        <button class="control-button" id="corridor-sound" type="button" aria-label="Mute ambient sound" aria-pressed="true" title="Sound on">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4V9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path id="sound-waves" d="M16 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path id="sound-slash" d="m3 3 18 18" stroke="currentColor" stroke-width="1.8" hidden/></svg>
+        </button>
         <button class="control-button" id="zoom-in" type="button" aria-label="Zoom in" title="Zoom in">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
@@ -131,6 +135,8 @@
         <button class="prompt-action" id="journey-action" type="button">Keep exploring</button>
       </div>
       <div class="discovery-toast" id="discovery-toast" role="status" hidden></div>
+      <audio id="children-laughter" src="assets/children-laughter.mp3" preload="none"></audio>
+      <div class="sound-caption glass" id="sound-caption" role="status" aria-live="polite" hidden></div>
       <section class="journey-prompt glass" id="memory-prompt" aria-labelledby="memory-prompt-title" hidden>
         <span class="eyebrow" id="memory-prompt-title">A LINGERING THOUGHT</span>
         <p>You try to picture this block with no one living here. An empty corridor begins to take shape in your mind.</p>
@@ -163,6 +169,7 @@
     </main>
     <script src="day-content.js"></script>
     <script src="discovery.js"></script>
+    <script src="corridor-audio.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

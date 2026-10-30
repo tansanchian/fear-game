@@ -17,13 +17,16 @@ const DAY_CONTENT = {
     },
   },
   2: {
-    // Day 2's incidental objects; important evidence can be added separately.
+    // Day 2 has its own evidence and incidental objects.
     inspectionLimit: null,
-    evidence: {},
+    evidence: {
+      murderArticle: { pass: 1, group: 'murderArticle', title: 'Newspaper article', description: 'A newspaper report on the execution of Adrian Lim and his accomplices.', location: 'Stop 2 · On the shoe cabinet' },
+    },
     hotspots: {
       'day2-plant': 1, 'day2-shoe-cabinet-stop2': 1,
       'day2-red-furnace': 2, 'day2-plants-stop4': 2,
       'day2-shoe-cabinet-stop3': 3, 'day2-railing-pots': 3,
+      'day2-murder-article': 'murderArticle',
     },
   },
 };

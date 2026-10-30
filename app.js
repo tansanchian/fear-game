@@ -19,6 +19,12 @@ const artifacts = {
     alt: 'For sale flyer for a nearby three-room flat with an asking price of $688,000',
     position: 1,
   },
+  murderArticle: {
+    image: 'assets/murder_article.png',
+    title: 'NEWSPAPER ARTICLE',
+    alt: 'Newspaper article reporting the execution of Adrian Lim and his accomplices',
+    position: 1,
+  },
   flat: {
     image: 'assets/hdb_door.jpg',
     title: 'FLAT ENTRANCE',
@@ -104,6 +110,7 @@ const sceneHotspots = [
   { button: document.getElementById('day2-shoe-cabinet-stop3'), stop: 2, title: 'A shoe cabinet', bounds: { x: 18, y: 495, width: 463, height: 225 } },
   { button: document.getElementById('day2-plants-stop4'), stop: 3, title: 'Plants', bounds: { x: 640, y: 310, width: 140, height: 107 } },
   { button: document.getElementById('day2-railing-pots'), stop: 3, title: 'Potted objects along the railing', bounds: { x: 644, y: 420, width: 114, height: 145 } },
+  { button: document.getElementById('day2-murder-article'), stop: 1, bounds: { x: 451, y: 575, width: 40, height: 53 } },
 ];
 
 let position = 0;
@@ -140,7 +147,7 @@ function turnDuration() {
 }
 
 function maxZoom() {
-  return ['map', 'flyer', 'filmRequest'].includes(artifact) ? 3 : 1.6;
+  return ['map', 'flyer', 'filmRequest', 'murderArticle'].includes(artifact) ? 3 : 1.6;
 }
 
 function renderCamera() {
@@ -265,6 +272,7 @@ function render() {
   if (artifact === 'flat') layoutFilmRequestHotspot();
   renderCamera();
   Discovery.render({ introActive, busy, artifact, position, doorPromptOpen, inspecting: Boolean(notedObject) });
+  CorridorAudio.update({ introActive, turning, artifact });
   if (!busy) saveProgress();
 }
 
@@ -381,10 +389,12 @@ async function transitionTo(next) {
   incoming.style.zIndex = '';
   activeFrame = incoming;
   inactiveFrame = outgoing;
-  Discovery.move(position, next);
+  const previous = position;
+  Discovery.move(previous, next);
   position = next;
   transitioning = false;
   render();
+  CorridorAudio.walked(previous, next);
   announcement.textContent = `${stops[position].label}. Stop ${position + 1} of ${stops.length}.`;
 }
 
@@ -447,7 +457,7 @@ async function openArtifact(kind) {
   corridorStage.setAttribute('aria-hidden', 'true');
   artifactStage.setAttribute('aria-hidden', 'false');
   render();
-  announcement.textContent = kind === 'map' ? 'Showing the floor plan.' : kind === 'flyer' ? 'Showing the nearby listing flyer.' : kind === 'power' ? 'Showing the power box.' : 'Showing the flat entrance.';
+  announcement.textContent = kind === 'map' ? 'Showing the floor plan.' : kind === 'flyer' ? 'Showing the nearby listing flyer.' : kind === 'murderArticle' ? 'Showing the newspaper article.' : kind === 'power' ? 'Showing the power box.' : 'Showing the flat entrance.';
   window.setTimeout(() => {
     turning = false;
     Discovery.record(kind);
@@ -523,7 +533,7 @@ function returnFromArtifact() {
   window.setTimeout(() => {
     turning = false;
     render();
-    (previousArtifact === 'map' ? document.getElementById('view-floor-plan') : previousArtifact === 'flyer' ? document.getElementById('view-listing-flyer') : previousArtifact === 'power' ? document.getElementById('view-power-box') : document.getElementById('see-flat')).focus();
+    (previousArtifact === 'map' ? document.getElementById('view-floor-plan') : previousArtifact === 'flyer' ? document.getElementById('view-listing-flyer') : previousArtifact === 'murderArticle' ? document.getElementById('day2-murder-article') : previousArtifact === 'power' ? document.getElementById('view-power-box') : document.getElementById('see-flat')).focus();
   }, turnDuration());
   announcement.textContent = `Returned to ${stops[position].label.toLowerCase()}.`;
 }
@@ -566,6 +576,7 @@ destinationClose.addEventListener('click', () => dismissDoorPrompt(true));
 for (const item of sceneHotspots.filter(item => item.title)) item.button.addEventListener('click', () => showObjectNote(item));
 objectNoteClose.addEventListener('click', () => dismissObjectNote(true));
 document.getElementById('view-listing-flyer').addEventListener('click', () => { void openArtifact('flyer'); });
+document.getElementById('day2-murder-article').addEventListener('click', () => { void openArtifact('murderArticle'); });
 document.getElementById('view-power-box').addEventListener('click', () => { void openArtifact('power'); });
 viewPowerCloseButton.addEventListener('click', () => { void showDetailView('powerClose'); });
 filmRequestHotspot.addEventListener('click', () => { void showDetailView('filmRequest'); });

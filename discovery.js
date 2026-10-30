@@ -4,7 +4,7 @@ const Discovery = (() => {
   const evidence = Object.fromEntries(Object.entries(DAY_CONTENT).flatMap(([day, content]) =>
     Object.entries(content.evidence).map(([id, entry]) => [id, { ...entry, day: Number(day) }])));
   const hotspotIds = new Set(Object.values(DAY_CONTENT).flatMap(content => Object.keys(content.hotspots)));
-  const freshState = () => ({ day: 1, phase: 'exploring', pass: 1, direction: 1, collected: [], unread: [], inspected: [], warningSeen: false, snapshot: null, hintSeen: false });
+  const freshState = () => ({ day: 1, phase: 'exploring', pass: 1, direction: 1, collected: [], unread: [], inspected: [], soundEnabled: true, warningSeen: false, snapshot: null, hintSeen: false });
   let state = freshState();
   try {
     const saved = JSON.parse(sessionStorage.getItem(storageKey));
@@ -15,6 +15,7 @@ const Discovery = (() => {
         Object.hasOwn(DAY_CONTENT[day].hotspots, id) || evidence[id]?.day === day);
       state = { ...freshState(), day, phase: day === 1 && ['reflection', 'home'].includes(saved.phase) ? saved.phase : 'exploring',
         pass: saved.pass, direction: saved.direction, collected, inspected: [...new Set(inspected)],
+        soundEnabled: saved.soundEnabled !== false,
         unread: (Array.isArray(saved.unread) ? saved.unread : []).filter(id => collected.includes(id)),
         snapshot: saved.snapshot, hintSeen: saved.hintSeen === true || saved.pass > 1, warningSeen: saved.warningSeen === true };
 
@@ -165,6 +166,7 @@ const Discovery = (() => {
     renderNotebook(); dialog.showModal();
     state.unread = []; persist(); updateBadge();
     document.getElementById('notebook-close').focus();
+    api.refresh();
   }
   dialog.addEventListener('cancel', event => {
     if (selected) { event.preventDefault(); showList(); }
@@ -220,7 +222,7 @@ const Discovery = (() => {
       const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 350;
       await dayDialog.animate([{ opacity: 1 }, { opacity: 0 }], { duration }).finished.catch(() => {});
       dayDialog.close();
-      state = { ...freshState(), day: 2, collected: state.collected, unread: state.unread };
+      state = { ...freshState(), day: 2, collected: state.collected, unread: state.unread, soundEnabled: state.soundEnabled };
       persist();
       resetting = false;
       nextButton.disabled = false;
@@ -228,6 +230,9 @@ const Discovery = (() => {
     }
   });
   return { available, canInspect, inspect, record, move, render, save, open,
+    hasCollected: id => state.collected.includes(id),
+    soundEnabled: () => state.soundEnabled,
+    setSoundEnabled(enabled) { state.soundEnabled = Boolean(enabled); persist(); },
     day: () => state.day, isOpen: () => dialog.open || dayDialog.open || state.phase !== 'exploring',
 
     init(config) { api = config; updateBadge(); return state.snapshot; } };
