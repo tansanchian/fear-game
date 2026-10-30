@@ -60,7 +60,8 @@
 }
 
 .scene.dragging .corridor-camera,
-.scene.dragging .artifact-photo { transition: none; }
+.scene.dragging .artifact-photo,
+.scene.dragging .artifact-hotspot-layer { transition: none; }
 
 .scene-frame {
   position: absolute;
@@ -127,13 +128,52 @@
 
 .scene-hotspot[data-hint="Shoe cabinet"]:is(:hover, :focus-visible)::after { transform: translateY(0); }
 
-.scene-hotspot[data-hint="Plant"]::after {
-  top: 12px;
-  left: 12px;
+.scene-hotspot:not(#view-power-box):not([data-hint="Shoe cabinet"])::after {
+  top: 10px;
+  left: 10px;
   transform: translateY(-4px);
 }
 
-.scene-hotspot[data-hint="Plant"]:is(:hover, :focus-visible)::after { transform: translateY(0); }
+.scene-hotspot:not(#view-power-box):not([data-hint="Shoe cabinet"]):is(:hover, :focus-visible)::after { transform: translateY(0); }
+
+.scene-prop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 3px;
+  overflow: visible;
+  color: #323c36;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, .19);
+  text-align: center;
+}
+
+.scene-prop > * { pointer-events: none; }
+
+.flyer-prop {
+  border: 1px solid #cfc4a5;
+  border-radius: 1px;
+  background: #f8f3df;
+  transform: rotate(-2deg);
+}
+
+.flyer-prop span { font-size: 7px; letter-spacing: .06em; }
+.flyer-prop strong { font-size: 10px; line-height: 1.1; }
+.flyer-prop small { width: 80%; padding-top: 5px; border-top: 1px solid #928b70; font-size: 6px; line-height: 1.2; }
+
+.door-sign-prop {
+  border: 2px solid #665b45;
+  border-radius: 2px;
+  background: #e9e0bf;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  transform: rotate(1deg);
+}
+
+.scene-prop:is(:hover, :focus-visible) {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, .9), 0 0 0 7px rgba(28, 95, 65, .23);
+}
 
 .artifact-stage {
   opacity: 0;
@@ -172,6 +212,15 @@
   will-change: transform;
 }
 
+.artifact-hotspot-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: transform 250ms ease;
+}
+
+.artifact-hotspot-layer .scene-hotspot { pointer-events: auto; }
+
 .explorer.is-at-artifact .corridor-stage {
   opacity: 0;
   transform: perspective(1100px) translateX(35%) rotateY(-20deg) scale(1.06);
@@ -179,6 +228,7 @@
 
 .explorer.is-at-artifact .artifact-stage {
   opacity: 1;
+  pointer-events: auto;
   transform: none;
 }
 
@@ -200,6 +250,8 @@
   .lift-prompt { z-index: 4; }
   .scene-frame { object-position: 48% center; }
   .scene-frame[data-stop="0"] { object-position: 45% center; }
+  .scene-frame[data-stop="1"] { object-position: 40% center; }
+  .scene-frame[data-stop="3"] { object-position: 34% center; }
   .scene-frame[data-stop="4"] { object-position: 38% center; }
   .floor-arrow { left: 55%; }
 }
@@ -209,5 +261,6 @@
   .artifact-stage,
   .intro-stage,
   .corridor-camera,
-  .artifact-photo { transition: none; }
+  .artifact-photo,
+  .artifact-hotspot-layer { transition: none; }
 }

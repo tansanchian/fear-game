@@ -13,10 +13,22 @@ const artifacts = {
     alt: 'Floor plan sign with the block and floor label blurred',
     position: 0,
   },
+  flyer: {
+    image: 'assets/nearby-listing-flyer.svg',
+    title: 'NEARBY LISTING',
+    alt: 'For sale flyer for a nearby three-room flat with an asking price of $688,000',
+    position: 1,
+  },
   flat: {
     image: 'assets/hdb_door.jpg',
     title: 'FLAT ENTRANCE',
     alt: 'Entrance gate of the flat',
+    position: stops.length - 1,
+  },
+  filmRequest: {
+    image: 'assets/film_request.jpg',
+    title: 'PAPER ON THE DOOR',
+    alt: 'Letter requesting the use of a home as a filming location',
     position: stops.length - 1,
   },
   power: {
@@ -48,8 +60,11 @@ const corridorCamera = document.getElementById('corridor-camera');
 const artifactStage = document.getElementById('artifact-stage');
 const artifactPhoto = document.getElementById('artifact-photo');
 const artifactBackdrop = document.getElementById('artifact-backdrop');
+const artifactHotspotLayer = document.getElementById('artifact-hotspot-layer');
+const filmRequestHotspot = document.getElementById('view-film-request');
 const frameA = document.getElementById('frame-a');
 const frameB = document.getElementById('frame-b');
+const flatDoorHotspot = document.getElementById('view-flat-door');
 const powerHotspot = document.getElementById('view-power-box');
 const objectNote = document.getElementById('object-note');
 const objectNoteTitle = document.getElementById('object-note-title');
@@ -58,6 +73,7 @@ const backButton = document.getElementById('back-button');
 const floorArrow = document.getElementById('floor-arrow');
 const mapPrompt = document.getElementById('map-prompt');
 const destinationCard = document.getElementById('destination-card');
+const destinationClose = document.getElementById('destination-close');
 const artifactReturn = document.getElementById('artifact-return');
 const artifactTitle = document.getElementById('artifact-title');
 const returnButton = document.getElementById('return-to-corridor');
@@ -73,7 +89,14 @@ const zoomOutButton = document.getElementById('zoom-out');
 const fullscreenButton = document.getElementById('fullscreen');
 const sceneHotspots = [
   { button: document.getElementById('view-shoe-cabinet'), stop: 0, title: 'A shoe cabinet', bounds: { x: 382, y: 185, width: 118, height: 525 } },
-  { button: document.getElementById('view-plant'), stop: 0, title: 'A plant', bounds: { x: 666, y: 360, width: 166, height: 330 } },
+  { button: document.getElementById('view-wooden-blocks'), stop: 0, title: 'Wooden blocks on the floor', bounds: { x: 515, y: 395, width: 58, height: 130 } },
+  { button: document.getElementById('view-listing-flyer'), stop: 1, bounds: { x: 394, y: 283, width: 52, height: 76 } },
+  { button: document.getElementById('view-stop-two-plants'), stop: 1, title: 'Plants', bounds: { x: 440, y: 345, width: 150, height: 215 } },
+  { button: document.getElementById('view-trolley'), stop: 2, title: 'A trolley', bounds: { x: 502, y: 345, width: 108, height: 205 } },
+  { button: document.getElementById('view-wheelchair'), stop: 3, title: 'A wheelchair', bounds: { x: 385, y: 485, width: 155, height: 235 } },
+  { button: document.getElementById('view-door-sign'), stop: 3, title: 'Unit 491', bounds: { x: 338, y: 118, width: 55, height: 28 } },
+  { button: document.getElementById('view-hanging-clothes'), stop: 4, title: 'Hanging clothes', bounds: { x: 585, y: 145, width: 105, height: 275 } },
+  { button: flatDoorHotspot, stop: stops.length - 1, bounds: { x: 478, y: 220, width: 74, height: 420 } },
   { button: powerHotspot, stop: stops.length - 1, bounds: { x: 430, y: 52, width: 70, height: 165 } },
 ];
 
@@ -95,6 +118,7 @@ let lookY = 0;
 let savedView = null;
 let pointer = null;
 let notedObject = null;
+let doorPromptOpen = false;
 
 for (const stop of stops.slice(1)) {
   const preload = new Image();
@@ -109,6 +133,10 @@ function turnDuration() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 900;
 }
 
+function maxZoom() {
+  return ['map', 'flyer', 'filmRequest'].includes(artifact) ? 3 : 1.6;
+}
+
 function renderCamera() {
   const corridorScale = 1.08 * zoom;
   const artifactScale = zoom;
@@ -118,7 +146,8 @@ function renderCamera() {
   const y = clamp(lookY, -limit, limit);
   corridorCamera.style.transform = `translate3d(${x}%, ${y}%, 0) scale(${corridorScale})`;
   artifactPhoto.style.transform = `translate3d(${x}%, ${y}%, 0) scale(${artifactScale})`;
-  zoomInButton.disabled = zoom >= (artifact === 'map' ? 3 : 1.6);
+  artifactHotspotLayer.style.transform = `translate3d(${x}%, ${y}%, 0) scale(${artifactScale})`;
+  zoomInButton.disabled = zoom >= maxZoom();
   zoomOutButton.disabled = zoom <= 1;
 }
 
@@ -137,6 +166,22 @@ function layoutSceneHotspots() {
     button.style.width = `${bounds.width * imageScale}px`;
     button.style.height = `${bounds.height * imageScale}px`;
   }
+}
+
+function layoutFilmRequestHotspot() {
+  const width = artifactStage.clientWidth;
+  const height = artifactStage.clientHeight;
+  const imageWidth = artifactPhoto.naturalWidth;
+  const imageHeight = artifactPhoto.naturalHeight;
+  if (!width || !height || !imageWidth || !imageHeight) return;
+  const scale = Math.min(width / imageWidth, height / imageHeight);
+  const offsetX = (width - imageWidth * scale) / 2;
+  const offsetY = (height - imageHeight * scale) / 2;
+  const paper = { x: 290, y: 575, width: 45, height: 82 };
+  filmRequestHotspot.style.left = `${offsetX + paper.x * scale}px`;
+  filmRequestHotspot.style.top = `${offsetY + paper.y * scale}px`;
+  filmRequestHotspot.style.width = `${paper.width * scale}px`;
+  filmRequestHotspot.style.height = `${paper.height * scale}px`;
 }
 
 function positionObjectNote() {
@@ -162,14 +207,31 @@ function showObjectNote(item) {
   if (notedObject === item) { dismissObjectNote(true); return; }
   notedObject = item;
   objectNoteTitle.textContent = item.title;
+  objectNote.classList.toggle('is-long', item.title.length > 28);
   objectNote.hidden = false;
   positionObjectNote();
   objectNoteClose.focus();
   announcement.textContent = item.title;
 }
 
+function dismissDoorPrompt(restoreFocus = false) {
+  doorPromptOpen = false;
+  render();
+  if (restoreFocus && !flatDoorHotspot.hidden) flatDoorHotspot.focus();
+}
+
+function showDoorPrompt() {
+  if (introActive || transitioning || turning || artifact || position !== stops.length - 1) return;
+  dismissObjectNote();
+  doorPromptOpen = true;
+  render();
+  document.getElementById('see-flat').focus();
+  announcement.textContent = 'Flat entrance. See the flat or dismiss this prompt.';
+}
+
 function render() {
   const busy = transitioning || turning;
+  if (position !== stops.length - 1) doorPromptOpen = false;
   if (notedObject && (busy || introActive || artifact || position !== notedObject.stop)) dismissObjectNote();
   explorer.classList.toggle('is-power-artifact', artifact === 'power' || artifact === 'powerClose');
   liftPrompt.hidden = busy || !introActive || (liftPosition === 0 && !liftReady);
@@ -178,17 +240,19 @@ function render() {
   liftNextLabel.textContent = liftPosition === 0 ? 'Step out of the lift' : 'View floor plan';
   mapPrompt.hidden = busy || introActive || Boolean(artifact) || position !== 0;
   for (const item of sceneHotspots) item.button.hidden = busy || introActive || Boolean(artifact) || position !== item.stop;
-  destinationCard.hidden = busy || introActive || Boolean(artifact) || position !== stops.length - 1;
+  filmRequestHotspot.hidden = busy || artifact !== 'flat';
+  destinationCard.hidden = busy || introActive || Boolean(artifact) || position !== stops.length - 1 || !doorPromptOpen;
   artifactReturn.hidden = busy || !artifact;
   viewPowerCloseButton.hidden = busy || artifact !== 'power';
   replayButton.hidden = busy || artifact !== 'map' || !fromIntro;
   returnIcon.textContent = fromIntro ? '→' : '←';
-  returnLabel.textContent = fromIntro ? 'Continue to corridor' : artifact === 'powerClose' ? 'Back to power box' : 'Back to corridor';
+  returnLabel.textContent = fromIntro ? 'Continue to corridor' : artifact === 'powerClose' ? 'Back to power box' : artifact === 'filmRequest' ? 'Back to flat' : 'Back to corridor';
   backButton.disabled = busy || Boolean(artifact) || (introActive ? liftPosition === 0 : position === 0);
   floorArrow.disabled = busy || introActive || Boolean(artifact) || position === stops.length - 1;
   document.querySelector('.view-controls').hidden = introActive;
   infoButton.hidden = introActive;
   layoutSceneHotspots();
+  if (artifact === 'flat') layoutFilmRequestHotspot();
   renderCamera();
 }
 
@@ -343,6 +407,7 @@ async function finishIntro() {
 async function openArtifact(kind) {
   const target = artifacts[kind];
   if (!target || introActive || position !== target.position || transitioning || turning || artifact) return;
+  if (kind !== 'flat') doorPromptOpen = false;
   turning = true;
   render();
   artifactPhoto.src = target.image;
@@ -369,7 +434,7 @@ async function openArtifact(kind) {
   corridorStage.setAttribute('aria-hidden', 'true');
   artifactStage.setAttribute('aria-hidden', 'false');
   render();
-  announcement.textContent = kind === 'map' ? 'Showing the floor plan.' : kind === 'power' ? 'Showing the power box.' : 'Showing the flat entrance.';
+  announcement.textContent = kind === 'map' ? 'Showing the floor plan.' : kind === 'flyer' ? 'Showing the nearby listing flyer.' : kind === 'power' ? 'Showing the power box.' : 'Showing the flat entrance.';
   window.setTimeout(() => {
     turning = false;
     render();
@@ -377,8 +442,9 @@ async function openArtifact(kind) {
   }, turnDuration());
 }
 
-async function showPowerView(nextKind) {
-  if (!['power', 'powerClose'].includes(artifact) || !['power', 'powerClose'].includes(nextKind) || artifact === nextKind || turning) return;
+async function showDetailView(nextKind) {
+  const detailPair = { power: 'powerClose', powerClose: 'power', flat: 'filmRequest', filmRequest: 'flat' };
+  if (detailPair[artifact] !== nextKind || turning) return;
   turning = true;
   render();
   const target = artifacts[nextKind];
@@ -420,13 +486,14 @@ async function showPowerView(nextKind) {
   fadeIn.cancel();
   turning = false;
   render();
-  (nextKind === 'power' ? viewPowerCloseButton : returnButton).focus();
-  announcement.textContent = nextKind === 'power' ? 'Back at the power box.' : 'Showing the meter number close-up.';
+  (nextKind === 'power' ? viewPowerCloseButton : nextKind === 'flat' ? filmRequestHotspot : returnButton).focus();
+  announcement.textContent = nextKind === 'power' ? 'Back at the power box.' : nextKind === 'flat' ? 'Back at the flat entrance.' : nextKind === 'filmRequest' ? 'Showing the paper on the door.' : 'Showing the meter number close-up.';
 }
 
 function returnFromArtifact() {
   if (!artifact || turning) return;
-  if (artifact === 'powerClose') { void showPowerView('power'); return; }
+  if (artifact === 'powerClose') { void showDetailView('power'); return; }
+  if (artifact === 'filmRequest') { void showDetailView('flat'); return; }
   const previousArtifact = artifact;
   turning = true;
   render();
@@ -441,7 +508,7 @@ function returnFromArtifact() {
   window.setTimeout(() => {
     turning = false;
     render();
-    (previousArtifact === 'map' ? document.getElementById('view-floor-plan') : previousArtifact === 'power' ? document.getElementById('view-power-box') : document.getElementById('see-flat')).focus();
+    (previousArtifact === 'map' ? document.getElementById('view-floor-plan') : previousArtifact === 'flyer' ? document.getElementById('view-listing-flyer') : previousArtifact === 'power' ? document.getElementById('view-power-box') : document.getElementById('see-flat')).focus();
   }, turnDuration());
   announcement.textContent = `Returned to ${stops[position].label.toLowerCase()}.`;
 }
@@ -479,14 +546,18 @@ liftVideo.addEventListener('error', () => {
 document.getElementById('lift-next').addEventListener('click', () => { if (liftPosition === 0) void moveLift(1); else void finishIntro(); });
 document.getElementById('view-floor-plan').addEventListener('click', () => { void openArtifact('map'); });
 document.getElementById('see-flat').addEventListener('click', () => { void openArtifact('flat'); });
+flatDoorHotspot.addEventListener('click', showDoorPrompt);
+destinationClose.addEventListener('click', () => dismissDoorPrompt(true));
 for (const item of sceneHotspots.filter(item => item.title)) item.button.addEventListener('click', () => showObjectNote(item));
 objectNoteClose.addEventListener('click', () => dismissObjectNote(true));
+document.getElementById('view-listing-flyer').addEventListener('click', () => { void openArtifact('flyer'); });
 document.getElementById('view-power-box').addEventListener('click', () => { void openArtifact('power'); });
-viewPowerCloseButton.addEventListener('click', () => { void showPowerView('powerClose'); });
+viewPowerCloseButton.addEventListener('click', () => { void showDetailView('powerClose'); });
+filmRequestHotspot.addEventListener('click', () => { void showDetailView('filmRequest'); });
 returnButton.addEventListener('click', returnFromArtifact);
 replayButton.addEventListener('click', replayLift);
-zoomInButton.addEventListener('click', () => { dismissObjectNote(); zoom = Math.round(clamp(zoom + .2, 1, artifact === 'map' ? 3 : 1.6) * 10) / 10; renderCamera(); });
-zoomOutButton.addEventListener('click', () => { dismissObjectNote(); zoom = Math.round(clamp(zoom - .2, 1, artifact === 'map' ? 3 : 1.6) * 10) / 10; renderCamera(); });
+zoomInButton.addEventListener('click', () => { dismissObjectNote(); zoom = Math.round(clamp(zoom + .2, 1, maxZoom()) * 10) / 10; renderCamera(); });
+zoomOutButton.addEventListener('click', () => { dismissObjectNote(); zoom = Math.round(clamp(zoom - .2, 1, maxZoom()) * 10) / 10; renderCamera(); });
 document.getElementById('reset-view').addEventListener('click', () => { dismissObjectNote(); zoom = 1; lookX = 0; lookY = 0; renderCamera(); });
 document.getElementById('info-button').addEventListener('click', () => { infoPanel.hidden = !infoPanel.hidden; });
 document.getElementById('info-close').addEventListener('click', () => { infoPanel.hidden = true; });
@@ -508,6 +579,7 @@ document.addEventListener('fullscreenchange', () => {
 scene.addEventListener('pointerdown', (event) => {
   if (event.button !== 0 || event.target.closest('button')) return;
   dismissObjectNote();
+  if (doorPromptOpen) dismissDoorPrompt();
   pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, lookX, lookY };
   scene.setPointerCapture(event.pointerId);
   scene.classList.add('dragging');
@@ -525,7 +597,7 @@ function endDrag(event) {
 }
 scene.addEventListener('pointerup', endDrag);
 scene.addEventListener('pointercancel', endDrag);
-window.addEventListener('resize', () => { layoutSceneHotspots(); positionObjectNote(); });
+window.addEventListener('resize', () => { layoutSceneHotspots(); layoutFilmRequestHotspot(); positionObjectNote(); });
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && !infoPanel.hidden) { infoPanel.hidden = true; return; }
@@ -536,6 +608,7 @@ document.addEventListener('keydown', (event) => {
     return;
   }
   if (event.key === 'Escape' && artifact) { returnFromArtifact(); return; }
+  if (event.key === 'Escape' && doorPromptOpen) { dismissDoorPrompt(true); return; }
   if (event.key === 'ArrowUp' || event.key.toLowerCase() === 'w') { event.preventDefault(); void transitionTo(position + 1); }
   if (event.key === 'ArrowDown' || event.key.toLowerCase() === 's') { event.preventDefault(); if (artifact) returnFromArtifact(); else void transitionTo(position - 1); }
   if (event.key === 'ArrowLeft') { event.preventDefault(); dismissObjectNote(); lookX -= 4; renderCamera(); }

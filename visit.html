@@ -17,13 +17,23 @@
             <img class="scene-frame is-active" id="frame-a" src="assets/stop-01.jpg" data-stop="0" alt="View down the corridor from the entrance" draggable="false" />
             <img class="scene-frame" id="frame-b" src="assets/stop-02.jpg" data-stop="1" alt="" aria-hidden="true" draggable="false" />
             <button class="scene-hotspot" id="view-shoe-cabinet" type="button" aria-label="Inspect the shoe cabinet" data-hint="Shoe cabinet" hidden></button>
-            <button class="scene-hotspot" id="view-plant" type="button" aria-label="Inspect the plant" data-hint="Plant" hidden></button>
+            <button class="scene-hotspot" id="view-wooden-blocks" type="button" aria-label="Inspect the wooden blocks" data-hint="Wooden blocks" hidden></button>
+            <button class="scene-hotspot scene-prop flyer-prop" id="view-listing-flyer" type="button" aria-label="View the nearby listing flyer" data-hint="View flyer" hidden><span>NEARBY FLAT</span><strong>FOR SALE</strong><small>$688K</small></button>
+            <button class="scene-hotspot" id="view-stop-two-plants" type="button" aria-label="Inspect the plants" data-hint="Plants" hidden></button>
+            <button class="scene-hotspot" id="view-trolley" type="button" aria-label="Inspect the trolley" data-hint="Trolley" hidden></button>
+            <button class="scene-hotspot" id="view-wheelchair" type="button" aria-label="Inspect the wheelchair" data-hint="Wheelchair" hidden></button>
+            <button class="scene-hotspot scene-prop door-sign-prop" id="view-door-sign" type="button" aria-label="Inspect unit 491" data-hint="Unit 491" hidden><span>491</span></button>
+            <button class="scene-hotspot" id="view-hanging-clothes" type="button" aria-label="Inspect the hanging clothes" data-hint="Hanging clothes" hidden></button>
+            <button class="scene-hotspot" id="view-flat-door" type="button" aria-label="Inspect the flat door" data-hint="View flat" hidden></button>
             <button class="scene-hotspot" id="view-power-box" type="button" aria-label="View the power box outside the unit" data-hint="View power box" hidden></button>
           </div>
         </div>
         <div class="artifact-stage" id="artifact-stage" aria-hidden="true">
           <img class="artifact-backdrop" id="artifact-backdrop" src="assets/floor_plan_view.jpg" alt="" draggable="false" />
           <img class="artifact-photo" id="artifact-photo" src="assets/floor_plan_view.jpg" alt="Floor plan sign with its block and floor label blurred" draggable="false" />
+          <div class="artifact-hotspot-layer" id="artifact-hotspot-layer">
+            <button class="scene-hotspot" id="view-film-request" type="button" aria-label="View the paper on the flat entrance" data-hint="View paper" hidden></button>
+          </div>
         </div>
         <div class="scene-shade" aria-hidden="true"></div>
         <div class="scene-vignette" aria-hidden="true"></div>
@@ -78,8 +88,9 @@
       </button>
 
       <div class="destination-card glass" id="destination-card" role="dialog" aria-modal="false" aria-labelledby="destination-title" hidden>
+        <button class="destination-close" id="destination-close" type="button" aria-label="Dismiss flat prompt">×</button>
         <div class="destination-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 20V6.5L12 3l7 3.5V20M9 20v-5h6v5M8.5 8.5h.01M12 8.5h.01M15.5 8.5h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="destination-copy"><span class="eyebrow">DESTINATION REACHED</span><strong id="destination-title">You've arrived at the flat</strong></div>
+        <div class="destination-copy"><span class="eyebrow">FLAT ENTRANCE</span><strong id="destination-title">View this unit</strong></div>
         <button id="see-flat" class="prompt-action" type="button">See the flat <span aria-hidden="true">↖</span></button>
       </div>
 
@@ -99,7 +110,7 @@
         <button class="info-close" id="info-close" type="button" aria-label="Close information">×</button>
         <span class="eyebrow">ABOUT THIS EXPLORER</span>
         <h2 id="info-title">Explore the corridor</h2>
-        <p>Start by stepping out of the lift, then view the floor plan and explore five corridor viewpoints. Hover over the cabinet or plant at the first stop, or the power box at the last stop, to inspect them. Drag or zoom to inspect details.</p>
+        <p>Start by stepping out of the lift, then view the floor plan and explore five corridor viewpoints. Hover over objects along the corridor to inspect them. At the last stop, click the unit door to view the flat or inspect the power box. Click the paper on the flat entrance to read it. Drag or zoom to inspect details.</p>
         <p class="info-keys">Keyboard: <kbd>↑</kbd> forward <kbd>↓</kbd> back <kbd>←</kbd><kbd>→</kbd> look around <kbd>Esc</kbd> return</p>
       </div>
 

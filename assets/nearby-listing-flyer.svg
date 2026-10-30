@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1100" viewBox="0 0 800 1100">
+  <rect width="800" height="1100" fill="#e7e5dc"/>
+  <rect x="34" y="24" width="732" height="1052" rx="7" fill="#fffdf6" stroke="#d6d0c0" stroke-width="3"/>
+  <rect x="80" y="78" width="640" height="38" fill="#e2ebe5"/>
+  <text x="96" y="105" fill="#285b44" font-family="Arial, sans-serif" font-size="17" font-weight="700" letter-spacing="4">NEARBY LISTING</text>
+  <text x="80" y="210" fill="#20382d" font-family="Arial, sans-serif" font-size="82" font-weight="800" letter-spacing="-3">FOR SALE</text>
+  <path d="M80 240H720" stroke="#b8cbbd" stroke-width="3"/>
+  <text x="80" y="290" fill="#3f5d4d" font-family="Arial, sans-serif" font-size="28" font-weight="700">3-ROOM HDB FLAT</text>
+  <rect x="80" y="325" width="640" height="285" fill="#edf2eb"/>
+  <path d="M80 555H720" stroke="#cddacf" stroke-width="2"/>
+  <path d="M186 554V390H338V554M340 554V357H511V554M513 554V414H634V554" fill="#d6e3d7" stroke="#6b8874" stroke-width="4"/>
+  <g fill="#fffdf6" stroke="#93aa98" stroke-width="2">
+    <rect x="209" y="415" width="33" height="36"/><rect x="280" y="415" width="33" height="36"/>
+    <rect x="209" y="474" width="33" height="36"/><rect x="280" y="474" width="33" height="36"/>
+    <rect x="366" y="383" width="35" height="37"/><rect x="424" y="383" width="35" height="37"/><rect x="466" y="383" width="27" height="37"/>
+    <rect x="366" y="444" width="35" height="37"/><rect x="424" y="444" width="35" height="37"/><rect x="466" y="444" width="27" height="37"/>
+    <rect x="535" y="438" width="31" height="35"/><rect x="586" y="438" width="31" height="35"/>
+  </g>
+  <text x="80" y="687" fill="#50705a" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="3">ASKING PRICE</text>
+  <text x="80" y="790" fill="#205d43" font-family="Arial, sans-serif" font-size="94" font-weight="800" letter-spacing="-4">$688,000</text>
+  <path d="M80 826H720" stroke="#b8cbbd" stroke-width="3"/>
+  <text x="80" y="900" fill="#3b5144" font-family="Arial, sans-serif" font-size="25">Enquire for viewing</text>
+  <rect x="80" y="991" width="640" height="41" fill="#23583e"/>
+  <text x="400" y="1019" fill="#fffdf6" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" letter-spacing="3">AVAILABLE FOR VIEWING</text>
+</svg>

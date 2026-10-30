@@ -255,6 +255,7 @@ button:focus-visible { outline: 3px solid #e8b75d; outline-offset: 3px; }
 .destination-copy { display: flex; flex-direction: column; gap: 3px; }
 .destination-copy strong { font-size: 12px; line-height: 1.2; }
 .destination-card .prompt-action { grid-column: 1 / -1; }
+.destination-close { position: absolute; top: 4px; right: 7px; border: 0; background: transparent; color: #587264; font-size: 21px; cursor: pointer; }
 
 .object-note {
   position: absolute;
@@ -266,6 +267,7 @@ button:focus-visible { outline: 3px solid #e8b75d; outline-offset: 3px; }
 }
 
 .object-note[hidden] { display: none; }
+.object-note.is-long { width: min(250px, calc(100vw - 24px)); }
 .object-note strong { display: block; font-size: 14px; }
 .object-note-close { position: absolute; top: 5px; right: 7px; border: 0; background: transparent; color: #587264; font-size: 22px; cursor: pointer; }
 
