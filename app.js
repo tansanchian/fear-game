@@ -200,10 +200,11 @@ function dismissObjectNote(restoreFocus = false) {
   notedObject = null;
   objectNote.hidden = true;
   if (restoreFocus && previous && !previous.button.hidden) previous.button.focus();
+  if (previous) queueMicrotask(render);
 }
 
 function showObjectNote(item) {
-  if (Discovery.isOpen() || !Discovery.available(item.button.id) || introActive || transitioning || turning || artifact || position !== item.stop) return;
+  if (Discovery.isOpen() || !Discovery.canInspect(item.button.id) || introActive || transitioning || turning || artifact || position !== item.stop) return;
   if (notedObject === item) { dismissObjectNote(true); return; }
   notedObject = item;
   objectNoteTitle.textContent = item.title;
@@ -212,6 +213,8 @@ function showObjectNote(item) {
   positionObjectNote();
   objectNoteClose.focus();
   announcement.textContent = item.title;
+  Discovery.inspect(item.button.id);
+  render();
 }
 
 function dismissDoorPrompt(restoreFocus = false) {
@@ -221,7 +224,7 @@ function dismissDoorPrompt(restoreFocus = false) {
 }
 
 function showDoorPrompt() {
-  if (introActive || transitioning || turning || artifact || position !== stops.length - 1) return;
+  if (Discovery.isOpen() || introActive || transitioning || turning || artifact || position !== stops.length - 1) return;
   dismissObjectNote();
   doorPromptOpen = true;
   render();
@@ -235,7 +238,7 @@ function render() {
   if (notedObject && (busy || introActive || artifact || position !== notedObject.stop)) dismissObjectNote();
   explorer.classList.toggle('is-power-artifact', artifact === 'power' || artifact === 'powerClose');
   liftPrompt.hidden = busy || !introActive || (liftPosition === 0 && !liftReady);
-  liftPromptLocation.textContent = liftPosition === 0 ? 'INSIDE THE LIFT' : 'LIFT LOBBY';
+  liftPromptLocation.textContent = `DAY ${Discovery.day()} · ${liftPosition === 0 ? 'INSIDE THE LIFT' : 'LIFT LOBBY'}`;
   liftPromptTitle.textContent = liftPosition === 0 ? 'The doors are open' : 'You are out of the lift';
   liftNextLabel.textContent = liftPosition === 0 ? 'Step out of the lift' : 'View floor plan';
   mapPrompt.hidden = busy || introActive || Boolean(artifact) || position !== 0;
@@ -243,7 +246,7 @@ function render() {
   filmRequestHotspot.hidden = busy || artifact !== 'flat' || !Discovery.available('filmRequest');
   destinationCard.hidden = busy || introActive || Boolean(artifact) || position !== stops.length - 1 || !doorPromptOpen;
   artifactReturn.hidden = busy || !artifact;
-  viewPowerCloseButton.hidden = busy || artifact !== 'power';
+  viewPowerCloseButton.hidden = busy || artifact !== 'power' || !Discovery.canInspect('powerClose');
   replayButton.hidden = busy || artifact !== 'map' || !fromIntro;
   returnIcon.textContent = fromIntro ? '→' : '←';
   returnLabel.textContent = fromIntro ? 'Continue to corridor' : artifact === 'powerClose' ? 'Back to power box' : artifact === 'filmRequest' ? 'Back to flat' : 'Back to corridor';
@@ -254,7 +257,7 @@ function render() {
   layoutSceneHotspots();
   if (artifact === 'flat') layoutFilmRequestHotspot();
   renderCamera();
-  Discovery.render({ introActive, busy, artifact, position, doorPromptOpen });
+  Discovery.render({ introActive, busy, artifact, position, doorPromptOpen, inspecting: Boolean(notedObject) });
   if (!busy) saveProgress();
 }
 
@@ -267,7 +270,7 @@ function playLiftOpening() {
 }
 
 async function moveLift(next) {
-  if (!introActive || transitioning || turning || next === liftPosition || next < 0 || next > 1 || (next === 1 && !liftReady)) return;
+  if (Discovery.isOpen() || !introActive || transitioning || turning || next === liftPosition || next < 0 || next > 1 || (next === 1 && !liftReady)) return;
   transitioning = true;
   render();
 
@@ -379,7 +382,7 @@ async function transitionTo(next) {
 }
 
 async function finishIntro() {
-  if (!introActive || liftPosition !== 1 || turning || transitioning) return;
+  if (Discovery.isOpen() || !introActive || liftPosition !== 1 || turning || transitioning) return;
   turning = true;
   render();
   try {
@@ -409,7 +412,7 @@ async function finishIntro() {
 
 async function openArtifact(kind) {
   const target = artifacts[kind];
-  if (Discovery.isOpen() || !Discovery.available(kind) || !target || introActive || position !== target.position || transitioning || turning || artifact) return;
+  if (Discovery.isOpen() || !Discovery.canInspect(kind) || !target || introActive || position !== target.position || transitioning || turning || artifact) return;
   if (kind !== 'flat') doorPromptOpen = false;
   turning = true;
   render();
@@ -440,15 +443,15 @@ async function openArtifact(kind) {
   announcement.textContent = kind === 'map' ? 'Showing the floor plan.' : kind === 'flyer' ? 'Showing the nearby listing flyer.' : kind === 'power' ? 'Showing the power box.' : 'Showing the flat entrance.';
   window.setTimeout(() => {
     turning = false;
-    render();
     Discovery.record(kind);
-    (kind === 'power' ? viewPowerCloseButton : returnButton).focus();
+    render();
+    (kind === 'power' && !viewPowerCloseButton.hidden ? viewPowerCloseButton : returnButton).focus();
   }, turnDuration());
 }
 
 async function showDetailView(nextKind) {
   const detailPair = { power: 'powerClose', powerClose: 'power', flat: 'filmRequest', filmRequest: 'flat' };
-  if (Discovery.isOpen() || !Discovery.available(nextKind) || detailPair[artifact] !== nextKind || turning) return;
+  if (Discovery.isOpen() || !Discovery.canInspect(nextKind) || detailPair[artifact] !== nextKind || turning) return;
   turning = true;
   render();
   const target = artifacts[nextKind];
@@ -489,8 +492,8 @@ async function showDetailView(nextKind) {
   artifactPhoto.style.opacity = '';
   fadeIn.cancel();
   turning = false;
-  render();
   Discovery.record(nextKind);
+  render();
   (nextKind === 'power' ? viewPowerCloseButton : nextKind === 'flat' ? filmRequestHotspot : returnButton).focus();
   announcement.textContent = nextKind === 'power' ? 'Back at the power box.' : nextKind === 'flat' ? 'Back at the flat entrance.' : nextKind === 'filmRequest' ? 'Showing the paper on the door.' : 'Showing the meter number close-up.';
 }
@@ -626,8 +629,37 @@ function saveProgress() {
   Discovery.save({ position, introActive, liftPosition, artifact, fromIntro, zoom, lookX, lookY, savedView, doorPromptOpen });
 }
 
+function restartDay() {
+  position = 0;
+  activeFrame = frameA; inactiveFrame = frameB;
+  frameA.src = stops[0].image; frameA.dataset.stop = '0'; frameA.alt = stops[0].label;
+  frameA.classList.add('is-active'); frameA.removeAttribute('aria-hidden');
+  frameB.classList.remove('is-active'); frameB.setAttribute('aria-hidden', 'true');
+  introActive = true; liftPosition = 0; liftReady = false;
+  activeLiftFrame = liftFrameA; inactiveLiftFrame = liftFrameB;
+  liftFrameA.classList.add('is-active'); liftFrameA.removeAttribute('aria-hidden');
+  liftFrameB.classList.remove('is-active'); liftFrameB.setAttribute('aria-hidden', 'true');
+  liftVideo.pause(); liftVideo.currentTime = 0;
+  fromIntro = false; artifact = null; transitioning = false; turning = false;
+  zoom = 1; lookX = 0; lookY = 0; savedView = null; pointer = null; notedObject = null; doorPromptOpen = false;
+  objectNote.hidden = true; infoPanel.hidden = true;
+  scene.classList.remove('dragging');
+  artifactPhoto.src = artifacts.map.image; artifactBackdrop.src = artifacts.map.image;
+  artifactPhoto.alt = artifacts.map.alt; artifactPhoto.dataset.kind = 'map'; artifactTitle.textContent = artifacts.map.title;
+  explorer.classList.remove('has-left-intro', 'is-at-artifact', 'is-power-artifact');
+  explorer.classList.add('is-intro');
+  introStage.setAttribute('aria-hidden', 'false');
+  corridorStage.setAttribute('aria-hidden', 'true'); artifactStage.setAttribute('aria-hidden', 'true');
+  render();
+  const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 650;
+  explorer.animate([{ opacity: 0 }, { opacity: 1 }], { duration });
+  playLiftOpening();
+  document.getElementById('notebook-button').focus();
+  announcement.textContent = `Day ${Discovery.day()}. You return to the block. The lift doors are opening.`;
+}
+
 async function startExplorer() {
-  const saved = Discovery.init({ artifacts });
+  const saved = Discovery.init({ artifacts, refresh: render, restartDay });
   if (saved && Number.isInteger(saved.position) && saved.position >= 0 && saved.position < stops.length && saved.introActive === false) {
     position = saved.position;
     activeFrame.src = stops[position].image;

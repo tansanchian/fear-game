@@ -10,6 +10,18 @@ The pages follow this order: `index.html` → `act-1.html` → `agent.html` → 
 
 ## Corridor controls
 
+### Days and inspection limit
+
+Day 1 allows **eight distinct inspections**. Dummy object notes and newly opened evidence images each count once, including the meter close-up. Walking, the floor plan, the flat entrance, repeat inspections and notebook review are free. An unsuccessful image load spends nothing. With two inspections remaining, the game gives a subtle evening warning.
+
+After the eighth inspection, the player can finish reading. Closing the last note or leaving the evidence image opens the end-of-day reflection. “Head home” leads to a short home scene that mentions only collected evidence. “Return the next morning” fades into a fresh lift opening for Day 2. The story cards can later be replaced by fuller transition scenes.
+
+Day 2 starts with fresh inspections, reveal progress and camera state. **Day 1 artifacts are no longer interactable**, whether collected or missed. The notebook retains collected Day 1 entries with day labels; missed evidence is never added. The floor plan and flat entrance remain shared navigation. Physical objects already in the base photographs stay visible.
+
+The separate artifact sets and inspection limits are configured in `day-content.js`. Day 2 currently has an **empty set and no cutoff**, awaiting its new assets. To add an artifact, give it a unique ID in that day's `evidence`, register its button and reveal pass in `hotspots`, and add its image/view and hotspot coordinates in `app.js` and `visit.html`. Dummy objects only need a numeric hotspot rule and a scene hotspot. Never reuse a Day 1 evidence ID for different Day 2 content: notebook images must remain accurate.
+
+The active day, story phase, inspection history, warning and notebook survive refreshes in the same tab. Refresh during the final image keeps it readable; refresh during a story card returns to that card. Older saves retain their discoveries and count already recorded evidence as inspected. “New game” resets both days and the notebook.
+
 ### Discovery passes and notebook
 
 The explorer unlocks interactions across three walks. A pass advances only after reaching the opposite end and starting back: stop 5 → 4 starts pass 2; stop 1 → 2 starts pass 3. Short backtracking, opening images, and reviewing the notebook do not advance progress. Unlocked objects remain available.
@@ -20,7 +32,7 @@ The explorer unlocks interactions across three walks. A pass advances only after
 | 2 | Wooden blocks, trolley, nearby listing flyer |
 | 3 | Unit 491 sign, hanging clothes, filming request at the flat entrance |
 
-The floor plan and flat entrance are always accessible. Existing photographed objects stay visible; their hotspots activate on the specified pass. Added props such as the flyer and unit sign appear when unlocked. Edit `hotspotRules` and the `evidence` metadata in `discovery.js` to change the schedule or add notebook evidence.
+The floor plan and flat entrance are always accessible. Existing photographed objects stay visible; their hotspots activate on the specified pass. Added props such as the flyer and unit sign appear when unlocked. Edit the day's `hotspots` and `evidence` in `day-content.js` to change the schedule or add notebook evidence. The table above describes Day 1; all interactions are subject to that day's inspection allowance.
 
 Opening an important image records it automatically after a successful load. The notebook groups the meter close-up with the power box, and shows only images already inspected. Dummy objects do not create entries. Notebook image enlargement and review do not change the corridor camera or position. Players can open the notebook at any time. The first arrival at the corridor's end shows one dismissible hint that another walk may reveal new items. The game does not display pass counts or announce later unlocks; subsequent exploration is left to the player.
 

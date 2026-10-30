@@ -42,3 +42,17 @@
   .notebook h2 { font-size: 24px; }
 }
 @media (max-width: 360px) { .notebook-button { top: 65px; right: 12px; } .view-controls { top: 119px; } }
+
+.day-transition { width: min(560px, calc(100% - 32px)); max-height: calc(100svh - 32px); overflow-y: auto; margin: auto; padding: 36px; border: 1px solid #d3ddd0; border-radius: 22px; background: #f8f6ee; color: #203a30; box-shadow: 0 25px 100px #0005; animation: day-arrive 550ms ease both; }
+.day-transition::backdrop { background: #081711de; backdrop-filter: blur(8px); }
+.day-transition h2 { font-size: 30px; line-height: 1.2; margin: 16px 0; }
+.day-transition p, .day-transition li { font-size: 15px; line-height: 1.8; }
+.day-transition h3 { margin: 22px 0 8px; font-size: 13px; }
+.day-transition ul { padding-left: 20px; }
+.day-transition-actions { display: grid; gap: 12px; margin-top: 28px; }
+.day-transition .prompt-action { justify-content: center; height: 44px; }
+.day-review { padding: 10px; background: transparent; border: 0; color: #42604e; font-size: 13px; cursor: pointer; }
+.day-transition [hidden] { display: none; }
+@keyframes day-arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 600px) { .day-transition { padding: 26px; } .day-transition h2 { font-size: 26px; } }
+@media (prefers-reduced-motion: reduce) { .day-transition { animation: none; } }

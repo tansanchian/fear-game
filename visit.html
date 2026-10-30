@@ -125,6 +125,17 @@
         <button class="prompt-action" id="journey-action" type="button">Keep exploring</button>
       </div>
       <div class="discovery-toast" id="discovery-toast" role="status" hidden></div>
+      <dialog class="day-transition" id="day-transition" aria-labelledby="day-transition-title" aria-describedby="day-transition-copy">
+        <span class="eyebrow" id="day-transition-label">DAY 1 · EVENING</span>
+        <h2 id="day-transition-title">Time to head home</h2>
+        <p id="day-transition-copy"></p>
+        <h3 id="day-notes-heading" hidden>In your notebook</h3>
+        <ul id="day-transition-notes" hidden></ul>
+        <div class="day-transition-actions">
+          <button class="prompt-action" id="day-transition-next" type="button">Head home</button>
+          <button class="day-review" id="day-transition-notebook" type="button">Open notebook</button>
+        </div>
+      </dialog>
       <dialog class="notebook" id="notebook" aria-labelledby="notebook-title">
         <header class="notebook-header"><div><span class="eyebrow">FIELD NOTES</span><h2 id="notebook-title">Your notebook</h2><p id="notebook-summary"></p></div><button id="notebook-close" type="button" aria-label="Close notebook">×</button></header>
         <p id="notebook-empty">Nothing recorded yet. Inspect papers and other evidence along the corridor to add them here.</p>
@@ -139,6 +150,7 @@
       </dialog>
       <div class="sr-only" id="announcement" role="status" aria-live="polite"></div>
     </main>
+    <script src="day-content.js"></script>
     <script src="discovery.js"></script>
     <script src="app.js"></script>
   </body>
