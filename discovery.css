@@ -1,0 +1,44 @@
+.notebook-button { position: absolute; top: 24px; right: 80px; z-index: 7; height: 42px; border-radius: 12px; display: flex; align-items: center; gap: 8px; padding: 0 12px; color: #23453b; cursor: pointer; font-size: 12px; font-weight: 750; }
+.notebook-button svg { width: 20px; height: 20px; }
+#notebook-badge { border-radius: 20px; background: #246247; color: white; min-width: 20px; padding: 3px; font-size: 10px; }
+.journey-prompt { position: absolute; bottom: 94px; left: 24px; z-index: 5; width: 270px; border-radius: 16px; padding: 14px; }
+.journey-prompt p { font-size: 13px; line-height: 1.5; margin: 8px 0 12px; }
+.journey-prompt .prompt-action { font-size: 11px; }
+.discovery-toast { position: absolute; z-index: 9; left: 50%; top: 85px; transform: translateX(-50%); width: max-content; max-width: calc(100% - 32px); background: #193f31; color: white; padding: 12px 18px; border-radius: 12px; box-shadow: 0 5px 25px #0003; font-size: 13px; pointer-events: none; }
+.notebook { width: min(760px, calc(100% - 32px)); max-height: calc(100svh - 32px); margin: auto; overflow-y: auto; padding: 26px; border: 1px solid #d3ddd0; border-radius: 22px; background: #f8f6ee; color: #203a30; box-shadow: 0 25px 100px #0005; }
+.notebook::backdrop { background: #0c201bc9; backdrop-filter: blur(6px); }
+.notebook button { cursor: pointer; color: #234c3a; }
+.notebook-header { display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px solid #d5ddcf; padding-bottom: 18px; }
+.notebook h2 { margin: 6px 0; font-size: 28px; }
+.notebook p { font-size: 14px; line-height: 1.6; }
+#notebook-summary { margin: 0; color: #617368; font-size: 12px; }
+#notebook-close { width: 42px; height: 42px; flex: none; border: 1px solid #ccd8c9; background: #edf1e7; border-radius: 12px; font-size: 26px; }
+.notebook-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
+.notebook-entry { display: flex; align-items: center; text-align: left; gap: 14px; padding: 12px; border: 1px solid #d4ddce; border-radius: 12px; background: #fffdf6; }
+.notebook-entry:hover { background: #edf2e8; border-color: #62826b; }
+.notebook-entry img { width: 70px; height: 90px; object-fit: cover; border-radius: 6px; }
+.notebook-entry span { display: grid; gap: 8px; }
+.notebook-entry strong { font-size: 15px; }
+.notebook-entry small { font-size: 11px; color: #627567; line-height: 1.5; }
+.notebook-tools, .notebook-variants { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.notebook-tools { justify-content: space-between; }
+.notebook-tools button, .notebook-variants button, .notebook-footer button { background: #edf1e7; border: 1px solid #cdd9c7; border-radius: 8px; padding: 10px 12px; font-size: 12px; }
+.notebook-variants [aria-pressed="true"] { background: #24583f; color: white; }
+.notebook-image-scroll { max-height: 55svh; overflow: auto; background: #dfe4da; border-radius: 8px; }
+#notebook-photo { display: block; margin: auto; max-width: 100%; max-height: 55svh; object-fit: contain; }
+#notebook-photo.is-enlarged { max-width: none; max-height: none; width: max(100%, 960px); margin: 0; }
+.notebook-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; border-top: 1px solid #d5ddcf; margin-top: 24px; padding-top: 16px; }
+.notebook-footer span { font-size: 11px; color: #627567; }
+.notebook-footer button { flex: none; }
+.journey-prompt[hidden], .discovery-toast[hidden], #notebook-badge[hidden], .notebook [hidden] { display: none; }
+@media (max-width: 600px) {
+  .notebook-button { top: 12px; right: 64px; width: 42px; padding: 10px; }
+  .notebook-label { display: none; }
+  #notebook-badge { position: absolute; right: -7px; top: -6px; text-align: center; }
+  .journey-prompt { left: 12px; bottom: 78px; width: min(270px, calc(100% - 82px)); }
+  .discovery-toast { top: auto; bottom: 150px; font-size: 12px; }
+  .notebook { padding: 18px; border-radius: 16px; }
+  .notebook-list { grid-template-columns: 1fr; }
+  .notebook h2 { font-size: 24px; }
+}
+@media (max-width: 360px) { .notebook-button { top: 65px; right: 12px; } .view-controls { top: 119px; } }

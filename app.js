@@ -203,7 +203,7 @@ function dismissObjectNote(restoreFocus = false) {
 }
 
 function showObjectNote(item) {
-  if (introActive || transitioning || turning || artifact || position !== item.stop) return;
+  if (Discovery.isOpen() || !Discovery.available(item.button.id) || introActive || transitioning || turning || artifact || position !== item.stop) return;
   if (notedObject === item) { dismissObjectNote(true); return; }
   notedObject = item;
   objectNoteTitle.textContent = item.title;
@@ -239,8 +239,8 @@ function render() {
   liftPromptTitle.textContent = liftPosition === 0 ? 'The doors are open' : 'You are out of the lift';
   liftNextLabel.textContent = liftPosition === 0 ? 'Step out of the lift' : 'View floor plan';
   mapPrompt.hidden = busy || introActive || Boolean(artifact) || position !== 0;
-  for (const item of sceneHotspots) item.button.hidden = busy || introActive || Boolean(artifact) || position !== item.stop;
-  filmRequestHotspot.hidden = busy || artifact !== 'flat';
+  for (const item of sceneHotspots) item.button.hidden = busy || introActive || Boolean(artifact) || position !== item.stop || !Discovery.available(item.button.id);
+  filmRequestHotspot.hidden = busy || artifact !== 'flat' || !Discovery.available('filmRequest');
   destinationCard.hidden = busy || introActive || Boolean(artifact) || position !== stops.length - 1 || !doorPromptOpen;
   artifactReturn.hidden = busy || !artifact;
   viewPowerCloseButton.hidden = busy || artifact !== 'power';
@@ -254,6 +254,8 @@ function render() {
   layoutSceneHotspots();
   if (artifact === 'flat') layoutFilmRequestHotspot();
   renderCamera();
+  Discovery.render({ introActive, busy, artifact, position, doorPromptOpen });
+  if (!busy) saveProgress();
 }
 
 function playLiftOpening() {
@@ -325,7 +327,7 @@ async function moveLift(next) {
 }
 
 async function transitionTo(next) {
-  if (introActive || transitioning || turning || artifact || next === position || next < 0 || next >= stops.length) return;
+  if (Discovery.isOpen() || introActive || transitioning || turning || artifact || next === position || next < 0 || next >= stops.length) return;
   transitioning = true;
   render();
 
@@ -369,6 +371,7 @@ async function transitionTo(next) {
   incoming.style.zIndex = '';
   activeFrame = incoming;
   inactiveFrame = outgoing;
+  Discovery.move(position, next);
   position = next;
   transitioning = false;
   render();
@@ -406,7 +409,7 @@ async function finishIntro() {
 
 async function openArtifact(kind) {
   const target = artifacts[kind];
-  if (!target || introActive || position !== target.position || transitioning || turning || artifact) return;
+  if (Discovery.isOpen() || !Discovery.available(kind) || !target || introActive || position !== target.position || transitioning || turning || artifact) return;
   if (kind !== 'flat') doorPromptOpen = false;
   turning = true;
   render();
@@ -438,13 +441,14 @@ async function openArtifact(kind) {
   window.setTimeout(() => {
     turning = false;
     render();
+    Discovery.record(kind);
     (kind === 'power' ? viewPowerCloseButton : returnButton).focus();
   }, turnDuration());
 }
 
 async function showDetailView(nextKind) {
   const detailPair = { power: 'powerClose', powerClose: 'power', flat: 'filmRequest', filmRequest: 'flat' };
-  if (detailPair[artifact] !== nextKind || turning) return;
+  if (Discovery.isOpen() || !Discovery.available(nextKind) || detailPair[artifact] !== nextKind || turning) return;
   turning = true;
   render();
   const target = artifacts[nextKind];
@@ -486,12 +490,13 @@ async function showDetailView(nextKind) {
   fadeIn.cancel();
   turning = false;
   render();
+  Discovery.record(nextKind);
   (nextKind === 'power' ? viewPowerCloseButton : nextKind === 'flat' ? filmRequestHotspot : returnButton).focus();
   announcement.textContent = nextKind === 'power' ? 'Back at the power box.' : nextKind === 'flat' ? 'Back at the flat entrance.' : nextKind === 'filmRequest' ? 'Showing the paper on the door.' : 'Showing the meter number close-up.';
 }
 
 function returnFromArtifact() {
-  if (!artifact || turning) return;
+  if (Discovery.isOpen() || !artifact || turning) return;
   if (artifact === 'powerClose') { void showDetailView('power'); return; }
   if (artifact === 'filmRequest') { void showDetailView('flat'); return; }
   const previousArtifact = artifact;
@@ -600,6 +605,7 @@ scene.addEventListener('pointercancel', endDrag);
 window.addEventListener('resize', () => { layoutSceneHotspots(); layoutFilmRequestHotspot(); positionObjectNote(); });
 
 document.addEventListener('keydown', (event) => {
+  if (Discovery.isOpen()) return;
   if (event.key === 'Escape' && !infoPanel.hidden) { infoPanel.hidden = true; return; }
   if (event.key === 'Escape' && !objectNote.hidden) { dismissObjectNote(true); return; }
   if (introActive) {
@@ -615,5 +621,53 @@ document.addEventListener('keydown', (event) => {
   if (event.key === 'ArrowRight') { event.preventDefault(); dismissObjectNote(); lookX += 4; renderCamera(); }
 });
 
-render();
-playLiftOpening();
+function saveProgress() {
+  if (transitioning || turning) return;
+  Discovery.save({ position, introActive, liftPosition, artifact, fromIntro, zoom, lookX, lookY, savedView, doorPromptOpen });
+}
+
+async function startExplorer() {
+  const saved = Discovery.init({ artifacts });
+  if (saved && Number.isInteger(saved.position) && saved.position >= 0 && saved.position < stops.length && saved.introActive === false) {
+    position = saved.position;
+    activeFrame.src = stops[position].image;
+    activeFrame.dataset.stop = String(position);
+    activeFrame.alt = `Corridor stop ${position + 1}: ${stops[position].label}`;
+    introActive = false;
+    liftVideo.pause();
+    liftPosition = 1;
+    activeLiftFrame = liftFrameB;
+    inactiveLiftFrame = liftFrameA;
+    liftFrameA.classList.remove('is-active');
+    liftFrameA.setAttribute('aria-hidden', 'true');
+    liftFrameB.classList.add('is-active');
+    liftFrameB.removeAttribute('aria-hidden');
+    explorer.classList.remove('is-intro');
+    explorer.classList.add('has-left-intro');
+    introStage.setAttribute('aria-hidden', 'true');
+    artifact = Object.hasOwn(artifacts, saved.artifact) && Discovery.available(saved.artifact) ? saved.artifact : null;
+    fromIntro = artifact === 'map' && saved.fromIntro === true;
+    doorPromptOpen = saved.doorPromptOpen === true;
+    const validView = view => view && [view.zoom, view.lookX, view.lookY].every(Number.isFinite);
+    if (validView(saved)) { zoom = clamp(saved.zoom, 1, maxZoom()); lookX = clamp(saved.lookX, -100, 100); lookY = clamp(saved.lookY, -100, 100); }
+    savedView = validView(saved.savedView) ? saved.savedView : null;
+    if (artifact) {
+      const target = artifacts[artifact];
+      artifactPhoto.src = target.image;
+      artifactBackdrop.src = target.image;
+      artifactPhoto.alt = target.alt;
+      artifactPhoto.dataset.kind = artifact;
+      artifactTitle.textContent = target.title;
+      try { await artifactPhoto.decode(); } catch { artifact = null; }
+    }
+    explorer.classList.toggle('is-at-artifact', Boolean(artifact));
+    corridorStage.setAttribute('aria-hidden', String(Boolean(artifact)));
+    artifactStage.setAttribute('aria-hidden', String(!artifact));
+    render();
+  } else {
+    render();
+    playLiftOpening();
+  }
+}
+window.addEventListener('pagehide', saveProgress);
+void startExplorer();

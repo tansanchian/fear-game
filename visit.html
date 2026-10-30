@@ -8,6 +8,7 @@
     <title>The Visit — Concrete Memories</title>
     <link rel="stylesheet" href="corridor.css" />
     <link rel="stylesheet" href="scene.css" />
+    <link rel="stylesheet" href="discovery.css" />
   </head>
   <body>
     <main class="explorer is-intro" id="explorer">
@@ -114,8 +115,31 @@
         <p class="info-keys">Keyboard: <kbd>↑</kbd> forward <kbd>↓</kbd> back <kbd>←</kbd><kbd>→</kbd> look around <kbd>Esc</kbd> return</p>
       </div>
 
+      <button class="notebook-button glass" id="notebook-button" type="button" aria-label="Notebook" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 3h14v18H5V3Zm4 0v18M12 8h4M12 12h4" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <span class="notebook-label">Notebook</span><span id="notebook-badge" hidden></span>
+      </button>
+      <div class="journey-prompt glass" id="journey-prompt" hidden>
+        <span class="eyebrow">TAKE ANOTHER LOOK</span>
+        <p>You might notice new items on another walk along the corridor.</p>
+        <button class="prompt-action" id="journey-action" type="button">Keep exploring</button>
+      </div>
+      <div class="discovery-toast" id="discovery-toast" role="status" hidden></div>
+      <dialog class="notebook" id="notebook" aria-labelledby="notebook-title">
+        <header class="notebook-header"><div><span class="eyebrow">FIELD NOTES</span><h2 id="notebook-title">Your notebook</h2><p id="notebook-summary"></p></div><button id="notebook-close" type="button" aria-label="Close notebook">×</button></header>
+        <p id="notebook-empty">Nothing recorded yet. Inspect papers and other evidence along the corridor to add them here.</p>
+        <div class="notebook-list" id="notebook-list"></div>
+        <section id="notebook-detail" hidden aria-label="Recorded artifact">
+          <div class="notebook-tools"><button id="notebook-to-list" type="button">← All discoveries</button><button id="notebook-zoom" type="button">Enlarge image</button></div>
+          <div id="notebook-variants" class="notebook-variants" aria-label="Recorded images"></div>
+          <p id="notebook-caption"></p>
+          <div class="notebook-image-scroll" tabindex="0" aria-label="Artifact image; scroll to inspect when enlarged"><img id="notebook-photo" alt="" /></div>
+        </section>
+        <footer class="notebook-footer"><span>Saved for this tab. New game clears your discoveries.</span><button id="new-game" type="button">New game</button></footer>
+      </dialog>
       <div class="sr-only" id="announcement" role="status" aria-live="polite"></div>
     </main>
+    <script src="discovery.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
