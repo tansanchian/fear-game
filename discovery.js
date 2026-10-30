@@ -100,6 +100,7 @@ const Discovery = (() => {
   }
   function render({ introActive, busy, artifact, position, doorPromptOpen, inspecting }) {
     button.disabled = busy;
+    document.getElementById('memory-prompt').hidden = state.day !== 2 || state.pass < 3 || state.phase !== 'exploring' || introActive || busy || Boolean(artifact) || doorPromptOpen || inspecting || position !== 4;
     const canShowHint = state.day === 1 && state.phase === 'exploring' && !exhausted() && !introActive && !busy && !artifact && !doorPromptOpen && position === 4 && state.pass === 1;
     if (canShowHint && !state.hintSeen) {
       hintVisible = true;
@@ -184,6 +185,7 @@ const Discovery = (() => {
   document.getElementById('new-game').addEventListener('click', () => {
     resetting = true;
     state = freshState();
+    try { sessionStorage.removeItem('concrete-memories.imagined.v1'); } catch {}
     persist(); window.location.reload();
   });
   function showDayTransition() {

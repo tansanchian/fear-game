@@ -8,6 +8,23 @@ Run `python3 -m http.server 8000` from this directory, then open `http://localho
 
 The pages follow this order: `index.html` → `act-1.html` → `agent.html` → `visit.html`. The landing, listing, and agent pages use `styles.css`; the corridor explorer uses `corridor.css` and `scene.css`.
 
+## Imagined corridor
+
+`hallucination.html` is the abandoned-block sequence, styled by `hallucination.css` and controlled by `hallucination.js`. For now, “Follow the thought” appears at the final Day 2 stop after the return walks. It is a temporary bridge while the phone search and stories are still to be added. Those scenes can later lead to `hallucination.html?start=1`, which starts the sequence afresh. Opening `hallucination.html` without that parameter resumes its saved viewpoint.
+
+The original lift-door opening plays and pauses. “Step out of the lift” transitions to an unfamiliar lift lobby, where a short prompt points out the change. The floor display is clickable and plays `hallucination_lift_close.mp4`. “Walk into the corridor” leads through five distinct stills with quick walking transitions, forward/back buttons and up/down arrow keys.
+
+| Viewpoint | Side scene |
+| --- | --- |
+| Lift lobby | Floor display close-up video |
+| Corridor stop 1 | Courtyard seat video, through the outdoor opening |
+| Corridor stop 3 | Void deck photograph, through the outdoor opening |
+| Corridor stop 5 | Closed gate photograph, by the yellow gate sign |
+
+Each side scene has Back and Escape support. Videos have native playback controls and pause when closed. The final stop offers a return to the real corridor; the return link is also available throughout. Day progress, evidence and inspection allowance are unaffected. This imagined sequence uses a separate session-storage key, cleared by New game. Reduced-motion mode skips automatic video playback and shortens transitions. Images retain their full framing so mobile users can reach the same hotspots.
+
+`hallucination-stop-01.jpg` through `hallucination-stop-05.jpg` were extracted from `hallucination_corridor.mp4` at 0.5, 5, 9.5, 14 and 16.8 seconds. The final frame precedes the passerby visible later in the source. `hallucination-lobby.jpg` comes from `hallucination_lift.mp4` at 1.5 seconds. The two detail-video posters are first-frame extracts. The source clips and the gate/void-deck uploads are preserved. Hotspot locations and side-scene mappings are in `hallucination.js`.
+
 ## Corridor controls
 
 ### Days and inspection limit

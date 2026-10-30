@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#172923" />
+  <title>An Imagined Memory — Concrete Memories</title>
+  <link rel="stylesheet" href="hallucination.css" />
+</head>
+<body>
+  <main id="memory" aria-label="Explore an imagined, abandoned block">
+    <img id="backdrop" src="assets/lift-inside.jpg" alt="" />
+    <div class="view" id="view">
+      <img id="view-photo" src="assets/hallucination-lobby.jpg" alt="An unfamiliar lift" hidden />
+      <video id="arrival-video" src="assets/lift-opening.mp4" poster="assets/lift-inside.jpg" muted playsinline preload="auto" aria-label="The lift doors opening"></video>
+      <button class="memory-hotspot" id="display-hotspot" type="button" aria-label="Inspect the lift floor display" data-hint="Inspect floor display" hidden><span aria-hidden="true">＋</span></button>
+      <button class="memory-hotspot route-hotspot" id="chair-hotspot" type="button" aria-label="Look into the courtyard" data-hint="Look into courtyard" hidden><span aria-hidden="true">↗</span></button>
+      <button class="memory-hotspot route-hotspot" id="deck-hotspot" type="button" aria-label="Look towards the void deck" data-hint="Look towards void deck" hidden><span aria-hidden="true">↗</span></button>
+      <button class="memory-hotspot" id="gate-hotspot" type="button" aria-label="Inspect the closed gate" data-hint="Inspect gate" hidden><span aria-hidden="true">＋</span></button>
+    </div>
+    <a class="return-link glass" href="visit.html">← Return to the corridor</a>
+    <section class="scene-prompt glass" id="scene-prompt" aria-labelledby="scene-title">
+      <span class="eyebrow" id="scene-label">AN IMAGINED MEMORY</span>
+      <h1 id="scene-title">The doors are opening</h1>
+      <p id="scene-copy">In your mind, the block becomes a place everyone has left behind.</p>
+      <button class="action" id="scene-next" type="button" disabled>Step out of the lift</button>
+      <a class="action" id="scene-exit" href="visit.html" hidden>Return to the corridor</a>
+    </section>
+    <button class="back-button glass" id="memory-back" type="button" aria-label="Move back" hidden>←</button>
+    <button class="forward-button glass" id="memory-forward" type="button" aria-label="Move forward along the corridor" hidden>⌃<span>Move forward</span></button>
+    <p class="walk-hint glass" id="walk-hint" hidden>Look around. The openings and gates may lead somewhere.</p>
+    <p class="load-error glass" id="load-error" role="alert" hidden>This view could not load. Please try again.</p>
+    <dialog id="memory-detail" aria-labelledby="detail-title">
+      <header><button id="detail-back" type="button">← Back</button><h2 id="detail-title"></h2></header>
+      <img id="detail-image" alt="" hidden />
+      <video id="detail-video" controls muted playsinline preload="metadata" hidden></video>
+      <p id="detail-error" role="alert" hidden>This scene could not load. You can go back and try again.</p>
+    </dialog>
+    <p class="sr-only" id="memory-announcement" role="status" aria-live="polite"></p>
+  </main>
+  <script src="hallucination.js"></script>
+</body>
+</html>
