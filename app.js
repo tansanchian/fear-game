@@ -272,7 +272,7 @@ function render() {
   if (artifact === 'flat') layoutFilmRequestHotspot();
   renderCamera();
   Discovery.render({ introActive, busy, artifact, position, doorPromptOpen, inspecting: Boolean(notedObject) });
-  CorridorAudio.update({ introActive, turning, artifact });
+  CorridorEffects.update({ introActive, turning, artifact });
   if (!busy) saveProgress();
 }
 
@@ -394,7 +394,7 @@ async function transitionTo(next) {
   position = next;
   transitioning = false;
   render();
-  CorridorAudio.walked(previous, next);
+  CorridorEffects.walked(previous, next);
   announcement.textContent = `${stops[position].label}. Stop ${position + 1} of ${stops.length}.`;
 }
 

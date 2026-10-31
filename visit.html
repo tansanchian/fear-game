@@ -15,8 +15,12 @@
       <div class="scene" id="scene" aria-label="Interactive corridor view">
         <div class="corridor-stage" id="corridor-stage" aria-hidden="true">
           <div class="corridor-camera" id="corridor-camera">
-            <img class="scene-frame is-active" id="frame-a" src="assets/stop-01.jpg" data-stop="0" alt="View down the corridor from the entrance" draggable="false" />
-            <img class="scene-frame" id="frame-b" src="assets/stop-02.jpg" data-stop="1" alt="" aria-hidden="true" draggable="false" />
+            <div class="corridor-photographs" id="corridor-photographs">
+              <img class="scene-frame is-active" id="frame-a" src="assets/stop-01.jpg" data-stop="0" alt="View down the corridor from the entrance" draggable="false" />
+              <img class="scene-frame" id="frame-b" src="assets/stop-02.jpg" data-stop="1" alt="" aria-hidden="true" draggable="false" />
+              <div class="corridor-cool-tone" aria-hidden="true"></div>
+              <div class="corridor-dim" id="corridor-dim" aria-hidden="true"></div>
+            </div>
             <button class="scene-hotspot" id="view-shoe-cabinet" type="button" aria-label="Inspect the shoe cabinet" data-hint="Shoe cabinet" hidden></button>
             <button class="scene-hotspot" id="view-wooden-blocks" type="button" aria-label="Inspect the wooden blocks" data-hint="Wooden blocks" hidden></button>
             <button class="scene-hotspot scene-prop flyer-prop" id="view-listing-flyer" type="button" aria-label="View the nearby listing flyer" data-hint="View flyer" hidden><span>NEARBY FLAT</span><strong>FOR SALE</strong><small>$688K</small></button>
@@ -135,7 +139,7 @@
         <button class="prompt-action" id="journey-action" type="button">Keep exploring</button>
       </div>
       <div class="discovery-toast" id="discovery-toast" role="status" hidden></div>
-      <audio id="children-laughter" src="assets/children-laughter.mp3" preload="none"></audio>
+      <audio id="corridor-audio" preload="none"></audio>
       <div class="sound-caption glass" id="sound-caption" role="status" aria-live="polite" hidden></div>
       <section class="journey-prompt glass" id="memory-prompt" aria-labelledby="memory-prompt-title" hidden>
         <span class="eyebrow" id="memory-prompt-title">A LINGERING THOUGHT</span>
@@ -170,6 +174,7 @@
     <script src="day-content.js"></script>
     <script src="discovery.js"></script>
     <script src="corridor-audio.js"></script>
+    <script src="corridor-effects.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

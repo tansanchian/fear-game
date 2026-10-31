@@ -78,6 +78,15 @@
 
 .scene-frame.is-active { opacity: 1; }
 
+/* Grade only the photographs: artifact images, hotspot labels and controls stay clear. */
+.corridor-photographs { position: absolute; inset: 0; pointer-events: none; filter: saturate(var(--corridor-saturation, 1)) brightness(var(--corridor-brightness, 1)); transition: filter 6s ease; }
+.corridor-cool-tone, .corridor-dim { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.corridor-cool-tone { background: #17394f; opacity: var(--corridor-coolness, 0); transition: opacity 6s ease; }
+.corridor-dim { background: #071014; opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .corridor-photographs, .corridor-cool-tone { transition: none; }
+}
+
 .scene-hotspot {
   position: absolute;
   z-index: 3;

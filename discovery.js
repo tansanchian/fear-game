@@ -4,7 +4,8 @@ const Discovery = (() => {
   const evidence = Object.fromEntries(Object.entries(DAY_CONTENT).flatMap(([day, content]) =>
     Object.entries(content.evidence).map(([id, entry]) => [id, { ...entry, day: Number(day) }])));
   const hotspotIds = new Set(Object.values(DAY_CONTENT).flatMap(content => Object.keys(content.hotspots)));
-  const freshState = () => ({ day: 1, phase: 'exploring', pass: 1, direction: 1, collected: [], unread: [], inspected: [], soundEnabled: true, warningSeen: false, snapshot: null, hintSeen: false });
+  const effectIds = new Set(['power-dim', 'filming-voices']);
+  const freshState = () => ({ day: 1, phase: 'exploring', pass: 1, direction: 1, collected: [], unread: [], inspected: [], effectsSeen: [], day2Steps: 0, soundEnabled: true, warningSeen: false, snapshot: null, hintSeen: false });
   let state = freshState();
   try {
     const saved = JSON.parse(sessionStorage.getItem(storageKey));
@@ -16,6 +17,8 @@ const Discovery = (() => {
       state = { ...freshState(), day, phase: day === 1 && ['reflection', 'home'].includes(saved.phase) ? saved.phase : 'exploring',
         pass: saved.pass, direction: saved.direction, collected, inspected: [...new Set(inspected)],
         soundEnabled: saved.soundEnabled !== false,
+        effectsSeen: day === 2 && Array.isArray(saved.effectsSeen) ? [...new Set(saved.effectsSeen.filter(id => effectIds.has(id)))] : [],
+        day2Steps: day === 2 && Number.isInteger(saved.day2Steps) ? Math.max(0, Math.min(8, saved.day2Steps)) : 0,
         unread: (Array.isArray(saved.unread) ? saved.unread : []).filter(id => collected.includes(id)),
         snapshot: saved.snapshot, hintSeen: saved.hintSeen === true || saved.pass > 1, warningSeen: saved.warningSeen === true };
 
@@ -93,6 +96,7 @@ const Discovery = (() => {
     inspect(id);
   }
   function move(from, to) {
+    if (state.day === 2 && from !== to) state.day2Steps = Math.min(8, state.day2Steps + 1);
     if (state.pass === 1 && from === 4 && to === 3) {
       state.pass = 2; state.direction = -1;
     } else if (state.pass === 2 && from === 0 && to === 1) {
@@ -231,6 +235,14 @@ const Discovery = (() => {
   });
   return { available, canInspect, inspect, record, move, render, save, open,
     hasCollected: id => state.collected.includes(id),
+    hasEffect: id => state.effectsSeen.includes(id),
+    rememberEffect(id) { if (effectIds.has(id) && !state.effectsSeen.includes(id)) { state.effectsSeen.push(id); persist(); } },
+    atmosphereLevel() {
+      if (state.day !== 2) return 0;
+      // The meter close-up is part of the power-box clue, not a second clue.
+      const clues = new Set(state.collected.map(id => `${evidence[id].day}:${evidence[id].group}`)).size;
+      return Math.min(1, Math.max(0, clues - 1) / 3) * state.day2Steps / 8;
+    },
     soundEnabled: () => state.soundEnabled,
     setSoundEnabled(enabled) { state.soundEnabled = Boolean(enabled); persist(); },
     day: () => state.day, isOpen: () => dialog.open || dayDialog.open || state.phase !== 'exploring',
