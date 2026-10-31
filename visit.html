@@ -6,9 +6,10 @@
     <meta name="theme-color" content="#162523" />
     <meta name="description" content="Explore five viewpoints along a residential corridor, its floor plan, and the flat entrance." />
     <title>The Visit — Concrete Memories</title>
-    <link rel="stylesheet" href="corridor.css" />
-    <link rel="stylesheet" href="scene.css" />
-    <link rel="stylesheet" href="discovery.css" />
+    <link rel="stylesheet" href="corridor.css?v=20261101-neighbour-hints" />
+    <link rel="stylesheet" href="scene.css?v=20261101-neighbour-hints" />
+    <link rel="stylesheet" href="discovery.css?v=20261101-neighbour-hints" />
+    <link rel="stylesheet" href="neighbour-conversation.css?v=20261101-neighbour-hints" />
   </head>
   <body>
     <main class="explorer is-intro" id="explorer">
@@ -38,6 +39,7 @@
             <button class="scene-hotspot" id="day2-plants-stop4" type="button" aria-label="Inspect the plants" data-hint="Plants" hidden></button>
             <button class="scene-hotspot" id="day2-railing-pots" type="button" aria-label="Inspect the potted objects along the railing" data-hint="Potted objects" hidden></button>
             <button class="scene-hotspot scene-prop newspaper-prop" id="day2-murder-article" type="button" aria-label="Read the newspaper article" data-hint="Read newspaper" hidden><img src="assets/murder_article.png" alt="" draggable="false" /></button>
+            <button class="scene-hotspot" id="day2-neighbour-door" type="button" aria-label="Talk to the neighbour at this door" data-hint="Talk to neighbour" hidden><span class="neighbour-door-cue" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h14v11H9l-4 4V4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 8h6M9 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Talk to neighbour</span></button>
           </div>
         </div>
         <div class="artifact-stage" id="artifact-stage" aria-hidden="true">
@@ -125,6 +127,7 @@
         <button class="info-close" id="info-close" type="button" aria-label="Close information">×</button>
         <span class="eyebrow">ABOUT THIS EXPLORER</span>
         <h2 id="info-title">Explore the corridor</h2>
+        <p id="visit-context" class="info-keys"></p>
         <p>Start by stepping out of the lift, then view the floor plan and explore five corridor viewpoints. Hover over objects along the corridor to inspect them. At the last stop, click the unit door to view the flat or inspect the power box. Click the paper on the flat entrance to read it. Drag or zoom to inspect details.</p>
         <p class="info-keys">Keyboard: <kbd>↑</kbd> forward <kbd>↓</kbd> back <kbd>←</kbd><kbd>→</kbd> look around <kbd>Esc</kbd> return</p>
       </div>
@@ -166,15 +169,35 @@
           <div id="notebook-variants" class="notebook-variants" aria-label="Recorded images"></div>
           <p id="notebook-caption"></p>
           <div class="notebook-image-scroll" tabindex="0" aria-label="Artifact image; scroll to inspect when enlarged"><img id="notebook-photo" alt="" /></div>
+          <div id="notebook-transcript" class="notebook-transcript" hidden></div>
         </section>
         <footer class="notebook-footer"><span>Saved for this tab. New game clears your discoveries.</span><button id="new-game" type="button">New game</button></footer>
       </dialog>
+      <dialog id="neighbour-conversation" class="neighbour-conversation" aria-labelledby="neighbour-conversation-title">
+        <div class="neighbour-layout">
+          <header class="neighbour-header"><button id="neighbour-back" type="button">← Back to corridor</button><h2 id="neighbour-conversation-title">A new neighbour</h2></header>
+          <div class="neighbour-portraits">
+            <figure data-character="resident"><img id="neighbour-resident" src="assets/convo1.png" alt="The older resident who has just moved in" /><figcaption>Neighbour</figcaption></figure>
+            <figure data-character="master"><img id="neighbour-master" src="assets/convo2.png" alt="The feng shui master visiting her home" /><figcaption>Feng shui master</figcaption></figure>
+          </div>
+          <div class="neighbour-dialogue-area">
+            <p id="neighbour-loading" role="status">Approaching the doorway…</p>
+            <button id="neighbour-dialogue" class="neighbour-dialogue" type="button" hidden>
+              <span class="neighbour-speaker" id="neighbour-speaker"></span>
+              <span class="neighbour-line" id="neighbour-line" aria-live="polite" aria-atomic="true"></span>
+              <span class="neighbour-continue" id="neighbour-continue">Click to continue →</span>
+            </button>
+            <button id="neighbour-previous" class="neighbour-previous" type="button" hidden>← Previous line</button>
+          </div>
+        </div>
+      </dialog>
       <div class="sr-only" id="announcement" role="status" aria-live="polite"></div>
     </main>
-    <script src="day-content.js"></script>
-    <script src="discovery.js"></script>
-    <script src="corridor-audio.js"></script>
-    <script src="corridor-effects.js"></script>
-    <script src="app.js"></script>
+    <script src="day-content.js?v=20261101-neighbour-hints"></script>
+    <script src="discovery.js?v=20261101-neighbour-hints"></script>
+    <script src="corridor-audio.js?v=20261101-neighbour-hints"></script>
+    <script src="corridor-effects.js?v=20261101-neighbour-hints"></script>
+    <script src="neighbour-conversation.js?v=20261101-neighbour-hints"></script>
+    <script src="app.js?v=20261101-neighbour-hints"></script>
   </body>
 </html>

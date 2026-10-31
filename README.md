@@ -6,6 +6,8 @@ An interactive story that starts with a flat listing, continues through a conver
 
 Run `python3 -m http.server 8000` from this directory, then open `http://localhost:8000`.
 
+The visit page uses a shared version query on its scripts and styles to avoid mixing cached discovery rules with a newer scene. Bump that version in `visit.html` when changing these files together. Reloading keeps the tab's saved progress. The ⓘ panel reports the actual day and corridor stop to help distinguish Day 1 revisits from Day 2; the neighbour conversation is available only on Day 2 at stop 4.
+
 The pages follow this order: `index.html` → `act-1.html` → `agent.html` → `visit.html`. The landing, listing, and agent pages use `styles.css`; the corridor explorer uses `corridor.css` and `scene.css`.
 
 ## Imagined corridor
@@ -35,7 +37,7 @@ After the eighth inspection, the player can finish reading. Closing the last not
 
 Day 2 starts with fresh inspections, reveal progress and camera state. **Day 1 artifacts are no longer interactable**, whether collected or missed. The notebook retains collected Day 1 entries with day labels; missed evidence is never added. The floor plan and flat entrance remain shared navigation. Physical objects already in the base photographs stay visible.
 
-The separate artifact sets and inspection limits are configured in `day-content.js`. Day 2 currently has six dummy objects, a newspaper article and no cutoff. To add an artifact, give it a unique ID in that day's `evidence`, register its button and reveal pass in `hotspots`, and add its image/view and hotspot coordinates in `app.js` and `visit.html`. Dummy objects only need a numeric hotspot rule and a scene hotspot. Never reuse a Day 1 evidence ID for different Day 2 content: notebook images must remain accurate.
+The separate artifact sets and inspection limits are configured in `day-content.js`. Day 2 currently has six dummy objects, a newspaper article, a neighbour conversation and no cutoff. To add an artifact, give it a unique ID in that day's `evidence`, register its button and reveal pass in `hotspots`, and add its image/view and hotspot coordinates in `app.js` and `visit.html`. Dummy objects only need a numeric hotspot rule and a scene hotspot. Never reuse a Day 1 evidence ID for different Day 2 content: notebook images must remain accurate.
 
 The active day, story phase, inspection history, warning and notebook survive refreshes in the same tab. Refresh during the final image keeps it readable; refresh during a story card returns to that card. Older saves retain their discoveries and count already recorded evidence as inspected. “New game” resets both days and the notebook.
 
@@ -59,13 +61,21 @@ Day 2's incidental objects use the same hover cues and dismissible text notes, w
 | 2 | Red furnace (stop 1), plants (stop 4) |
 | 3 | Shoe cabinet (stop 3), potted objects along the railing (stop 4) |
 
-The red furnace hotspot covers the small red burner beside the cabinet at stop 1. At stop 4, the foliage and the pots/rack below it have separate targets. Day 2 uses adjusted mobile framing at stops 1, 3 and 4 to keep these objects reachable.
+The red furnace hotspot covers the small red burner beside the cabinet at stop 1. At stop 4, the foliage and the pots/rack below it have separate targets. Day 2 uses adjusted mobile framing at stops 1 and 3. Stop 4 shows the full photograph on mobile so both the near-left conversation gate and the railing plants stay reachable.
 
-Day 2 also has a newspaper attached to the shoe cabinet at stop 2, available on the first walk. Clicking it opens the supplied `assets/murder_article.png` with zoom and Back controls and records it in the notebook. Reading stays silent. Once collected, walking away from that unit triggers faint children's laughter; later passes by stop 2 trigger it again in either direction. Arrival and departure count as one passage, so they do not double-trigger. The cue can finish as the player continues walking. Opening an artifact or notebook, muting, hiding the tab or leaving the page stops it. Closing an image, zooming, refreshing and notebook review never trigger playback. A failed corridor image load also does not trigger it.
+Day 2 also has a newspaper lying on the corridor floor at stop 2, available on the first walk. Clicking it opens the supplied `assets/murder_article.png` with zoom and Back controls and records it in the notebook. Reading stays silent. Once collected, walking away from that unit triggers faint children's laughter; later passes by stop 2 trigger it again in either direction. Arrival and departure count as one passage, so they do not double-trigger. The cue can finish as the player continues walking. Opening an artifact or notebook, muting, hiding the tab or leaving the page stops it. Closing an image, zooming, refreshing and notebook review never trigger playback. A failed corridor image load also does not trigger it.
 
 `corridor-effects.js` chooses effects after completed movement; `corridor-audio.js` plays them through one shared channel, so location sounds replace rather than overlap one another. Collection and the sound preference survive refreshes. Muted passages are skipped. If browser playback is blocked, the speaker offers a retry for that passage; subsequent movement or opening an image clears that pending retry. New game clears the article, so the player must discover it again. Old saves that previously heard the one-time cue also use this new passage behavior.
 
 `assets/children-laughter.mp3` is adapted from Joseph SARDIN's [Laughter of children, sound 1660](https://bigsoundbank.com/laughter-of-children-s1660.html), published by BigSoundBank under CC0 (public domain). The [source MP3](https://bigsoundbank.com/UPLOAD/mp3/1660.mp3) was slowed to 88% speed with a corresponding pitch shift, filtered to 300–2400 Hz, and given three soft echoes (190, 390 and 610 ms) with gradual fades. The roughly six-second cue plays at 12% volume. Replace the local MP3 to use a different recording.
+
+### Neighbour conversation
+
+On Day 2, stop 4, the dark metal gate with the oval scrollwork beside the wheelchair is clickable from the first walk. A small “Talk to neighbour” cue marks the gate until the conversation is collected; afterward the label appears on hover. This interaction belongs to the normal Day 2 corridor, not the hallucination sequence. Clicking opens an agent-style dialogue with the new resident (`assets/convo1.png`) and the feng shui master (`assets/convo2.png`). The supplied images are used without changing the source files. The fictional conversation covers moving in, feeling unsettled and inviting the master to help arrange the flat.
+
+Click the dialogue box, or focus it and press Enter/Space, to continue. Previous line revisits earlier dialogue; Back and Escape return to the same stop and camera view. Corridor audio and navigation pause while the dialogue is open. Refresh resumes the current line. If an image fails to load, Back remains available and no discovery is recorded.
+
+“Save conversation & return” on the final line records **A new neighbour** once in the notebook. Leaving early does not collect it. Its notebook entry contains the complete speaker-labelled transcript rather than an enlarged image, and review does not replay audio, move the camera or add inspections. It counts as one important clue for the Day 2 colour treatment. New game clears it. Edit `NEIGHBOUR_CONVERSATION` in `neighbour-conversation.js` to change the dialogue; the playable scene and notebook use the same text. Styling is in `neighbour-conversation.css`, and the door coordinates are in `app.js`.
 
 ### Day 2 atmosphere
 

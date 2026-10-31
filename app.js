@@ -7,6 +7,10 @@ const stops = [
 ];
 
 const artifacts = {
+  neighbourConversation: {
+    type: 'conversation', image: 'assets/convo1.png', alt: 'The neighbour who has just moved in',
+    transcript: NEIGHBOUR_CONVERSATION, position: 3,
+  },
   map: {
     image: 'assets/floor_plan_view.jpg',
     title: 'FLOOR PLAN',
@@ -110,7 +114,8 @@ const sceneHotspots = [
   { button: document.getElementById('day2-shoe-cabinet-stop3'), stop: 2, title: 'A shoe cabinet', bounds: { x: 18, y: 495, width: 463, height: 225 } },
   { button: document.getElementById('day2-plants-stop4'), stop: 3, title: 'Plants', bounds: { x: 640, y: 310, width: 140, height: 107 } },
   { button: document.getElementById('day2-railing-pots'), stop: 3, title: 'Potted objects along the railing', bounds: { x: 644, y: 420, width: 114, height: 145 } },
-  { button: document.getElementById('day2-murder-article'), stop: 1, bounds: { x: 451, y: 575, width: 40, height: 53 } },
+  { button: document.getElementById('day2-murder-article'), stop: 1, bounds: { x: 578, y: 578, width: 65, height: 46 } },
+  { button: document.getElementById('day2-neighbour-door'), stop: artifacts.neighbourConversation.position, bounds: { x: 283, y: 45, width: 93, height: 510 } },
 ];
 
 let position = 0;
@@ -168,8 +173,9 @@ function layoutSceneHotspots() {
   const width = corridorCamera.clientWidth;
   const height = corridorCamera.clientHeight;
   if (!width || !height) return;
-  const imageScale = Math.max(width / 1280, height / 720);
-  const positionPercent = parseFloat(getComputedStyle(activeFrame).objectPosition);
+  const frameStyle = getComputedStyle(activeFrame);
+  const imageScale = frameStyle.objectFit === 'contain' ? Math.min(width / 1280, height / 720) : Math.max(width / 1280, height / 720);
+  const positionPercent = parseFloat(frameStyle.objectPosition);
   const imagePositionX = Number.isFinite(positionPercent) ? positionPercent / 100 : .5;
   const offsetX = (width - 1280 * imageScale) * imagePositionX;
   const offsetY = (height - 720 * imageScale) / 2;
@@ -248,6 +254,8 @@ function showDoorPrompt() {
 function render() {
   const busy = transitioning || turning;
   explorer.dataset.day = String(Discovery.day());
+  explorer.dataset.stop = String(position);
+  document.getElementById('visit-context').textContent = `Day ${Discovery.day()} · ${introActive ? 'Lift arrival' : `Corridor stop ${position + 1} of ${stops.length}`}`;
   if (position !== stops.length - 1) doorPromptOpen = false;
   if (notedObject && (busy || introActive || artifact || position !== notedObject.stop)) dismissObjectNote();
   explorer.classList.toggle('is-power-artifact', artifact === 'power' || artifact === 'powerClose');
@@ -257,6 +265,7 @@ function render() {
   liftNextLabel.textContent = liftPosition === 0 ? 'Step out of the lift' : 'View floor plan';
   mapPrompt.hidden = busy || introActive || Boolean(artifact) || position !== 0;
   for (const item of sceneHotspots) item.button.hidden = busy || introActive || Boolean(artifact) || position !== item.stop || !Discovery.available(item.button.id);
+  document.getElementById('day2-neighbour-door').classList.toggle('is-undiscovered', !Discovery.hasCollected('neighbourConversation'));
   filmRequestHotspot.hidden = busy || artifact !== 'flat' || !Discovery.available('filmRequest');
   destinationCard.hidden = busy || introActive || Boolean(artifact) || position !== stops.length - 1 || !doorPromptOpen;
   artifactReturn.hidden = busy || !artifact;
@@ -429,6 +438,7 @@ async function finishIntro() {
 
 async function openArtifact(kind) {
   const target = artifacts[kind];
+  if (target?.type === 'conversation') return;
   if (Discovery.isOpen() || !Discovery.canInspect(kind) || !target || introActive || position !== target.position || transitioning || turning || artifact) return;
   if (kind !== 'flat') doorPromptOpen = false;
   turning = true;
@@ -577,6 +587,7 @@ for (const item of sceneHotspots.filter(item => item.title)) item.button.addEven
 objectNoteClose.addEventListener('click', () => dismissObjectNote(true));
 document.getElementById('view-listing-flyer').addEventListener('click', () => { void openArtifact('flyer'); });
 document.getElementById('day2-murder-article').addEventListener('click', () => { void openArtifact('murderArticle'); });
+document.getElementById('day2-neighbour-door').addEventListener('click', () => { void NeighbourConversation.open(); });
 document.getElementById('view-power-box').addEventListener('click', () => { void openArtifact('power'); });
 viewPowerCloseButton.addEventListener('click', () => { void showDetailView('powerClose'); });
 filmRequestHotspot.addEventListener('click', () => { void showDetailView('filmRequest'); });
@@ -623,7 +634,13 @@ function endDrag(event) {
 }
 scene.addEventListener('pointerup', endDrag);
 scene.addEventListener('pointercancel', endDrag);
-window.addEventListener('resize', () => { layoutSceneHotspots(); layoutFilmRequestHotspot(); positionObjectNote(); });
+function refreshHotspotLayout() {
+  layoutSceneHotspots(); layoutFilmRequestHotspot(); positionObjectNote();
+}
+// Mobile viewport height and photo framing can settle after the resize event.
+// Observe the actual stage so hit targets stay aligned with the final image layout.
+new ResizeObserver(refreshHotspotLayout).observe(corridorStage);
+window.addEventListener('resize', () => requestAnimationFrame(refreshHotspotLayout));
 
 document.addEventListener('keydown', (event) => {
   if (Discovery.isOpen()) return;
@@ -644,7 +661,7 @@ document.addEventListener('keydown', (event) => {
 
 function saveProgress() {
   if (transitioning || turning) return;
-  Discovery.save({ position, introActive, liftPosition, artifact, fromIntro, zoom, lookX, lookY, savedView, doorPromptOpen });
+  Discovery.save({ position, introActive, liftPosition, artifact, fromIntro, zoom, lookX, lookY, savedView, doorPromptOpen, conversationLine: NeighbourConversation.snapshot() });
 }
 
 function restartDay() {
@@ -695,7 +712,7 @@ async function startExplorer() {
     explorer.classList.remove('is-intro');
     explorer.classList.add('has-left-intro');
     introStage.setAttribute('aria-hidden', 'true');
-    artifact = Object.hasOwn(artifacts, saved.artifact) && Discovery.available(saved.artifact) ? saved.artifact : null;
+    artifact = Object.hasOwn(artifacts, saved.artifact) && artifacts[saved.artifact].type !== 'conversation' && Discovery.available(saved.artifact) ? saved.artifact : null;
     fromIntro = artifact === 'map' && saved.fromIntro === true;
     doorPromptOpen = saved.doorPromptOpen === true;
     const validView = view => view && [view.zoom, view.lookX, view.lookY].every(Number.isFinite);
@@ -714,10 +731,16 @@ async function startExplorer() {
     corridorStage.setAttribute('aria-hidden', String(Boolean(artifact)));
     artifactStage.setAttribute('aria-hidden', String(!artifact));
     render();
+    if (Number.isInteger(saved.conversationLine)) await NeighbourConversation.open(saved.conversationLine);
   } else {
     render();
     playLiftOpening();
   }
 }
 window.addEventListener('pagehide', saveProgress);
+NeighbourConversation.init({
+  refresh: render,
+  canOpen: () => !introActive && !artifact && !transitioning && !turning && position === artifacts.neighbourConversation.position,
+  prepare: () => { dismissObjectNote(); infoPanel.hidden = true; },
+});
 void startExplorer();

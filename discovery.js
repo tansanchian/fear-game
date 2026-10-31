@@ -31,6 +31,7 @@ const Discovery = (() => {
   const prompt = document.getElementById('journey-prompt');
   const toast = document.getElementById('discovery-toast');
   const dayDialog = document.getElementById('day-transition');
+  const conversationDialog = document.getElementById('neighbour-conversation');
   let api;
   let toastTimer;
   let selected = null;
@@ -136,7 +137,7 @@ const Discovery = (() => {
       const copy = document.createElement('span');
       const title = document.createElement('strong'); title.textContent = evidence[evidence[first].group]?.title ?? evidence[first].title;
       const location = document.createElement('small'); location.textContent = `Day ${evidence[first].day} · ${evidence[first].location}`;
-      const count = document.createElement('small'); count.textContent = `${ids.length} ${ids.length === 1 ? 'image' : 'images'}`;
+      const count = document.createElement('small'); count.textContent = api.artifacts[first].type === 'conversation' ? 'Conversation · Read dialogue' : `${ids.length} ${ids.length === 1 ? 'image' : 'images'}`;
       copy.append(title, location, count); card.append(thumb, copy);
       card.addEventListener('click', () => showEntry(first)); list.append(card);
     }
@@ -147,12 +148,26 @@ const Discovery = (() => {
     list.hidden = true;
     document.getElementById('notebook-empty').hidden = true;
     detail.hidden = false;
+    const entry = api.artifacts[id];
+    const isConversation = entry.type === 'conversation';
+    const transcript = document.getElementById('notebook-transcript');
+    transcript.replaceChildren(); transcript.hidden = !isConversation;
+    document.querySelector('.notebook-image-scroll').hidden = isConversation;
+    document.getElementById('notebook-zoom').hidden = isConversation;
+    if (isConversation) {
+      for (const line of entry.transcript) {
+        const paragraph = document.createElement('p');
+        const speaker = document.createElement('strong'); speaker.textContent = `${line.speaker}: `;
+        paragraph.append(speaker, document.createTextNode(line.text)); transcript.append(paragraph);
+      }
+    }
     const photo = document.getElementById('notebook-photo');
     photo.src = api.artifacts[id].image; photo.alt = api.artifacts[id].alt;
     document.getElementById('notebook-caption').textContent = `Day ${evidence[id].day} · ${evidence[id].description}`;
     photo.classList.remove('is-enlarged');
     document.getElementById('notebook-zoom').textContent = 'Enlarge image';
     const variants = document.getElementById('notebook-variants'); variants.replaceChildren();
+    variants.hidden = isConversation;
     for (const variant of state.collected.filter(key => evidence[key].day === evidence[id].day && evidence[key].group === evidence[id].group)) {
       const tab = document.createElement('button'); tab.type = 'button'; tab.textContent = evidence[variant].title;
       tab.setAttribute('aria-pressed', String(variant === id)); tab.addEventListener('click', () => showEntry(variant)); variants.append(tab);
@@ -164,7 +179,7 @@ const Discovery = (() => {
     document.getElementById('notebook-close').focus();
   }
   function open() {
-    if (resetting || button.disabled || dialog.open) return;
+    if (resetting || button.disabled || dialog.open || conversationDialog.open) return;
     returnFocus = document.activeElement;
     selected = null; detail.hidden = true; list.hidden = false;
     renderNotebook(); dialog.showModal();
@@ -245,7 +260,7 @@ const Discovery = (() => {
     },
     soundEnabled: () => state.soundEnabled,
     setSoundEnabled(enabled) { state.soundEnabled = Boolean(enabled); persist(); },
-    day: () => state.day, isOpen: () => dialog.open || dayDialog.open || state.phase !== 'exploring',
+    day: () => state.day, isOpen: () => dialog.open || dayDialog.open || conversationDialog.open || state.phase !== 'exploring',
 
     init(config) { api = config; updateBadge(); return state.snapshot; } };
 })();

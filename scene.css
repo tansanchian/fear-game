@@ -170,8 +170,8 @@
 .flyer-prop strong { font-size: 10px; line-height: 1.1; }
 .flyer-prop small { width: 80%; padding-top: 5px; border-top: 1px solid #928b70; font-size: 6px; line-height: 1.2; }
 
-.newspaper-prop { background: #e3dfd2; border-radius: 1px; border: 1px solid #aaa69a; transform: skewY(-12deg) rotate(1deg); }
-.newspaper-prop img { display: block; width: 100%; height: 100%; object-fit: cover; opacity: .94; }
+.newspaper-prop { background: #e3dfd2; border-radius: 1px; border: 1px solid #aaa69a; transform: skewX(-18deg) rotate(-8deg); box-shadow: 1px 2px 3px #0004; }
+.newspaper-prop img { display: block; width: 100%; height: 100%; object-fit: fill; opacity: .94; }
 
 .door-sign-prop {
   border: 2px solid #665b45;
@@ -267,7 +267,9 @@
   .scene-frame[data-stop="4"] { object-position: 38% center; }
   .explorer[data-day="2"] .scene-frame[data-stop="0"] { object-position: 50% center; }
   .explorer[data-day="2"] .scene-frame[data-stop="2"] { object-position: 40% center; }
-  .explorer[data-day="2"] .scene-frame[data-stop="3"] { object-position: 55% center; }
+  /* Keep the near-left gate and the railing plants reachable together on mobile. */
+  .explorer[data-day="2"] .scene-frame[data-stop="3"] { object-fit: contain; object-position: center; }
+  .explorer[data-day="2"][data-stop="3"] .floor-arrow { top: 75%; left: 50%; }
   .floor-arrow { left: 55%; }
 }
 
