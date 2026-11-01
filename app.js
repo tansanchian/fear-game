@@ -24,9 +24,9 @@ const artifacts = {
     position: 1,
   },
   murderArticle: {
-    image: 'assets/murder_article.png',
+    image: 'assets/ritual_newspaper.png',
     title: 'NEWSPAPER ARTICLE',
-    alt: 'Newspaper article reporting the execution of Adrian Lim and his accomplices',
+    alt: 'The Sunday Times front page reporting the discovery of a boy’s body and a suspected ritual killing',
     position: 1,
   },
   flat: {

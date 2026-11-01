@@ -9,9 +9,18 @@
 #phone-video { display: block; width: 100%; height: min(65svh, 720px); object-fit: contain; background: #09110e; border-radius: 10px; }
 .phone-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
 .phone-secondary { border: 1px solid #a7b9ad; background: transparent; color: #214b38; border-radius: 8px; padding: 10px 14px; }
-.phone-post-scroll { overflow: auto; max-height: 65svh; background: #17221e; border-radius: 8px; }
-#phone-post-image { display: block; width: 100%; max-height: 65svh; object-fit: contain; }
-#phone-post-image.is-enlarged { width: 1175px; max-width: none; max-height: none; }
+.memory-transition[open][data-stage="post"] { display: flex; flex-direction: column; height: min(940px, calc(100svh - 32px)); }
+#memory-stage-post { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.memory-transition .phone-scroll-hint { margin: 0 0 10px; font-size: 12px; color: #4b6b59; }
+.phone-post-scroll { overflow: auto; flex: 1; min-height: 120px; background: #17221e; border-radius: 8px; overscroll-behavior: contain; }
+.phone-post-scroll:focus-visible { outline: 3px solid #ad7829; outline-offset: 3px; }
+#phone-thread { width: 100%; }
+#phone-thread img { display: block; width: 100%; height: auto; }
+#phone-thread.is-enlarged { width: max(100%, 1175px); }
+.phone-comments { background: #f8f9fa; color: #203a30; }
+.phone-comments h3 { margin: 0; padding: 20px 18px; border-bottom: 1px solid #d9e0db; font-size: 16px; }
+.phone-comments img + img { border-top: 1px solid #d9e0db; }
+#memory-stage-post > p, #memory-stage-post > .phone-actions, #phone-post-error { flex-shrink: 0; }
 #phone-video-status { margin-bottom: 0; }
 @media (max-width: 600px) {
   .memory-transition { padding: 16px; width: calc(100% - 20px); max-height: calc(100svh - 20px); }

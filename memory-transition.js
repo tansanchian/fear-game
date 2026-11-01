@@ -2,7 +2,9 @@
 const MemoryTransition = (() => {
   const dialog = document.getElementById('memory-transition');
   const video = document.getElementById('phone-video');
-  const post = document.getElementById('phone-post-image');
+  const thread = document.getElementById('phone-thread');
+  const threadImages = [...thread.querySelectorAll('img[data-src]')];
+  const failedImages = new Set();
   const title = document.getElementById('memory-transition-title');
   let shown = null;
   let leaving = false;
@@ -35,8 +37,8 @@ const MemoryTransition = (() => {
         document.getElementById('phone-video-status').textContent = 'Use the video controls to play, or continue to the post.';
       });
     } else if (phase === 'post') {
-      post.src = 'assets/hallucination_reddit.png';
-      document.getElementById('phone-put-away').focus();
+      for (const image of threadImages) image.src = image.dataset.src;
+      document.getElementById('phone-post-scroll').focus({ preventScroll: true });
     } else document.getElementById('phone-search').focus();
   }
   function readPost() {
@@ -55,16 +57,24 @@ const MemoryTransition = (() => {
   document.getElementById('phone-read-post').addEventListener('click', readPost);
   document.getElementById('phone-put-away').addEventListener('click', () => { void putAway(); });
   document.getElementById('phone-post-zoom').addEventListener('click', event => {
-    const enlarged = post.classList.toggle('is-enlarged');
-    event.currentTarget.textContent = enlarged ? 'Fit image' : 'Enlarge image';
+    const enlarged = thread.classList.toggle('is-enlarged');
+    event.currentTarget.textContent = enlarged ? 'Fit thread' : 'Enlarge thread';
     event.currentTarget.setAttribute('aria-pressed', String(enlarged));
   });
   video.addEventListener('ended', readPost);
   video.addEventListener('error', showVideoError);
-  post.addEventListener('error', () => { document.getElementById('phone-post-error').hidden = false; });
-  post.addEventListener('load', () => { document.getElementById('phone-post-error').hidden = true; });
+  for (const image of threadImages) {
+    image.addEventListener('error', () => {
+      failedImages.add(image);
+      document.getElementById('phone-post-error').hidden = false;
+    });
+    image.addEventListener('load', () => {
+      failedImages.delete(image);
+      document.getElementById('phone-post-error').hidden = failedImages.size === 0;
+    });
+  }
   document.getElementById('phone-post-retry').addEventListener('click', () => {
-    post.src = `assets/hallucination_reddit.png?retry=${Date.now()}`;
+    for (const image of failedImages) image.src = `${image.dataset.src}?retry=${Date.now()}`;
   });
   dialog.addEventListener('cancel', event => {
     event.preventDefault();
