@@ -14,7 +14,7 @@ const MemoryTransition = (() => {
   function sync() {
     const phase = MemoryJourney.phase();
     if (!MemoryJourney.active() || shown === phase || leaving) return;
-    if (phase === 'walk') {
+    if (['walk', 'ending', 'complete'].includes(phase)) {
       leaving = true;
       location.replace('hallucination.html');
       return;

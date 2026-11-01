@@ -1,7 +1,7 @@
 // Shared story progress across the real and imagined corridor pages.
 const MemoryJourney = (() => {
   const key = 'concrete-memories.memory-journey.v1';
-  const phases = ['idle', 'prompt', 'phone', 'post', 'walk', 'complete'];
+  const phases = ['idle', 'prompt', 'phone', 'post', 'walk', 'ending', 'complete'];
   let phase = 'idle';
   let persistent = true;
   try {
@@ -14,11 +14,15 @@ const MemoryJourney = (() => {
   function save() { try { sessionStorage.setItem(key, phase); } catch { persistent = false; } }
   function reset() {
     phase = 'idle'; save();
-    try { sessionStorage.removeItem('concrete-memories.imagined.v1'); } catch {}
+    try {
+      sessionStorage.removeItem('concrete-memories.imagined.v1');
+      sessionStorage.removeItem('concrete-memories.ending.v1');
+    } catch {}
   }
   return {
     phase: () => phase,
-    active: () => !['idle', 'complete'].includes(phase),
+    // The real corridor stays closed once the final story sequence starts.
+    active: () => phase !== 'idle',
     persistent: () => persistent,
     advance(next) {
       if (phases.indexOf(next) !== phases.indexOf(phase) + 1) return false;

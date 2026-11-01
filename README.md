@@ -16,7 +16,7 @@ After **six distinct Day 2 inspections**, the player finishes their current note
 
 “Search on your phone” plays `assets/hallucination_transition.mp4`. When the clip ends (or the player selects “Read the post”), it opens `assets/hallucination_reddit.png`, with image enlargement for reading. “Put phone away” or Escape from the post fades into `hallucination.html`. There is no optional corridor-end shortcut. Video controls remain available if autoplay is blocked; reduced-motion mode leaves the clip paused. Failed media loads offer a way to continue, and the post can be retried.
 
-`memory-transition.js` and `memory-transition.css` handle these scenes. `memory-journey.js` shares their progress with the imagined corridor using `concrete-memories.memory-journey.v1`: idle → prompt → phone → post → walk → complete. Refresh resumes the current stage (the phone clip restarts if interrupted). Reopening the visit during an unfinished imagined walk resumes that walk. Browser navigation itself is not blocked. New game resets the sequence.
+`memory-transition.js` and `memory-transition.css` handle these scenes. `memory-journey.js` shares their progress with the imagined corridor using `concrete-memories.memory-journey.v1`: idle → prompt → phone → post → walk → ending → complete. Refresh resumes the current stage (the phone clip restarts if interrupted). Reopening the visit resumes the imagined walk or final phone call once that sequence has begun. Browser navigation itself is not blocked. New game resets the sequence.
 
 `hallucination.html` is the abandoned-block sequence, styled by `hallucination.css` and controlled by `hallucination.js`. The phone handoff starts it at the lift; later visits resume its saved viewpoint. Direct entry without an active sequence returns to the real visit.
 
@@ -27,11 +27,19 @@ The original lift-door opening plays and pauses. “Step out of the lift” tran
 | Lift lobby | Floor display close-up video |
 | Corridor stop 1 | Courtyard seat video, through the outdoor opening |
 | Corridor stop 3 | Void deck photograph, through the outdoor opening |
-| Corridor stop 5 | Closed gate photograph, by the yellow gate sign |
+| Corridor stop 5 | Final phone call and house decision |
 
-Each side scene has Back and Escape support. Videos have native playback controls and pause when closed. The return button appears only at the final stop after all five corridor viewpoints have been visited; there is no return shortcut elsewhere. Players may backtrack and inspect side scenes, whose Back buttons close only that detail. Returning restores the real corridor position and notebook. Day 2 exploration can then continue without triggering the phone sequence again. This imagined sequence uses a separate session-storage key, cleared by New game. Reduced-motion mode skips automatic video playback and shortens transitions. Images retain their full framing so mobile users can reach the same hotspots.
+Each side scene has Back and Escape support. Videos have native playback controls and pause when closed. After visiting all five viewpoints, arriving at the last stop automatically starts the final phone call. There is no return to Day 2. Players may backtrack and inspect side scenes before reaching the end; their Back buttons close only that detail. This imagined sequence uses a separate session-storage key, cleared by New game. Reduced-motion mode skips automatic video playback and shortens transitions. Images retain their full framing so mobile users can reach the same hotspots.
 
 `hallucination-stop-01.jpg` through `hallucination-stop-05.jpg` were extracted from `hallucination_corridor.mp4` at 0.5, 5, 9.5, 14 and 16.8 seconds. The final frame precedes the passerby visible later in the source. `hallucination-lobby.jpg` comes from `hallucination_lift.mp4` at 1.5 seconds. The two detail-video posters are first-frame extracts. The source clips and the gate/void-deck uploads are preserved. Hotspot locations and side-scene mappings are in `hallucination.js`.
+
+## Final phone call and decision
+
+At the final imagined viewpoint, a short cellphone ringtone accompanies a popup: the player's wife is calling, snapping them out of the hallucination. “Answer the call” stops the sound and reveals her question about buying the home. The player chooses “I would buy it” or “I would not buy it”, optionally writes up to 1,200 characters of thoughts, and selects “Finish the story”. Neither answer is preselected or treated as correct. The closing screen shows their choice and reflection, with a “Play again” button that starts a fresh game from the landing page.
+
+`game-ending.js` controls the call, decision and closing screen. Draft responses and completed choices are stored only in this tab under `concrete-memories.ending.v1`; nothing is sent to a server. Refresh restores the current screen and text without replaying the ringtone. The notebook data remains in storage until a new game. Reopening `visit.html` after the ending starts resumes the ending rather than reopening Day 2. Older completed-walk saves without a final decision open the wife’s call.
+
+`assets/phone-ring.mp3` is an original synthesized 3.6-second chime, played once at 45% volume on arrival, respecting the corridor sound preference. Answering, hiding the tab or leaving the page stops it. If playback is blocked, “Play ringtone” allows a manual retry; answering remains available even if audio cannot load. The call and decision block corridor navigation, including keyboard movement and Escape, while keeping normal browser navigation available. New game clears the ending and discovery state.
 
 ## Corridor controls
 
@@ -43,7 +51,7 @@ After the eighth inspection, the player can finish reading. Closing the last not
 
 Day 2 starts with fresh inspections, reveal progress and camera state. **Day 1 artifacts are no longer interactable**, whether collected or missed. The notebook retains collected Day 1 entries with day labels; missed evidence is never added. The floor plan and flat entrance remain shared navigation. Physical objects already in the base photographs stay visible.
 
-The separate artifact sets and inspection limits are configured in `day-content.js`. Day 2 currently has six dummy objects, a newspaper article and a neighbour conversation. Its `inspectionLimit: 6` starts the phone/imagined-corridor sequence; after completing that sequence, the remaining Day 2 objects can be explored freely. To add an artifact, give it a unique ID in that day's `evidence`, register its button and reveal pass in `hotspots`, and add its image/view and hotspot coordinates in `app.js` and `visit.html`. Dummy objects only need a numeric hotspot rule and a scene hotspot. Never reuse a Day 1 evidence ID for different Day 2 content: notebook images must remain accurate.
+The separate artifact sets and inspection limits are configured in `day-content.js`. Day 2 currently has six dummy objects, a newspaper article and a neighbour conversation. Its `inspectionLimit: 6` starts the phone/imagined-corridor sequence, which leads to the final decision and ends the game. To add an artifact, give it a unique ID in that day's `evidence`, register its button and reveal pass in `hotspots`, and add its image/view and hotspot coordinates in `app.js` and `visit.html`. Dummy objects only need a numeric hotspot rule and a scene hotspot. Never reuse a Day 1 evidence ID for different Day 2 content: notebook images must remain accurate.
 
 The active day, story phase, inspection history, warning and notebook survive refreshes in the same tab. Refresh during the final image keeps it readable; refresh during a story card returns to that card. Older saves retain their discoveries and count already recorded evidence as inspected. “New game” resets both days and the notebook.
 

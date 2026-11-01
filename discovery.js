@@ -57,7 +57,6 @@ const Discovery = (() => {
     return typeof rule === 'number' || evidence[id]?.day === state.day ? id : null;
   }
   function exhausted() {
-    if (state.day === 2 && MemoryJourney.phase() === 'complete') return false;
     const limit = DAY_CONTENT[state.day].inspectionLimit;
     return Number.isInteger(limit) && state.inspected.length >= limit;
   }

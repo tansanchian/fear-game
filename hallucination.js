@@ -5,7 +5,7 @@ const MemoryWalk = (() => {
   if (!MemoryJourney.persistent() && url.searchParams.has('start')) {
     for (const phase of ['prompt', 'phone', 'post', 'walk']) MemoryJourney.advance(phase);
   }
-  if (MemoryJourney.phase() !== 'walk') { location.replace('visit.html'); return; }
+  if (!['walk', 'ending', 'complete'].includes(MemoryJourney.phase())) { location.replace('visit.html'); return; }
   const visited = new Set();
   const explored = () => [0, 1, 2, 3, 4].every(stop => visited.has(stop));
   const root = document.getElementById('memory');
@@ -40,8 +40,8 @@ const MemoryWalk = (() => {
   let detailOpener = null;
   const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const source = index => index === -1 ? 'assets/hallucination-lobby.jpg' : `assets/hallucination-stop-${String(index + 1).padStart(2, '0')}.jpg`;
-  function save() { try { sessionStorage.setItem(storageKey, JSON.stringify({ scene, visited: [...visited] })); } catch {} }
-  if (url.searchParams.has('start')) {
+  function save() { if (MemoryJourney.phase() === 'idle') return; try { sessionStorage.setItem(storageKey, JSON.stringify({ scene, visited: [...visited] })); } catch {} }
+  if (url.searchParams.has('start') && MemoryJourney.phase() === 'walk') {
     try { sessionStorage.removeItem(storageKey); } catch {}
     if (MemoryJourney.persistent()) { url.searchParams.delete('start'); history.replaceState(null, '', url); }
   } else {
@@ -55,6 +55,7 @@ const MemoryWalk = (() => {
       }
     } catch {}
   }
+  if (GameEnding.active()) scene = 4;
   function layout() {
     if (scene === -2) return;
     const width = view.clientWidth, height = view.clientHeight;
@@ -76,7 +77,6 @@ const MemoryWalk = (() => {
     arrival.hidden = scene !== -2; photo.hidden = scene === -2;
     prompt.hidden = busy || (scene >= 0 && scene < 4);
     nextButton.hidden = scene === 4;
-    document.getElementById('scene-exit').hidden = scene !== 4 || !explored();
     nextButton.disabled = busy || (scene === -2 && !ready);
     back.hidden = scene < 0; back.disabled = busy;
     forward.hidden = scene < 0 || scene === 4; forward.disabled = busy;
@@ -84,7 +84,7 @@ const MemoryWalk = (() => {
     for (const item of hotspots) document.getElementById(item.id).hidden = busy || item.scene !== scene;
     document.getElementById('scene-label').textContent = scene === -2 ? 'AN IMAGINED MEMORY' : scene === -1 ? 'THE LIFT LOBBY' : 'A FADING IMPRESSION';
     document.getElementById('scene-title').textContent = scene === -2 ? ready ? 'The doors are open' : 'The doors are opening' : scene === -1 ? 'The lift looks different' : 'The image begins to fade';
-    document.getElementById('scene-copy').textContent = scene === -2 ? 'In your mind, the block becomes a place everyone has left behind.' : scene === -1 ? 'The familiar doors give way to an older lift. Its floor display catches your eye.' : explored() ? 'You have been picturing a place emptied of its residents. The familiar corridor slowly comes back into focus.' : 'There is more of this place to explore. Walk back through the corridor before returning.';
+    document.getElementById('scene-copy').textContent = scene === -2 ? 'In your mind, the block becomes a place everyone has left behind.' : scene === -1 ? 'The familiar doors give way to an older lift. Its floor display catches your eye.' : explored() ? 'Your phone rings. The familiar world begins to come back into focus.' : 'There is more of this place to explore. Walk back through the corridor and take another look.';
     nextButton.textContent = scene === -2 ? 'Step out of the lift' : 'Walk into the corridor';
     layout();
   }
@@ -95,7 +95,7 @@ const MemoryWalk = (() => {
     catch { ready = true; render(); announcement.textContent = 'The lift video is paused. You can step out to continue.'; }
   }
   async function go(next) {
-    if (busy || dialog.open || !Number.isInteger(next) || next < -1 || next > 4 || Math.abs(next - scene) !== 1 || (scene === -2 && !ready)) return;
+    if (GameEnding.active() || busy || dialog.open || !Number.isInteger(next) || next < -1 || next > 4 || Math.abs(next - scene) !== 1 || (scene === -2 && !ready)) return;
     busy = true; error.hidden = true; render();
     const preload = new Image(); preload.src = source(next);
     try { await preload.decode(); }
@@ -113,10 +113,11 @@ const MemoryWalk = (() => {
     if (scene >= 0) visited.add(scene);
     busy = false; render(); save();
     announcement.textContent = scene === -1 ? 'The lift looks different. Inspect its display or enter the corridor.' : `Along the imagined corridor. View ${scene + 1}.`;
-    (scene === -1 ? nextButton : scene === 4 ? explored() ? document.getElementById('scene-exit') : back : forward).focus({ preventScroll: true });
+    if (scene === 4 && explored()) GameEnding.begin();
+    else (scene === -1 ? nextButton : scene === 4 ? back : forward).focus({ preventScroll: true });
   }
   function openDetail(item) {
-    if (busy || dialog.open || item.scene !== scene) return;
+    if (GameEnding.active() || busy || dialog.open || item.scene !== scene) return;
     const target = details[item.detail];
     detailOpener = document.getElementById(item.id);
     document.getElementById('detail-title').textContent = target.title;
@@ -138,20 +139,13 @@ const MemoryWalk = (() => {
   detailImage.addEventListener('error', () => { if (dialog.open && !detailImage.hidden) document.getElementById('detail-error').hidden = false; });
   arrival.addEventListener('ended', () => { ready = true; arrival.pause(); render(); });
   arrival.addEventListener('error', () => { ready = true; render(); announcement.textContent = 'The opening video could not load. You can still step out of the lift.'; });
-  document.getElementById('scene-exit').addEventListener('click', async () => {
-    if (busy || dialog.open || scene !== 4 || !explored()) return;
-    if (!MemoryJourney.advance('complete')) return;
-    busy = true; render(); save();
-    await root.animate([{ opacity: 1 }, { opacity: 0 }], { duration: reduced() ? 1 : 450, fill: 'forwards' }).finished.catch(() => {});
-    location.replace(MemoryJourney.persistent() ? 'visit.html' : 'visit.html?memory=complete');
-  });
   nextButton.addEventListener('click', () => { void go(scene + 1); });
   back.addEventListener('click', () => { void go(scene - 1); });
   forward.addEventListener('click', () => { void go(scene + 1); });
   for (const item of hotspots) document.getElementById(item.id).addEventListener('click', () => openDetail(item));
   window.addEventListener('resize', layout);
   document.addEventListener('keydown', event => {
-    if (dialog.open || busy || event.target.closest('a')) return;
+    if (GameEnding.active() || dialog.open || busy || event.target.closest('a')) return;
     if (event.key === 'ArrowUp' || event.key.toLowerCase() === 'w') { event.preventDefault(); void go(scene + 1); }
     if (event.key === 'ArrowDown' || event.key.toLowerCase() === 's') { event.preventDefault(); void go(scene - 1); }
   });
@@ -163,6 +157,8 @@ const MemoryWalk = (() => {
       photo.alt = scene === -1 ? 'An older lift in an unfamiliar lobby' : `View ${scene + 1} along the empty corridor`;
       try { await photo.decode(); if (scene >= 0) visited.add(scene); save(); } catch { error.hidden = false; }
       render();
+      if (GameEnding.active()) GameEnding.show();
+      else if (scene === 4 && explored()) GameEnding.begin();
     }
   }
   void start();

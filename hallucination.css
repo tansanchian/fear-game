@@ -44,3 +44,34 @@ h1 { margin: 8px 0; font-size: 20px; line-height: 1.25; }
   #memory-detail { padding: 12px; }
 }
 @media (max-height: 560px) and (min-width: 601px) { .scene-prompt { bottom: 12px; padding: 14px; } .scene-prompt h1 { font-size: 17px; } .scene-prompt p { font-size: 12px; margin: 6px 0; } }
+
+/* The phone call ends movement; the final photograph remains behind the modal. */
+#memory[data-ending] .scene-prompt,
+#memory[data-ending] .back-button,
+#memory[data-ending] .forward-button,
+#memory[data-ending] .memory-hotspot,
+#memory[data-ending] .walk-hint { display: none; }
+#game-ending { width: min(490px, calc(100% - 28px)); max-height: calc(100svh - 28px); padding: 28px; border: 1px solid #ffffffa3; border-radius: 20px; background: #f5f5ee; color: #203a30; overflow: auto; box-shadow: 0 24px 80px #0004; }
+#game-ending::backdrop { background: #081510b8; backdrop-filter: blur(10px); }
+#ending-title { font-size: 25px; line-height: 1.2; margin: 10px 0 18px; }
+#game-ending p { font-size: 14px; line-height: 1.7; }
+.phone-symbol { display: grid; place-items: center; width: 68px; height: 68px; margin: 20px auto 8px; border-radius: 50%; background: #dce9df; color: #245e43; font-size: 37px; }
+#game-ending .ring-caption { text-align: center; font-size: 12px; color: #53705f; }
+#game-ending .action { margin-top: 20px; padding: 14px; font-size: 13px; }
+#game-ending blockquote { margin: 0 0 22px; padding: 12px 16px; border-left: 3px solid #9bb7a5; background: #e7ece3; border-radius: 0 9px 9px 0; font-size: 15px; line-height: 1.6; }
+#game-ending cite { display: block; margin-top: 8px; font-size: 12px; font-style: normal; color: #53705f; }
+#ending-form fieldset { margin: 0 0 22px; padding: 0; border: 0; }
+#ending-form legend, .thoughts-label { font-size: 13px; font-weight: 650; margin-bottom: 10px; }
+.ending-option { display: flex; align-items: center; gap: 10px; padding: 14px; margin-top: 8px; border: 1px solid #b6c8bb; border-radius: 9px; font-size: 14px; cursor: pointer; }
+.ending-option:has(input:checked) { background: #dde9de; border-color: #245e43; }
+.ending-option input { accent-color: #245e43; width: 18px; height: 18px; margin: 0; }
+.thoughts-label { display: block; }
+.thoughts-label span { font-weight: 400; color: #53705f; }
+#ending-thoughts { display: block; width: 100%; min-height: 100px; padding: 12px; border: 1px solid #a4bbaa; border-radius: 9px; background: #fffef9; color: #203a30; font: inherit; font-size: 16px; line-height: 1.5; resize: vertical; }
+#game-ending input:focus-visible, #ending-thoughts:focus-visible { outline: 3px solid #b78336; outline-offset: 3px; }
+.ending-secondary { padding: 11px 15px; margin-top: 12px; border: 1px solid #9fb7a6; border-radius: 9px; background: transparent; color: #245e43; font-size: 13px; }
+#ending-reflection { margin-top: 20px; padding-top: 14px; border-top: 1px solid #ccd8cb; }
+#ending-reflection h3 { font-size: 13px; margin: 0; }
+#ending-thoughts-summary { white-space: pre-wrap; overflow-wrap: anywhere; }
+#game-ending .ending-storage-note { font-size: 11px; color: #53705f; }
+@media (max-width: 600px) { #game-ending { padding: 22px; } #ending-title { font-size: 22px; } }
