@@ -485,3 +485,69 @@ figure img {
     transform: translateX(-50%) rotate(45deg);
   }
 }
+
+/* Opening context shares the landing page's black-and-white typography. */
+main.intro-page {
+  min-height: 100svh;
+  padding: clamp(2rem, 6vw, 4.5rem) max(1.5rem, env(safe-area-inset-right)) clamp(2rem, 6vw, 4.5rem) max(1.5rem, env(safe-area-inset-left));
+}
+
+.intro-content {
+  width: min(100%, 720px);
+  text-align: left;
+}
+
+main.intro-page h1 {
+  margin-bottom: 2rem;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+
+.intro-context p,
+.intro-controls li {
+  color: #d8d8d8;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.intro-context p {
+  margin: 0 0 1rem;
+}
+
+.intro-context strong {
+  color: white;
+}
+
+.intro-controls {
+  margin: 2rem 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid #444;
+}
+
+.intro-controls h2 {
+  margin: 0 0 1rem;
+  font-size: 1.15rem;
+}
+
+.intro-controls ul {
+  padding-left: 1.25rem;
+  margin: 0;
+}
+
+.intro-controls li + li {
+  margin-top: 0.75rem;
+}
+
+.intro-page .button {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.intro-page .button:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 5px;
+}

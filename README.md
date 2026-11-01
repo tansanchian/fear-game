@@ -1,6 +1,6 @@
 # Concrete Memories
 
-An interactive story that starts with a flat listing, continues through a conversation with the agent, and leads into a lift arrival, floor plan, and five-stop corridor explorer.
+An interactive story that starts with an introduction and a flat listing, continues through a conversation with the agent, and leads into a lift arrival, floor plan, and five-stop corridor explorer.
 
 ## Run locally
 
@@ -8,7 +8,7 @@ Run `python3 -m http.server 8000` from this directory, then open `http://localho
 
 The visit page uses a shared version query on its scripts and styles to avoid mixing cached discovery rules with a newer scene. Bump that version in `visit.html` when changing these files together. Reloading keeps the tab's saved progress. The ⓘ panel reports the actual day and corridor stop to help distinguish Day 1 revisits from Day 2; the neighbour conversation is available only on Day 2 at stop 4.
 
-The pages follow this order: `index.html` → `act-1.html` → `agent.html` → `visit.html`. The landing, listing, and agent pages use `styles.css`; the corridor explorer uses `corridor.css` and `scene.css`.
+The pages follow this order: `index.html` → `intro.html` → `act-1.html` → `agent.html` → `visit.html`. The introduction establishes the two-day decision and explains movement, interactive objects and the notebook. The landing, introduction, listing, and agent pages use `styles.css`; the corridor explorer uses `corridor.css` and `scene.css`.
 
 ## Imagined corridor
 

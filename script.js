@@ -38,7 +38,7 @@ const conversation = [
   },
   {
     speaker: "Agent",
-    text: "The owner is moving out soon and wants a quick sale. This is an exclusive price for you, but let me know within five days.",
+    text: "The owner is moving out soon and wants a quick sale. This is an exclusive price for you, but let me know within two days.",
   },
   {
     speaker: "Agent",
