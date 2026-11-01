@@ -13,7 +13,17 @@ const NEIGHBOUR_CONVERSATION = [
   { speaker: 'You', character: null, text: 'Thank you, aunty. I’ll leave you both to settle things.' },
 ];
 
+// These papers belong to the imagined sequence, not either day's inspection budget.
+const IMAGINED_EVIDENCE = {
+  memoryArticle1: { day: 'imagined', section: 'Imagined corridor', group: 'memoryArticle1', title: 'An old newspaper clipping', description: 'A clipping about Adrian Lim’s execution, encountered in the imagined corridor.', location: 'Stop 2 · On the floor' },
+  memoryArticle2: { day: 'imagined', section: 'Imagined corridor', group: 'memoryArticle2', title: 'A page from the trial reporting', description: 'A newspaper page containing a report from the ritual killings trial, encountered in the imagined corridor.', location: 'Stop 5 · On the floor' },
+  memoryArticle2Close: { day: 'imagined', section: 'Imagined corridor', group: 'memoryArticle2', title: 'Trial report close-up', description: 'A closer look at the trial report near the bottom of the newspaper page.', location: 'Stop 5 · Newspaper detail' },
+};
+
 const ARTIFACT_CONTENT = {
+  memoryArticle1: { image: 'assets/hallucination_artifact1.png', title: 'An old newspaper clipping', alt: 'Newspaper clipping reporting Adrian Lim’s execution' },
+  memoryArticle2: { image: 'assets/hallucination_artifact2.png', title: 'A page from the trial reporting', alt: 'Newspaper page with a report on the ritual killings trial near the bottom' },
+  memoryArticle2Close: { image: 'assets/hallucination_artifact2_zoomed.png', title: 'Trial report close-up', alt: 'Close-up of the newspaper report headed All three of sound mind at the killings' },
   doorChant: {
     type: 'observation', image: 'assets/hdb_door.jpg',
     title: 'SOUNDS BEHIND THE DOOR', alt: 'The viewing unit’s gate, where you heard chanting and decided to stay outside', position: 4,

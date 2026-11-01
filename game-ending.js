@@ -10,13 +10,17 @@ const GameEnding = (() => {
   const notebookButton = document.getElementById('ending-notebook');
   const evidence = Object.fromEntries(Object.entries(DAY_CONTENT).flatMap(([day, content]) =>
     Object.entries(content.evidence).map(([id, entry]) => [id, { ...entry, day: Number(day) }])));
+  Object.assign(evidence, IMAGINED_EVIDENCE);
+  let imaginedNotes = () => [];
   const notebook = createNotebookView({
     dialog: document.getElementById('notebook'), evidence, artifacts: ARTIFACT_CONTENT,
     getCollected() {
+      let dayNotes = [];
       try {
         const saved = JSON.parse(sessionStorage.getItem('concrete-memories.discovery.v1'));
-        return Array.isArray(saved?.collected) ? saved.collected : [];
-      } catch { return []; }
+        if (Array.isArray(saved?.collected)) dayNotes = saved.collected;
+      } catch { /* Imagined notes remain available in memory. */ }
+      return [...dayNotes, ...imaginedNotes()];
     },
   });
   let state = { stage: 'call', choice: '', thoughts: '' };
@@ -33,6 +37,7 @@ const GameEnding = (() => {
   function save() { try { sessionStorage.setItem(key, JSON.stringify(state)); } catch {} }
   function stopRing() { ringtone.pause(); ringtone.currentTime = 0; replaySound.hidden = true; }
   function soundEnabled() {
+    if (typeof MemoryAtmosphere !== 'undefined') return MemoryAtmosphere.soundEnabled();
     try { return JSON.parse(sessionStorage.getItem('concrete-memories.discovery.v1'))?.soundEnabled !== false; }
     catch { return true; }
   }
@@ -101,5 +106,8 @@ const GameEnding = (() => {
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden) stopRing(); });
   window.addEventListener('pagehide', stopRing);
-  return { active, begin, show };
+  return { active, begin, show,
+    useImaginedNotes(getCollected) { imaginedNotes = getCollected; },
+    openNotebook() { notebook.open(); },
+  };
 })();

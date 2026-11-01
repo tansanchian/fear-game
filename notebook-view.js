@@ -4,6 +4,7 @@ function createNotebookView({ dialog, evidence, artifacts, getCollected, onClose
   const list = element('notebook-list');
   const detail = element('notebook-detail');
   const collected = () => [...new Set(getCollected())].filter(id => evidence[id] && artifacts[id]);
+  const section = id => evidence[id].section || `Day ${evidence[id].day}`;
   let selected = null;
   let returnFocus;
   function renderNotebook() {
@@ -20,7 +21,7 @@ function createNotebookView({ dialog, evidence, artifacts, getCollected, onClose
       const thumb = document.createElement('img'); thumb.src = artifacts[first].image; thumb.alt = ''; thumb.loading = 'lazy';
       const copy = document.createElement('span');
       const title = document.createElement('strong'); title.textContent = evidence[evidence[first].group]?.title ?? evidence[first].title;
-      const location = document.createElement('small'); location.textContent = `Day ${evidence[first].day} · ${evidence[first].location}`;
+      const location = document.createElement('small'); location.textContent = `${section(first)} · ${evidence[first].location}`;
       const count = document.createElement('small'); count.textContent = artifacts[first].type === 'conversation' ? 'Conversation · Read dialogue' : artifacts[first].type === 'observation' ? 'Observation · Read note' : `${ids.length} ${ids.length === 1 ? 'image' : 'images'}`;
       copy.append(title, location, count); card.append(thumb, copy);
       card.addEventListener('click', () => showEntry(first)); list.append(card);
@@ -47,7 +48,7 @@ function createNotebookView({ dialog, evidence, artifacts, getCollected, onClose
     }
     const photo = element('notebook-photo');
     photo.src = artifacts[id].image; photo.alt = artifacts[id].alt;
-    element('notebook-caption').textContent = `Day ${evidence[id].day} · ${evidence[id].description}`;
+    element('notebook-caption').textContent = `${section(id)} · ${evidence[id].description}`;
     photo.classList.remove('is-enlarged');
     element('notebook-zoom').textContent = 'Enlarge image';
     const variants = element('notebook-variants'); variants.replaceChildren();

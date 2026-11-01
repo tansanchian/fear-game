@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#172923" />
   <title>An Imagined Memory — Concrete Memories</title>
-  <link rel="stylesheet" href="discovery.css?v=20261102-door-chant" />
-  <link rel="stylesheet" href="hallucination.css?v=20261102-door-chant" />
+  <link rel="stylesheet" href="discovery.css?v=20261102-imagined-papers" />
+  <link rel="stylesheet" href="hallucination.css?v=20261102-imagined-papers" />
 </head>
 <body>
   <main id="memory" aria-label="Explore an imagined, abandoned block">
@@ -14,12 +14,19 @@
     <div class="view" id="view">
       <img id="view-photo" src="assets/hallucination-lobby.jpg" alt="An unfamiliar lift" hidden />
       <video id="arrival-video" src="assets/lift-opening.mp4" poster="assets/lift-inside.jpg" muted playsinline preload="auto" aria-label="The lift doors opening"></video>
+      <div id="memory-dim" aria-hidden="true"></div>
     </div>
     <div class="memory-hotspots" id="memory-hotspots">
       <button class="memory-hotspot" id="display-hotspot" type="button" aria-label="Inspect the lift floor display" data-hint="Inspect floor display" hidden><span aria-hidden="true">＋</span></button>
       <button class="memory-hotspot route-hotspot" id="chair-hotspot" type="button" aria-label="Look into the courtyard" data-hint="Look into courtyard" hidden><span aria-hidden="true">↗</span></button>
       <button class="memory-hotspot route-hotspot" id="deck-hotspot" type="button" aria-label="Look towards the void deck" data-hint="Look towards void deck" hidden><span aria-hidden="true">↗</span></button>
       <button class="memory-hotspot" id="gate-hotspot" type="button" aria-label="Inspect the closed gate" data-hint="Inspect gate" hidden><span aria-hidden="true">＋</span></button>
+      <button class="memory-hotspot newspaper-hotspot" id="article-one-hotspot" type="button" aria-label="Read the newspaper clipping" data-hint="Read clipping" hidden><img src="assets/hallucination_artifact1.png" alt="" draggable="false" /></button>
+      <button class="memory-hotspot newspaper-hotspot" id="article-two-hotspot" type="button" aria-label="Read the newspaper page" data-hint="Read newspaper" hidden><img src="assets/hallucination_artifact2.png" alt="" draggable="false" /></button>
+    </div>
+    <div class="memory-tools" id="memory-tools">
+      <button class="glass" id="memory-notebook" type="button" aria-haspopup="dialog">Notebook</button>
+      <button class="glass" id="memory-sound" type="button" aria-pressed="true">Sound on</button>
     </div>
     <section class="scene-prompt glass" id="scene-prompt" aria-labelledby="scene-title">
       <span class="eyebrow" id="scene-label">THE DOORS OPEN</span>
@@ -30,14 +37,24 @@
     <button class="back-button glass" id="memory-back" type="button" aria-label="Move back" hidden>←</button>
     <button class="forward-button glass" id="memory-forward" type="button" aria-label="Move forward along the corridor" hidden>⌃<span>Move forward</span></button>
     <button class="side-view-button glass" id="side-view-button" type="button" hidden></button>
-    <p class="walk-hint glass" id="walk-hint" hidden>Look around. The openings and gates may lead somewhere.</p>
+    <p class="walk-hint glass" id="walk-hint" hidden>Look around. Papers, openings and gates may hold something.</p>
     <p class="load-error glass" id="load-error" role="alert" hidden>This view could not load. Please try again.</p>
     <dialog id="memory-detail" aria-labelledby="detail-title">
       <header><button id="detail-back" type="button">← Back</button><h2 id="detail-title"></h2></header>
-      <img id="detail-image" alt="" hidden />
+      <div id="detail-tools" class="detail-tools" hidden>
+        <button id="detail-crop" type="button" hidden>View article close-up</button>
+        <button id="detail-zoom" type="button" aria-pressed="false">Enlarge image</button>
+        <button id="detail-sound" type="button" aria-pressed="true">Sound on</button>
+      </div>
+      <p id="detail-loading" role="status" hidden>Loading the image…</p>
+      <p id="detail-note" hidden></p>
+      <div id="detail-image-scroll" tabindex="0" role="region" aria-label="Image; scroll to inspect when enlarged" hidden><img id="detail-image" alt="" hidden /></div>
       <video id="detail-video" controls muted playsinline preload="metadata" hidden></video>
-      <p id="detail-error" role="alert" hidden>This scene could not load. You can go back and try again.</p>
+      <p id="detail-sound-caption" class="memory-sound-caption" role="status" hidden></p>
+      <div id="detail-error" role="alert" hidden><p>This scene could not load. You can go back or try again.</p><button id="detail-retry" type="button">Try again</button></div>
     </dialog>
+    <audio id="memory-audio" preload="none"></audio>
+    <p id="memory-sound-caption" class="memory-sound-caption glass" role="status" hidden></p>
     <audio id="ending-ringtone" src="assets/phone-ring.mp3" preload="auto"></audio>
     <dialog id="game-ending" aria-labelledby="ending-title" closedby="none">
       <span class="eyebrow" id="ending-label">BACK TO THE PRESENT</span>
@@ -72,7 +89,7 @@
       </section>
     </dialog>
       <dialog class="notebook" id="notebook" aria-labelledby="notebook-title">
-        <header class="notebook-header"><div><span class="eyebrow">FIELD NOTES</span><h2 id="notebook-title">Your notebook</h2><p id="notebook-summary"></p></div><button id="notebook-close" type="button" aria-label="Return to your decision">×</button></header>
+        <header class="notebook-header"><div><span class="eyebrow">FIELD NOTES</span><h2 id="notebook-title">Your notebook</h2><p id="notebook-summary"></p></div><button id="notebook-close" type="button" aria-label="Close notebook">×</button></header>
         <p id="notebook-empty">You did not record any evidence during your visit.</p>
         <div class="notebook-list" id="notebook-list"></div>
         <section id="notebook-detail" hidden aria-label="Recorded artifact">
@@ -86,11 +103,12 @@
       </dialog>
     <p class="sr-only" id="memory-announcement" role="status" aria-live="polite"></p>
   </main>
-  <script src="memory-journey.js?v=20261102-door-chant"></script>
-  <script src="day-content.js?v=20261102-door-chant"></script>
-  <script src="artifact-content.js?v=20261102-door-chant"></script>
-  <script src="notebook-view.js?v=20261102-door-chant"></script>
-  <script src="game-ending.js?v=20261102-door-chant"></script>
-  <script src="hallucination.js?v=20261102-door-chant"></script>
+  <script src="memory-journey.js?v=20261102-imagined-papers"></script>
+  <script src="day-content.js?v=20261102-imagined-papers"></script>
+  <script src="artifact-content.js?v=20261102-imagined-papers"></script>
+  <script src="notebook-view.js?v=20261102-imagined-papers"></script>
+  <script src="memory-atmosphere.js?v=20261102-imagined-papers"></script>
+  <script src="game-ending.js?v=20261102-imagined-papers"></script>
+  <script src="hallucination.js?v=20261102-imagined-papers"></script>
 </body>
 </html>
