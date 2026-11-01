@@ -5,8 +5,8 @@ const CorridorEffects = (() => {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const cues = {
     laughter: { id: 'laughter', src: 'assets/children-laughter.mp3', volume: .12, caption: 'Faint children’s laughter echoes nearby.', onStarted: () => Discovery.rememberEffect('children-laughter') },
-    buzz: { id: 'buzz', src: 'assets/electrical-buzz.mp3', volume: .13, caption: 'A faint electrical buzz comes from beside the flat.', onStarted: () => Discovery.rememberEffect('electrical-buzz') },
-    voices: { id: 'voices', src: 'assets/behind-door-voices.mp3', volume: .16, caption: 'Muffled voices behind you, then a soft click.', onStarted: () => Discovery.rememberEffect('filming-voices') },
+    buzz: { id: 'buzz', src: 'assets/electrical-buzz.mp3', volume: .22, caption: 'A faint electrical buzz comes from beside the flat.', onStarted: () => Discovery.rememberEffect('electrical-buzz') },
+    voices: { id: 'voices', src: 'assets/behind-door-voices.mp3', volume: .28, caption: 'Muffled voices behind you, then a soft click.', onStarted: () => Discovery.rememberEffect('filming-voices') },
   };
   let context = { introActive: true, turning: false, artifact: null };
   let dimAnimation = null;
