@@ -1,12 +1,11 @@
 .memory-transition { width: min(1120px, calc(100% - 32px)); max-height: calc(100svh - 32px); padding: 24px; border: 1px solid #dce6dc; border-radius: 18px; background: #f5f5ee; color: #18392c; overflow: auto; }
 .memory-transition::backdrop { background: #06130ff0; backdrop-filter: blur(12px); }
-.memory-transition[data-stage="prompt"] { width: min(440px, calc(100% - 32px)); }
+.memory-transition [hidden] { display: none !important; }
 .memory-transition h2 { margin: 8px 0 16px; font-size: 22px; }
 .memory-transition p { font-size: 14px; line-height: 1.65; }
 .memory-transition button { font: inherit; cursor: pointer; }
 .memory-transition button:focus-visible { outline: 3px solid #ad7829; outline-offset: 3px; }
 .memory-transition .prompt-action { border: 0; padding: 13px 18px; }
-#phone-video { display: block; width: 100%; height: min(65svh, 720px); object-fit: contain; background: #09110e; border-radius: 10px; }
 .phone-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
 .phone-secondary { border: 1px solid #a7b9ad; background: transparent; color: #214b38; border-radius: 8px; padding: 10px 14px; }
 .memory-transition[open][data-stage="post"] { display: flex; flex-direction: column; height: min(940px, calc(100svh - 32px)); }
@@ -14,6 +13,7 @@
 .memory-transition .phone-scroll-hint { margin: 0 0 10px; font-size: 12px; color: #4b6b59; }
 .phone-post-scroll { overflow: auto; flex: 1; min-height: 120px; background: #17221e; border-radius: 8px; overscroll-behavior: contain; }
 .phone-post-scroll:focus-visible { outline: 3px solid #ad7829; outline-offset: 3px; }
+#phone-post-loading { padding: 28px 20px; margin: 0; color: #f5f5ee; text-align: center; }
 #phone-thread { width: 100%; }
 #phone-thread img { display: block; width: 100%; height: auto; }
 #phone-thread.is-enlarged { width: max(100%, 1175px); }
@@ -21,9 +21,14 @@
 .phone-comments h3 { margin: 0; padding: 20px 18px; border-bottom: 1px solid #d9e0db; font-size: 16px; }
 .phone-comments img + img { border-top: 1px solid #d9e0db; }
 #memory-stage-post > p, #memory-stage-post > .phone-actions, #phone-post-error { flex-shrink: 0; }
-#phone-video-status { margin-bottom: 0; }
 @media (max-width: 600px) {
   .memory-transition { padding: 16px; width: calc(100% - 20px); max-height: calc(100svh - 20px); }
   .memory-transition h2 { font-size: 19px; }
   .phone-actions .prompt-action { flex: 1; text-align: center; }
 }
+
+.memory-transition[data-stage="preview"] { width: min(820px, calc(100% - 32px)); }
+.reddit-preview { display: block; width: 100%; padding: 0; overflow: hidden; border: 1px solid #9db4a4; border-radius: 12px; background: #111a17; color: #fff; text-align: left; }
+.reddit-preview img { display: block; width: 100%; height: auto; max-height: 60svh; object-fit: contain; }
+.reddit-preview span { display: block; padding: 16px; background: #245e43; font-size: 14px; font-weight: 650; }
+.reddit-preview:hover span { background: #317650; }

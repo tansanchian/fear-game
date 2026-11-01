@@ -7,6 +7,18 @@ const GameEnding = (() => {
   const thoughts = document.getElementById('ending-thoughts');
   const title = document.getElementById('ending-title');
   const replaySound = document.getElementById('ending-play-ring');
+  const notebookButton = document.getElementById('ending-notebook');
+  const evidence = Object.fromEntries(Object.entries(DAY_CONTENT).flatMap(([day, content]) =>
+    Object.entries(content.evidence).map(([id, entry]) => [id, { ...entry, day: Number(day) }])));
+  const notebook = createNotebookView({
+    dialog: document.getElementById('notebook'), evidence, artifacts: ARTIFACT_CONTENT,
+    getCollected() {
+      try {
+        const saved = JSON.parse(sessionStorage.getItem('concrete-memories.discovery.v1'));
+        return Array.isArray(saved?.collected) ? saved.collected : [];
+      } catch { return []; }
+    },
+  });
   let state = { stage: 'call', choice: '', thoughts: '' };
   let restarting = false;
   try {
@@ -36,6 +48,7 @@ const GameEnding = (() => {
     for (const stage of ['call', 'decision', 'done']) document.getElementById(`ending-${stage}`).hidden = stage !== state.stage;
     title.textContent = state.stage === 'call' ? 'Your wife is calling' : state.stage === 'decision' ? 'Would you buy this home?' : 'The end';
     document.getElementById('ending-label').textContent = state.stage === 'done' ? 'CONCRETE MEMORIES' : 'BACK TO THE PRESENT';
+    notebookButton.hidden = state.stage === 'call';
     if (state.stage === 'decision') {
       thoughts.value = state.thoughts;
       for (const input of form.elements.choice) input.checked = input.value === state.choice;
@@ -59,6 +72,9 @@ const GameEnding = (() => {
     stopRing(); state.stage = 'decision'; save(); show();
   });
   replaySound.addEventListener('click', () => { void ring(); });
+  notebookButton.addEventListener('click', () => {
+    if (active() && state.stage !== 'call') notebook.open();
+  });
   form.addEventListener('input', () => {
     if (state.stage !== 'decision') return;
     state.choice = form.elements.choice.value;

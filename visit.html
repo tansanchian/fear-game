@@ -6,11 +6,12 @@
     <meta name="theme-color" content="#162523" />
     <meta name="description" content="Explore five viewpoints along a residential corridor, its floor plan, and the flat entrance." />
     <title>The Visit — Concrete Memories</title>
-    <link rel="stylesheet" href="corridor.css?v=20261101-reddit-thread" />
-    <link rel="stylesheet" href="scene.css?v=20261101-reddit-thread" />
-    <link rel="stylesheet" href="memory-transition.css?v=20261101-reddit-thread" />
-    <link rel="stylesheet" href="discovery.css?v=20261101-reddit-thread" />
-    <link rel="stylesheet" href="neighbour-conversation.css?v=20261101-reddit-thread" />
+    <link rel="stylesheet" href="corridor.css?v=20261102-door-chant" />
+    <link rel="stylesheet" href="scene.css?v=20261102-door-chant" />
+    <link rel="stylesheet" href="memory-transition.css?v=20261102-door-chant" />
+    <link rel="stylesheet" href="discovery.css?v=20261102-door-chant" />
+    <link rel="stylesheet" href="neighbour-conversation.css?v=20261102-door-chant" />
+    <link rel="stylesheet" href="door-encounter.css?v=20261102-door-chant" />
   </head>
   <body>
     <main class="explorer is-intro" id="explorer">
@@ -37,6 +38,8 @@
             <button class="scene-hotspot" id="day2-red-furnace" type="button" aria-label="Inspect the red furnace" data-hint="Red furnace" hidden></button>
             <button class="scene-hotspot" id="day2-shoe-cabinet-stop2" type="button" aria-label="Inspect the shoe cabinet" data-hint="Shoe cabinet" hidden></button>
             <button class="scene-hotspot" id="day2-shoe-cabinet-stop3" type="button" aria-label="Inspect the shoe cabinet" data-hint="Shoe cabinet" hidden></button>
+            <button class="scene-hotspot" id="day2-trolley" type="button" aria-label="Inspect the trolley" data-hint="Trolley" hidden></button>
+            <button class="scene-hotspot" id="day2-hanging-clothes" type="button" aria-label="Inspect the hanging clothes" data-hint="Hanging clothes" hidden></button>
             <button class="scene-hotspot" id="day2-plants-stop4" type="button" aria-label="Inspect the plants" data-hint="Plants" hidden></button>
             <button class="scene-hotspot" id="day2-railing-pots" type="button" aria-label="Inspect the potted objects along the railing" data-hint="Potted objects" hidden></button>
             <button class="scene-hotspot scene-prop newspaper-prop" id="day2-murder-article" type="button" aria-label="Read the newspaper article" data-hint="Read newspaper" hidden><img src="assets/ritual_newspaper.png" alt="" draggable="false" /></button>
@@ -48,6 +51,7 @@
           <img class="artifact-photo" id="artifact-photo" src="assets/floor_plan_view.jpg" alt="Floor plan sign with its block and floor label blurred" draggable="false" />
           <div class="artifact-hotspot-layer" id="artifact-hotspot-layer">
             <button class="scene-hotspot" id="view-film-request" type="button" aria-label="View the paper on the flat entrance" data-hint="View paper" hidden></button>
+            <button class="scene-hotspot" id="day2-peek-door" type="button" aria-label="Peek inside the flat" data-hint="Peek inside" hidden></button>
           </div>
         </div>
         <div class="scene-shade" aria-hidden="true"></div>
@@ -145,33 +149,32 @@
       <div class="discovery-toast" id="discovery-toast" role="status" hidden></div>
       <audio id="corridor-audio" preload="none"></audio>
       <div class="sound-caption glass" id="sound-caption" role="status" aria-live="polite" hidden></div>
-      <dialog class="memory-transition" id="memory-transition" aria-labelledby="memory-transition-title">
-        <span class="eyebrow">A LINGERING THOUGHT</span>
-        <h2 id="memory-transition-title">A question that won’t leave you</h2>
-        <section id="memory-stage-prompt">
-          <p>The details you’ve noticed keep coming back to you. Before going any further, you decide to look up the block.</p>
-          <button class="prompt-action" id="phone-search" type="button">Search on your phone</button>
-        </section>
-        <section id="memory-stage-phone" hidden>
-          <video id="phone-video" src="assets/hallucination_transition.mp4" poster="assets/hallucination-phone-poster.jpg" controls playsinline preload="metadata" aria-label="Taking out your phone to search for the block"></video>
-          <p id="phone-video-status" role="status">You search for stories about this place.</p>
-          <div class="phone-actions"><button class="prompt-action" id="phone-read-post" type="button">Read the post</button></div>
+      <dialog class="memory-transition" id="memory-transition" aria-labelledby="memory-transition-title" closedby="none">
+        <span class="eyebrow">ON YOUR PHONE</span>
+        <h2 id="memory-transition-title">Something catches your eye</h2>
+        <section id="memory-stage-preview">
+          <p>You look up the block. One post catches your attention.</p>
+          <button class="reddit-preview" id="phone-open-post" type="button" aria-label="Open the Reddit post and read the comments">
+            <img id="phone-preview-image" src="assets/hallucination_reddit.png" width="1175" height="872" alt="Preview of a Reddit post about the Toa Payoh ritual murders" hidden />
+            <span id="phone-preview-caption">Loading post preview…</span>
+          </button>
         </section>
         <section id="memory-stage-post" hidden>
           <p class="phone-scroll-hint" id="phone-scroll-hint">Scroll down to read the comments.</p>
           <div class="phone-post-scroll" id="phone-post-scroll" tabindex="0" role="region" aria-label="Reddit post and comments" aria-describedby="phone-scroll-hint">
-            <div id="phone-thread">
-              <img id="phone-post-image" data-src="assets/hallucination_reddit.png" width="1175" height="872" alt="An online post about the Toa Payoh ritual murders, with portraits and discussion" />
+            <p id="phone-post-loading" role="status">Loading the post…</p>
+            <div id="phone-thread" hidden>
+              <img id="phone-post-image" src="assets/hallucination_reddit.png" data-src="assets/hallucination_reddit.png" decoding="async" fetchpriority="high" width="1175" height="872" alt="An online post about the Toa Payoh ritual murders, with portraits and discussion" />
               <section class="phone-comments" aria-labelledby="phone-comments-title">
                 <h3 id="phone-comments-title">Comments</h3>
-                <img data-src="assets/reddit1.jpg" width="810" height="609" alt="Reddit comments, part 1: readers recall their families’ fear and childhood warnings about the block" />
-                <img data-src="assets/reddit2.jpg" width="833" height="606" alt="Reddit comments, part 2: replies continue the discussion of childhood memories and unsettling stories" />
-                <img data-src="assets/reddit3.jpg" width="838" height="618" alt="Reddit comments, part 3: readers share stories about later residents and link to further reporting" />
+                <img src="assets/reddit1.jpg" data-src="assets/reddit1.jpg" decoding="async" width="810" height="609" alt="Reddit comments, part 1: readers recall their families’ fear and childhood warnings about the block" />
+                <img src="assets/reddit2.jpg" data-src="assets/reddit2.jpg" decoding="async" width="833" height="606" alt="Reddit comments, part 2: replies continue the discussion of childhood memories and unsettling stories" />
+                <img src="assets/reddit3.jpg" data-src="assets/reddit3.jpg" decoding="async" width="838" height="618" alt="Reddit comments, part 3: readers share stories about later residents and link to further reporting" />
               </section>
             </div>
           </div>
           <div id="phone-post-error" role="alert" hidden><p>Part of the thread could not load. Try again, or put the phone away to continue.</p><button class="phone-secondary" id="phone-post-retry" type="button">Try again</button></div>
-          <p>You look up from the screen, but the story stays with you. For a moment, you imagine the block empty.</p>
+          <p>Read at your own pace. Put the phone away when you’re ready.</p>
           <div class="phone-actions">
             <button class="phone-secondary" id="phone-post-zoom" type="button" aria-pressed="false">Enlarge thread</button>
             <button class="prompt-action" id="phone-put-away" type="button">Put phone away</button>
@@ -221,14 +224,28 @@
         </div>
       </dialog>
       <div class="sr-only" id="announcement" role="status" aria-live="polite"></div>
+      <dialog id="door-encounter" class="door-encounter" aria-labelledby="door-encounter-title" aria-describedby="door-encounter-copy">
+        <span class="eyebrow">AT THE THRESHOLD</span>
+        <h2 id="door-encounter-title">A closer look</h2>
+        <p id="door-encounter-copy" aria-live="polite" aria-atomic="true"></p>
+        <p id="door-encounter-status" class="door-encounter-status" role="status" hidden></p>
+        <div class="door-encounter-actions">
+          <button class="prompt-action" id="door-stay-outside" type="button">Stay outside <span aria-hidden="true">←</span></button>
+          <button class="door-sound-button" id="door-chant-sound" type="button" hidden>Mute sound</button>
+        </div>
+      </dialog>
+      <audio id="door-chant-audio" src="assets/door-chant.mp3" preload="metadata"></audio>
     </main>
-    <script src="memory-journey.js?v=20261101-reddit-thread"></script>
-    <script src="day-content.js?v=20261101-reddit-thread"></script>
-    <script src="discovery.js?v=20261101-reddit-thread"></script>
-    <script src="corridor-audio.js?v=20261101-reddit-thread"></script>
-    <script src="corridor-effects.js?v=20261101-reddit-thread"></script>
-    <script src="neighbour-conversation.js?v=20261101-reddit-thread"></script>
-    <script src="memory-transition.js?v=20261101-reddit-thread"></script>
-    <script src="app.js?v=20261101-reddit-thread"></script>
+    <script src="memory-journey.js?v=20261102-door-chant"></script>
+    <script src="day-content.js?v=20261102-door-chant"></script>
+    <script src="artifact-content.js?v=20261102-door-chant"></script>
+    <script src="notebook-view.js?v=20261102-door-chant"></script>
+    <script src="discovery.js?v=20261102-door-chant"></script>
+    <script src="corridor-audio.js?v=20261102-door-chant"></script>
+    <script src="corridor-effects.js?v=20261102-door-chant"></script>
+    <script src="neighbour-conversation.js?v=20261102-door-chant"></script>
+    <script src="door-encounter.js?v=20261102-door-chant"></script>
+    <script src="memory-transition.js?v=20261102-door-chant"></script>
+    <script src="app.js?v=20261102-door-chant"></script>
   </body>
 </html>

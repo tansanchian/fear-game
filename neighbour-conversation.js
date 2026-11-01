@@ -1,17 +1,3 @@
-// Shared by the playable conversation and its notebook transcript.
-const NEIGHBOUR_CONVERSATION = [
-  { speaker: 'You', character: null, text: 'Hello, aunty. Have you just moved in?' },
-  { speaker: 'Neighbour', character: 'resident', text: 'Yes, only a few days ago. There are still boxes everywhere. Are you here to view a flat?' },
-  { speaker: 'You', character: null, text: 'Yes, further down the corridor. Are you having some work done here?' },
-  { speaker: 'Neighbour', character: 'resident', text: 'This is the feng shui master I invited. Before I settle everything, I wanted him to look at the place and help me put things right.' },
-  { speaker: 'Feng shui master', character: 'master', text: 'I’m looking at the entrance first. There’s a heaviness on the side facing the unit next door… though this flat itself seems quite ordinary.' },
-  { speaker: 'You', character: null, text: 'Was there something about the flat that worried you?' },
-  { speaker: 'Neighbour', character: 'resident', text: 'I haven’t felt quite settled yet. Maybe it’s just because everything is unfamiliar. I thought making a few changes might help.' },
-  { speaker: 'Feng shui master', character: 'master', text: 'For now, I’ve suggested moving her resting area away from that wall. A place can feel unsettled long after the people who lived there have gone. I wouldn’t say more without knowing its history.' },
-  { speaker: 'Neighbour', character: 'resident', text: 'Once it’s all arranged, perhaps it will start to feel like home.' },
-  { speaker: 'You', character: null, text: 'Thank you, aunty. I’ll leave you both to settle things.' },
-];
-
 const NeighbourConversation = (() => {
   const dialog = document.getElementById('neighbour-conversation');
   const dialogue = document.getElementById('neighbour-dialogue');

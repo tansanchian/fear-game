@@ -22,13 +22,15 @@ const DAY_CONTENT = {
     evidence: {
       murderArticle: { pass: 1, group: 'murderArticle', title: 'Newspaper article', description: 'A newspaper report on the discovery of a boy’s body and a suspected ritual killing.', location: 'Stop 2 · On the corridor floor' },
       neighbourConversation: { pass: 1, group: 'neighbourConversation', title: 'A new neighbour', description: 'A newly arrived resident has invited a feng shui master to help arrange her home before she settles in.', location: 'Stop 4 · At the neighbour’s door' },
+      doorChant: { pass: 1, group: 'doorChant', title: 'Sounds behind the door', description: 'As you lean towards the gate to peek inside the viewing unit, you hear low, repetitive chanting. It sounds thin and muffled, as though coming from a television or radio further inside. You cannot make out the words or tell where it is coming from. Uneasy, you step back and decide not to enter.', location: 'Stop 5 · At the viewing unit’s gate' },
     },
     hotspots: {
-      'day2-plant': 1, 'day2-shoe-cabinet-stop2': 1,
-      'day2-red-furnace': 2, 'day2-plants-stop4': 2,
+      'day2-plant': 1, 'day2-shoe-cabinet-stop2': 1, 'day2-trolley': 1,
+      'day2-red-furnace': 2, 'day2-plants-stop4': 2, 'day2-hanging-clothes': 2,
       'day2-shoe-cabinet-stop3': 3, 'day2-railing-pots': 3,
       'day2-murder-article': 'murderArticle',
       'day2-neighbour-door': 'neighbourConversation',
+      'day2-peek-door': 'doorChant',
     },
   },
 };

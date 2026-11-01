@@ -26,17 +26,15 @@ const Discovery = (() => {
   } catch { /* Storage can be unavailable; the current run still works. */ }
   const button = document.getElementById('notebook-button');
   const dialog = document.getElementById('notebook');
-  const list = document.getElementById('notebook-list');
-  const detail = document.getElementById('notebook-detail');
   const prompt = document.getElementById('journey-prompt');
   const toast = document.getElementById('discovery-toast');
   const dayDialog = document.getElementById('day-transition');
   const conversationDialog = document.getElementById('neighbour-conversation');
+  const doorDialog = document.getElementById('door-encounter');
   let api;
   let toastTimer;
-  let selected = null;
+  let notebook;
   let hintVisible = false;
-  let returnFocus;
   let resetting = false;
 
   function persist() {
@@ -117,92 +115,23 @@ const Discovery = (() => {
     if (!canShowHint) hintVisible = false;
     prompt.hidden = !hintVisible;
     updateBadge();
-    if (state.phase === 'exploring' && exhausted() && !introActive && !busy && (!artifact || artifact === 'flat' || artifact === 'map') && !inspecting && !dialog.open && !conversationDialog.open) {
+    if (state.phase === 'exploring' && exhausted() && !introActive && !busy && (!artifact || artifact === 'flat' || artifact === 'map') && !inspecting && !dialog.open && !conversationDialog.open && !doorDialog.open) {
       if (state.day === 1) { state.phase = 'reflection'; persist(); }
-      else if (MemoryJourney.phase() === 'idle') MemoryJourney.advance('prompt');
+      else if (MemoryJourney.phase() === 'idle') MemoryJourney.advance('preview');
     }
     if (state.phase !== 'exploring' && !busy) showDayTransition();
     if (state.day === 2 && MemoryJourney.active() && !busy) {
       clearTimeout(toastTimer); toast.hidden = true;
-      MemoryTransition.sync();
+      MemoryTransition.sync({ position });
     }
-  }
-  function renderNotebook() {
-    const groups = [...new Set(state.collected.map(id => `${evidence[id].day}:${evidence[id].group}`))];
-    document.getElementById('notebook-title').textContent = 'Your notebook';
-    document.getElementById('notebook-summary').textContent = `${groups.length} ${groups.length === 1 ? 'artifact' : 'artifacts'} recorded`;
-    list.replaceChildren();
-    document.getElementById('notebook-empty').hidden = groups.length > 0;
-    for (const group of groups) {
-      const ids = state.collected.filter(id => `${evidence[id].day}:${evidence[id].group}` === group);
-      const first = ids[0];
-      const card = document.createElement('button');
-      card.type = 'button'; card.className = 'notebook-entry'; card.dataset.entry = group;
-      const thumb = document.createElement('img'); thumb.src = api.artifacts[first].image; thumb.alt = ''; thumb.loading = 'lazy';
-      const copy = document.createElement('span');
-      const title = document.createElement('strong'); title.textContent = evidence[evidence[first].group]?.title ?? evidence[first].title;
-      const location = document.createElement('small'); location.textContent = `Day ${evidence[first].day} · ${evidence[first].location}`;
-      const count = document.createElement('small'); count.textContent = api.artifacts[first].type === 'conversation' ? 'Conversation · Read dialogue' : `${ids.length} ${ids.length === 1 ? 'image' : 'images'}`;
-      copy.append(title, location, count); card.append(thumb, copy);
-      card.addEventListener('click', () => showEntry(first)); list.append(card);
-    }
-  }
-  function showEntry(id) {
-    if (!state.collected.includes(id)) return;
-    selected = id;
-    list.hidden = true;
-    document.getElementById('notebook-empty').hidden = true;
-    detail.hidden = false;
-    const entry = api.artifacts[id];
-    const isConversation = entry.type === 'conversation';
-    const transcript = document.getElementById('notebook-transcript');
-    transcript.replaceChildren(); transcript.hidden = !isConversation;
-    document.querySelector('.notebook-image-scroll').hidden = isConversation;
-    document.getElementById('notebook-zoom').hidden = isConversation;
-    if (isConversation) {
-      for (const line of entry.transcript) {
-        const paragraph = document.createElement('p');
-        const speaker = document.createElement('strong'); speaker.textContent = `${line.speaker}: `;
-        paragraph.append(speaker, document.createTextNode(line.text)); transcript.append(paragraph);
-      }
-    }
-    const photo = document.getElementById('notebook-photo');
-    photo.src = api.artifacts[id].image; photo.alt = api.artifacts[id].alt;
-    document.getElementById('notebook-caption').textContent = `Day ${evidence[id].day} · ${evidence[id].description}`;
-    photo.classList.remove('is-enlarged');
-    document.getElementById('notebook-zoom').textContent = 'Enlarge image';
-    const variants = document.getElementById('notebook-variants'); variants.replaceChildren();
-    variants.hidden = isConversation;
-    for (const variant of state.collected.filter(key => evidence[key].day === evidence[id].day && evidence[key].group === evidence[id].group)) {
-      const tab = document.createElement('button'); tab.type = 'button'; tab.textContent = evidence[variant].title;
-      tab.setAttribute('aria-pressed', String(variant === id)); tab.addEventListener('click', () => showEntry(variant)); variants.append(tab);
-    }
-    document.getElementById('notebook-to-list').focus();
-  }
-  function showList() {
-    selected = null; detail.hidden = true; list.hidden = false; renderNotebook();
-    document.getElementById('notebook-close').focus();
   }
   function open() {
-    if (resetting || button.disabled || dialog.open || conversationDialog.open || MemoryJourney.active()) return;
-    returnFocus = document.activeElement;
-    selected = null; detail.hidden = true; list.hidden = false;
-    renderNotebook(); dialog.showModal();
+    if (resetting || button.disabled || dialog.open || conversationDialog.open || doorDialog.open || MemoryJourney.active()) return;
+    notebook.open();
     state.unread = []; persist(); updateBadge();
-    document.getElementById('notebook-close').focus();
     api.refresh();
   }
-  dialog.addEventListener('cancel', event => {
-    if (selected) { event.preventDefault(); showList(); }
-  });
-  dialog.addEventListener('close', () => { if (returnFocus?.isConnected && !returnFocus.hidden) returnFocus.focus(); api.refresh(); });
-  button.addEventListener('click', () => open());
-  document.getElementById('notebook-close').addEventListener('click', () => dialog.close());
-  document.getElementById('notebook-to-list').addEventListener('click', showList);
-  document.getElementById('notebook-zoom').addEventListener('click', event => {
-    const enlarged = document.getElementById('notebook-photo').classList.toggle('is-enlarged');
-    event.currentTarget.textContent = enlarged ? 'Fit image' : 'Enlarge image';
-  });
+  button.addEventListener('click', open);
   document.getElementById('journey-action').addEventListener('click', () => {
     hintVisible = false;
     prompt.hidden = true;
@@ -265,7 +194,12 @@ const Discovery = (() => {
     },
     soundEnabled: () => state.soundEnabled,
     setSoundEnabled(enabled) { state.soundEnabled = Boolean(enabled); persist(); },
-    day: () => state.day, isOpen: () => dialog.open || dayDialog.open || conversationDialog.open || MemoryJourney.active() || state.phase !== 'exploring',
+    day: () => state.day, isOpen: () => dialog.open || dayDialog.open || conversationDialog.open || doorDialog.open || MemoryJourney.active() || state.phase !== 'exploring',
 
-    init(config) { api = config; updateBadge(); return state.snapshot; } };
+    init(config) {
+      api = config;
+      notebook = createNotebookView({ dialog, evidence, artifacts: api.artifacts,
+        getCollected: () => state.collected, onClose: () => api.refresh() });
+      updateBadge(); return state.snapshot;
+    } };
 })();

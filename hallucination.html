@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#172923" />
   <title>An Imagined Memory — Concrete Memories</title>
-  <link rel="stylesheet" href="hallucination.css?v=20261101-reddit-thread" />
+  <link rel="stylesheet" href="discovery.css?v=20261102-door-chant" />
+  <link rel="stylesheet" href="hallucination.css?v=20261102-door-chant" />
 </head>
 <body>
   <main id="memory" aria-label="Explore an imagined, abandoned block">
@@ -13,19 +14,22 @@
     <div class="view" id="view">
       <img id="view-photo" src="assets/hallucination-lobby.jpg" alt="An unfamiliar lift" hidden />
       <video id="arrival-video" src="assets/lift-opening.mp4" poster="assets/lift-inside.jpg" muted playsinline preload="auto" aria-label="The lift doors opening"></video>
+    </div>
+    <div class="memory-hotspots" id="memory-hotspots">
       <button class="memory-hotspot" id="display-hotspot" type="button" aria-label="Inspect the lift floor display" data-hint="Inspect floor display" hidden><span aria-hidden="true">＋</span></button>
       <button class="memory-hotspot route-hotspot" id="chair-hotspot" type="button" aria-label="Look into the courtyard" data-hint="Look into courtyard" hidden><span aria-hidden="true">↗</span></button>
       <button class="memory-hotspot route-hotspot" id="deck-hotspot" type="button" aria-label="Look towards the void deck" data-hint="Look towards void deck" hidden><span aria-hidden="true">↗</span></button>
       <button class="memory-hotspot" id="gate-hotspot" type="button" aria-label="Inspect the closed gate" data-hint="Inspect gate" hidden><span aria-hidden="true">＋</span></button>
     </div>
     <section class="scene-prompt glass" id="scene-prompt" aria-labelledby="scene-title">
-      <span class="eyebrow" id="scene-label">AN IMAGINED MEMORY</span>
+      <span class="eyebrow" id="scene-label">THE DOORS OPEN</span>
       <h1 id="scene-title">The doors are opening</h1>
-      <p id="scene-copy">In your mind, the block becomes a place everyone has left behind.</p>
+      <p id="scene-copy">You expect the familiar landing, but the images from the post are still with you.</p>
       <button class="action" id="scene-next" type="button" disabled>Step out of the lift</button>
     </section>
     <button class="back-button glass" id="memory-back" type="button" aria-label="Move back" hidden>←</button>
     <button class="forward-button glass" id="memory-forward" type="button" aria-label="Move forward along the corridor" hidden>⌃<span>Move forward</span></button>
+    <button class="side-view-button glass" id="side-view-button" type="button" hidden></button>
     <p class="walk-hint glass" id="walk-hint" hidden>Look around. The openings and gates may lead somewhere.</p>
     <p class="load-error glass" id="load-error" role="alert" hidden>This view could not load. Please try again.</p>
     <dialog id="memory-detail" aria-labelledby="detail-title">
@@ -38,6 +42,7 @@
     <dialog id="game-ending" aria-labelledby="ending-title" closedby="none">
       <span class="eyebrow" id="ending-label">BACK TO THE PRESENT</span>
       <h2 id="ending-title" tabindex="-1">Your wife is calling</h2>
+      <button class="ending-secondary" id="ending-notebook" type="button" aria-haspopup="dialog" hidden>Review notebook</button>
       <section id="ending-call">
         <div class="phone-symbol" aria-hidden="true">☎</div>
         <p class="ring-caption">Your phone rings.</p>
@@ -66,10 +71,26 @@
         <button class="ending-secondary" id="ending-restart" type="button">Play again</button>
       </section>
     </dialog>
+      <dialog class="notebook" id="notebook" aria-labelledby="notebook-title">
+        <header class="notebook-header"><div><span class="eyebrow">FIELD NOTES</span><h2 id="notebook-title">Your notebook</h2><p id="notebook-summary"></p></div><button id="notebook-close" type="button" aria-label="Return to your decision">×</button></header>
+        <p id="notebook-empty">You did not record any evidence during your visit.</p>
+        <div class="notebook-list" id="notebook-list"></div>
+        <section id="notebook-detail" hidden aria-label="Recorded artifact">
+          <div class="notebook-tools"><button id="notebook-to-list" type="button">← All discoveries</button><button id="notebook-zoom" type="button">Enlarge image</button></div>
+          <div id="notebook-variants" class="notebook-variants" aria-label="Recorded images"></div>
+          <p id="notebook-caption"></p>
+          <div class="notebook-image-scroll" tabindex="0" aria-label="Artifact image; scroll to inspect when enlarged"><img id="notebook-photo" alt="" /></div>
+          <div id="notebook-transcript" class="notebook-transcript" hidden></div>
+        </section>
+        <footer class="notebook-footer"><span>Only discoveries recorded during your visit appear here.</span></footer>
+      </dialog>
     <p class="sr-only" id="memory-announcement" role="status" aria-live="polite"></p>
   </main>
-  <script src="memory-journey.js?v=20261101-reddit-thread"></script>
-  <script src="game-ending.js?v=20261101-reddit-thread"></script>
-  <script src="hallucination.js?v=20261101-reddit-thread"></script>
+  <script src="memory-journey.js?v=20261102-door-chant"></script>
+  <script src="day-content.js?v=20261102-door-chant"></script>
+  <script src="artifact-content.js?v=20261102-door-chant"></script>
+  <script src="notebook-view.js?v=20261102-door-chant"></script>
+  <script src="game-ending.js?v=20261102-door-chant"></script>
+  <script src="hallucination.js?v=20261102-door-chant"></script>
 </body>
 </html>

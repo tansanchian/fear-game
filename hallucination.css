@@ -7,7 +7,8 @@ button:focus-visible, a:focus-visible { outline: 3px solid #e8b75d; outline-offs
 [hidden] { display: none !important; }
 #memory { position: relative; height: 100svh; min-height: 400px; overflow: hidden; isolation: isolate; }
 #backdrop { position: absolute; inset: -5%; width: 110%; height: 110%; object-fit: cover; filter: blur(24px) brightness(.45); pointer-events: none; }
-.view { position: absolute; inset: 0; }
+.view { position: absolute; inset: 0; z-index: 1; }
+.memory-hotspots { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 #view-photo, #arrival-video { position: absolute; width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none; }
 .glass { background: rgba(249,250,244,.94); border: 1px solid #ffffffb8; box-shadow: 0 8px 30px #10291e26; backdrop-filter: blur(14px); }
 .scene-prompt { position: absolute; bottom: 28px; left: 24px; width: min(330px, calc(100% - 48px)); padding: 20px; border-radius: 18px; z-index: 3; }
@@ -20,9 +21,11 @@ h1 { margin: 8px 0; font-size: 20px; line-height: 1.25; }
 .back-button { position: absolute; bottom: 24px; left: 24px; width: 48px; height: 48px; border-radius: 14px; font-size: 26px; color: #245e43; z-index: 4; }
 .forward-button { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 58px; height: 58px; border-radius: 50%; background: #245e43e6; color: white; font-size: 42px; line-height: 1; z-index: 4; }
 .forward-button span { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); padding: 5px 7px; border-radius: 5px; background: #173b2de6; color: white; font-size: 9px; font-weight: 700; white-space: nowrap; text-transform: uppercase; letter-spacing: .08em; }
-.walk-hint { position: absolute; right: 24px; top: 24px; margin: 0; padding: 12px 15px; border-radius: 12px; max-width: 300px; font-size: 12px; pointer-events: none; }
-.memory-hotspot { position: absolute; background: transparent; border: 0; border-radius: 6px; color: white; z-index: 2; }
-.memory-hotspot > span { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); display: grid; place-items: center; width: 30px; height: 30px; border: 1px solid #ffffffe0; border-radius: 50%; background: #173b2db3; font-size: 21px; box-shadow: 0 2px 12px #0003; }
+.walk-hint { position: absolute; right: 24px; top: 84px; margin: 0; padding: 12px 15px; border-radius: 12px; max-width: 300px; font-size: 12px; pointer-events: none; z-index: 3; }
+.side-view-button { position: absolute; top: 24px; right: 24px; z-index: 5; padding: 13px 16px; min-height: 48px; max-width: calc(100% - 48px); border-radius: 12px; color: #245e43; font-size: 13px; }
+.side-view-button:hover { background: #e6efe3; }
+.memory-hotspot { position: absolute; background: transparent; border: 0; border-radius: 6px; color: white; pointer-events: auto; touch-action: manipulation; }
+.memory-hotspot > span { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid #ffffffe0; border-radius: 50%; background: #173b2db3; font-size: 21px; box-shadow: 0 2px 12px #0003; pointer-events: none; }
 .memory-hotspot:hover, .memory-hotspot:focus-visible { background: #ffffff12; box-shadow: 0 0 0 2px #ffffffe0; }
 .memory-hotspot::after { content: attr(data-hint); position: absolute; top: calc(100% + 7px); left: 50%; transform: translateX(-50%); background: #173b2def; color: white; padding: 7px 9px; border-radius: 7px; font-size: 11px; white-space: nowrap; opacity: 0; pointer-events: none; }
 .memory-hotspot:hover::after, .memory-hotspot:focus-visible::after { opacity: 1; }
@@ -39,7 +42,8 @@ h1 { margin: 8px 0; font-size: 20px; line-height: 1.25; }
   .scene-prompt h1 { font-size: 18px; }
   .scene-prompt p { margin-bottom: 10px; font-size: 12px; }
   .back-button { bottom: 18px; left: 12px; }
-  .walk-hint { top: 64px; left: 12px; right: auto; max-width: calc(100% - 24px); font-size: 11px; }
+  .walk-hint { top: 72px; left: 12px; right: auto; max-width: calc(100% - 24px); font-size: 11px; }
+  .side-view-button { top: 12px; right: 12px; max-width: calc(100% - 24px); }
   #memory[data-scene="end"] .scene-prompt { bottom: 78px; }
   #memory-detail { padding: 12px; }
 }
@@ -50,6 +54,7 @@ h1 { margin: 8px 0; font-size: 20px; line-height: 1.25; }
 #memory[data-ending] .back-button,
 #memory[data-ending] .forward-button,
 #memory[data-ending] .memory-hotspot,
+#memory[data-ending] .side-view-button,
 #memory[data-ending] .walk-hint { display: none; }
 #game-ending { width: min(490px, calc(100% - 28px)); max-height: calc(100svh - 28px); padding: 28px; border: 1px solid #ffffffa3; border-radius: 20px; background: #f5f5ee; color: #203a30; overflow: auto; box-shadow: 0 24px 80px #0004; }
 #game-ending::backdrop { background: #081510b8; backdrop-filter: blur(10px); }
@@ -70,6 +75,7 @@ h1 { margin: 8px 0; font-size: 20px; line-height: 1.25; }
 #ending-thoughts { display: block; width: 100%; min-height: 100px; padding: 12px; border: 1px solid #a4bbaa; border-radius: 9px; background: #fffef9; color: #203a30; font: inherit; font-size: 16px; line-height: 1.5; resize: vertical; }
 #game-ending input:focus-visible, #ending-thoughts:focus-visible { outline: 3px solid #b78336; outline-offset: 3px; }
 .ending-secondary { padding: 11px 15px; margin-top: 12px; border: 1px solid #9fb7a6; border-radius: 9px; background: transparent; color: #245e43; font-size: 13px; }
+#ending-notebook { margin: 0 0 18px; }
 #ending-reflection { margin-top: 20px; padding-top: 14px; border-top: 1px solid #ccd8cb; }
 #ending-reflection h3 { font-size: 13px; margin: 0; }
 #ending-thoughts-summary { white-space: pre-wrap; overflow-wrap: anywhere; }

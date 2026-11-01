@@ -6,54 +6,7 @@ const stops = [
   { image: 'assets/stop-05.jpg', label: 'In front of the flat' },
 ];
 
-const artifacts = {
-  neighbourConversation: {
-    type: 'conversation', image: 'assets/convo1.png', alt: 'The neighbour who has just moved in',
-    transcript: NEIGHBOUR_CONVERSATION, position: 3,
-  },
-  map: {
-    image: 'assets/floor_plan_view.jpg',
-    title: 'FLOOR PLAN',
-    alt: 'Floor plan sign with the block and floor label blurred',
-    position: 0,
-  },
-  flyer: {
-    image: 'assets/nearby-listing-flyer.svg',
-    title: 'NEARBY LISTING',
-    alt: 'For sale flyer for a nearby three-room flat with an asking price of $688,000',
-    position: 1,
-  },
-  murderArticle: {
-    image: 'assets/ritual_newspaper.png',
-    title: 'NEWSPAPER ARTICLE',
-    alt: 'The Sunday Times front page reporting the discovery of a boy’s body and a suspected ritual killing',
-    position: 1,
-  },
-  flat: {
-    image: 'assets/hdb_door.jpg',
-    title: 'FLAT ENTRANCE',
-    alt: 'Entrance gate of the flat',
-    position: stops.length - 1,
-  },
-  filmRequest: {
-    image: 'assets/film_request.jpg',
-    title: 'PAPER ON THE DOOR',
-    alt: 'Letter requesting the use of a home as a filming location',
-    position: stops.length - 1,
-  },
-  power: {
-    image: 'assets/power_box.jpg',
-    title: 'POWER BOX',
-    alt: 'Power box outside the unit',
-    position: stops.length - 1,
-  },
-  powerClose: {
-    image: 'assets/close_up_power_box.jpg',
-    title: 'METER NUMBER',
-    alt: 'Close-up of the meter display and serial number',
-    position: stops.length - 1,
-  },
-};
+const artifacts = ARTIFACT_CONTENT;
 
 const explorer = document.getElementById('explorer');
 const scene = document.getElementById('scene');
@@ -72,6 +25,7 @@ const artifactPhoto = document.getElementById('artifact-photo');
 const artifactBackdrop = document.getElementById('artifact-backdrop');
 const artifactHotspotLayer = document.getElementById('artifact-hotspot-layer');
 const filmRequestHotspot = document.getElementById('view-film-request');
+const peekDoorHotspot = document.getElementById('day2-peek-door');
 const frameA = document.getElementById('frame-a');
 const frameB = document.getElementById('frame-b');
 const flatDoorHotspot = document.getElementById('view-flat-door');
@@ -112,6 +66,8 @@ const sceneHotspots = [
   { button: document.getElementById('day2-red-furnace'), stop: 0, title: 'A red furnace', bounds: { x: 490, y: 464, width: 30, height: 82 } },
   { button: document.getElementById('day2-shoe-cabinet-stop2'), stop: 1, title: 'A shoe cabinet', bounds: { x: 218, y: 487, width: 292, height: 233 } },
   { button: document.getElementById('day2-shoe-cabinet-stop3'), stop: 2, title: 'A shoe cabinet', bounds: { x: 18, y: 495, width: 463, height: 225 } },
+  { button: document.getElementById('day2-trolley'), stop: 2, title: 'A trolley', bounds: { x: 502, y: 345, width: 108, height: 205 } },
+  { button: document.getElementById('day2-hanging-clothes'), stop: 4, title: 'Hanging clothes', bounds: { x: 585, y: 145, width: 105, height: 275 } },
   { button: document.getElementById('day2-plants-stop4'), stop: 3, title: 'Plants', bounds: { x: 640, y: 310, width: 140, height: 107 } },
   { button: document.getElementById('day2-railing-pots'), stop: 3, title: 'Potted objects along the railing', bounds: { x: 644, y: 420, width: 114, height: 145 } },
   { button: document.getElementById('day2-murder-article'), stop: 1, bounds: { x: 578, y: 578, width: 65, height: 46 } },
@@ -187,7 +143,7 @@ function layoutSceneHotspots() {
   }
 }
 
-function layoutFilmRequestHotspot() {
+function layoutArtifactHotspots() {
   const width = artifactStage.clientWidth;
   const height = artifactStage.clientHeight;
   const imageWidth = artifactPhoto.naturalWidth;
@@ -196,11 +152,15 @@ function layoutFilmRequestHotspot() {
   const scale = Math.min(width / imageWidth, height / imageHeight);
   const offsetX = (width - imageWidth * scale) / 2;
   const offsetY = (height - imageHeight * scale) / 2;
-  const paper = { x: 290, y: 575, width: 45, height: 82 };
-  filmRequestHotspot.style.left = `${offsetX + paper.x * scale}px`;
-  filmRequestHotspot.style.top = `${offsetY + paper.y * scale}px`;
-  filmRequestHotspot.style.width = `${paper.width * scale}px`;
-  filmRequestHotspot.style.height = `${paper.height * scale}px`;
+  for (const [button, bounds] of [
+    [filmRequestHotspot, { x: 290, y: 575, width: 45, height: 82 }],
+    [peekDoorHotspot, { x: 235, y: 385, width: 350, height: 680 }],
+  ]) {
+    button.style.left = `${offsetX + bounds.x * scale}px`;
+    button.style.top = `${offsetY + bounds.y * scale}px`;
+    button.style.width = `${bounds.width * scale}px`;
+    button.style.height = `${bounds.height * scale}px`;
+  }
 }
 
 function positionObjectNote() {
@@ -267,6 +227,8 @@ function render() {
   for (const item of sceneHotspots) item.button.hidden = busy || introActive || Boolean(artifact) || position !== item.stop || !Discovery.available(item.button.id);
   document.getElementById('day2-neighbour-door').classList.toggle('is-undiscovered', !Discovery.hasCollected('neighbourConversation'));
   filmRequestHotspot.hidden = busy || artifact !== 'flat' || !Discovery.available('filmRequest');
+  peekDoorHotspot.hidden = busy || artifact !== 'flat' || !Discovery.available('doorChant');
+  peekDoorHotspot.dataset.hint = Discovery.hasCollected('doorChant') ? 'Stay outside' : 'Peek inside';
   destinationCard.hidden = busy || introActive || Boolean(artifact) || position !== stops.length - 1 || !doorPromptOpen;
   artifactReturn.hidden = busy || !artifact;
   viewPowerCloseButton.hidden = busy || artifact !== 'power' || !Discovery.canInspect('powerClose');
@@ -278,7 +240,7 @@ function render() {
   document.querySelector('.view-controls').hidden = introActive;
   infoButton.hidden = introActive;
   layoutSceneHotspots();
-  if (artifact === 'flat') layoutFilmRequestHotspot();
+  if (artifact === 'flat') layoutArtifactHotspots();
   renderCamera();
   Discovery.render({ introActive, busy, artifact, position, doorPromptOpen, inspecting: Boolean(notedObject) });
   CorridorEffects.update({ introActive, turning, artifact });
@@ -438,7 +400,7 @@ async function finishIntro() {
 
 async function openArtifact(kind) {
   const target = artifacts[kind];
-  if (target?.type === 'conversation') return;
+  if (target?.type) return;
   if (Discovery.isOpen() || !Discovery.canInspect(kind) || !target || introActive || position !== target.position || transitioning || turning || artifact) return;
   if (kind !== 'flat') doorPromptOpen = false;
   turning = true;
@@ -591,6 +553,7 @@ document.getElementById('day2-neighbour-door').addEventListener('click', () => {
 document.getElementById('view-power-box').addEventListener('click', () => { void openArtifact('power'); });
 viewPowerCloseButton.addEventListener('click', () => { void showDetailView('powerClose'); });
 filmRequestHotspot.addEventListener('click', () => { void showDetailView('filmRequest'); });
+peekDoorHotspot.addEventListener('click', () => DoorEncounter.open());
 returnButton.addEventListener('click', returnFromArtifact);
 replayButton.addEventListener('click', replayLift);
 zoomInButton.addEventListener('click', () => { dismissObjectNote(); zoom = Math.round(clamp(zoom + .2, 1, maxZoom()) * 10) / 10; renderCamera(); });
@@ -635,7 +598,7 @@ function endDrag(event) {
 scene.addEventListener('pointerup', endDrag);
 scene.addEventListener('pointercancel', endDrag);
 function refreshHotspotLayout() {
-  layoutSceneHotspots(); layoutFilmRequestHotspot(); positionObjectNote();
+  layoutSceneHotspots(); layoutArtifactHotspots(); positionObjectNote();
 }
 // Mobile viewport height and photo framing can settle after the resize event.
 // Observe the actual stage so hit targets stay aligned with the final image layout.
@@ -712,7 +675,7 @@ async function startExplorer() {
     explorer.classList.remove('is-intro');
     explorer.classList.add('has-left-intro');
     introStage.setAttribute('aria-hidden', 'true');
-    artifact = Object.hasOwn(artifacts, saved.artifact) && artifacts[saved.artifact].type !== 'conversation' && Discovery.available(saved.artifact) ? saved.artifact : null;
+    artifact = Object.hasOwn(artifacts, saved.artifact) && !artifacts[saved.artifact].type && Discovery.available(saved.artifact) ? saved.artifact : null;
     fromIntro = artifact === 'map' && saved.fromIntro === true;
     doorPromptOpen = saved.doorPromptOpen === true;
     const validView = view => view && [view.zoom, view.lookX, view.lookY].every(Number.isFinite);
@@ -742,5 +705,10 @@ NeighbourConversation.init({
   refresh: render,
   canOpen: () => !introActive && !artifact && !transitioning && !turning && position === artifacts.neighbourConversation.position,
   prepare: () => { dismissObjectNote(); infoPanel.hidden = true; },
+});
+DoorEncounter.init({
+  refresh: render,
+  canOpen: () => !introActive && artifact === 'flat' && !transitioning && !turning && position === artifacts.flat.position,
+  prepare: () => { infoPanel.hidden = true; },
 });
 void startExplorer();

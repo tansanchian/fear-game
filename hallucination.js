@@ -3,7 +3,7 @@ const MemoryWalk = (() => {
   const storageKey = 'concrete-memories.imagined.v1';
   const url = new URL(window.location.href);
   if (!MemoryJourney.persistent() && url.searchParams.has('start')) {
-    for (const phase of ['prompt', 'phone', 'post', 'walk']) MemoryJourney.advance(phase);
+    for (const phase of ['preview', 'post', 'retreat', 'walk']) MemoryJourney.advance(phase);
   }
   if (!['walk', 'ending', 'complete'].includes(MemoryJourney.phase())) { location.replace('visit.html'); return; }
   const visited = new Set();
@@ -17,6 +17,7 @@ const MemoryWalk = (() => {
   const nextButton = document.getElementById('scene-next');
   const back = document.getElementById('memory-back');
   const forward = document.getElementById('memory-forward');
+  const sideView = document.getElementById('side-view-button');
   const dialog = document.getElementById('memory-detail');
   const detailVideo = document.getElementById('detail-video');
   const detailImage = document.getElementById('detail-image');
@@ -32,7 +33,8 @@ const MemoryWalk = (() => {
     { id: 'display-hotspot', scene: -1, detail: 'display', bounds: [555, 46, 82, 40] },
     { id: 'chair-hotspot', scene: 0, detail: 'chair', bounds: [670, 220, 95, 100] },
     { id: 'deck-hotspot', scene: 2, detail: 'deck', bounds: [735, 205, 80, 100] },
-    { id: 'gate-hotspot', scene: 4, detail: 'gate', bounds: [218, 85, 80, 280] },
+    // Inspect the gate before the final stop triggers the wife's phone call.
+    { id: 'gate-hotspot', scene: 3, detail: 'gate', bounds: [280, 40, 58, 355] },
   ];
   let scene = -2;
   let busy = false;
@@ -64,7 +66,7 @@ const MemoryWalk = (() => {
     for (const item of hotspots) {
       const button = document.getElementById(item.id);
       const [x, y, w, h] = item.bounds;
-      const bw = Math.max(44, w * scale), bh = Math.max(44, h * scale);
+      const bw = Math.max(48, w * scale), bh = Math.max(48, h * scale);
       button.style.left = `${ox + (x + w / 2) * scale - bw / 2}px`;
       button.style.top = `${oy + (y + h / 2) * scale - bh / 2}px`;
       button.style.width = `${bw}px`; button.style.height = `${bh}px`;
@@ -82,9 +84,13 @@ const MemoryWalk = (() => {
     forward.hidden = scene < 0 || scene === 4; forward.disabled = busy;
     document.getElementById('walk-hint').hidden = scene < 0 || scene === 4 || busy;
     for (const item of hotspots) document.getElementById(item.id).hidden = busy || item.scene !== scene;
-    document.getElementById('scene-label').textContent = scene === -2 ? 'AN IMAGINED MEMORY' : scene === -1 ? 'THE LIFT LOBBY' : 'A FADING IMPRESSION';
-    document.getElementById('scene-title').textContent = scene === -2 ? ready ? 'The doors are open' : 'The doors are opening' : scene === -1 ? 'The lift looks different' : 'The image begins to fade';
-    document.getElementById('scene-copy').textContent = scene === -2 ? 'In your mind, the block becomes a place everyone has left behind.' : scene === -1 ? 'The familiar doors give way to an older lift. Its floor display catches your eye.' : explored() ? 'Your phone rings. The familiar world begins to come back into focus.' : 'There is more of this place to explore. Walk back through the corridor and take another look.';
+    const side = hotspots.find(item => item.scene === scene);
+    sideView.hidden = busy || !side;
+    sideView.disabled = busy;
+    if (side) sideView.textContent = `↗ ${document.getElementById(side.id).getAttribute('aria-label')}`;
+    document.getElementById('scene-label').textContent = scene === -2 ? 'THE DOORS OPEN' : scene === -1 ? 'THE LIFT LOBBY' : 'A FADING IMPRESSION';
+    document.getElementById('scene-title').textContent = scene === -2 ? ready ? 'The doors are open' : 'The doors are opening' : scene === -1 ? 'This landing feels unfamiliar' : 'The image begins to fade';
+    document.getElementById('scene-copy').textContent = scene === -2 ? 'You expect the familiar landing, but the images from the post are still with you.' : scene === -1 ? 'You entered this lift only a moment ago. Now its doors and floor display look older. You step closer to make sense of them.' : explored() ? 'Your phone rings. The familiar world begins to come back into focus.' : 'There is more of this place to explore. Walk back through the corridor and take another look.';
     nextButton.textContent = scene === -2 ? 'Step out of the lift' : 'Walk into the corridor';
     layout();
   }
@@ -135,6 +141,9 @@ const MemoryWalk = (() => {
     if (detailOpener && !detailOpener.hidden) detailOpener.focus({ preventScroll: true });
   });
   document.getElementById('detail-back').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('keydown', event => {
+    if (event.key === 'Escape') { event.preventDefault(); dialog.close(); }
+  });
   detailVideo.addEventListener('error', () => { if (dialog.open && !detailVideo.hidden && detailVideo.hasAttribute('src')) document.getElementById('detail-error').hidden = false; });
   detailImage.addEventListener('error', () => { if (dialog.open && !detailImage.hidden) document.getElementById('detail-error').hidden = false; });
   arrival.addEventListener('ended', () => { ready = true; arrival.pause(); render(); });
@@ -142,6 +151,10 @@ const MemoryWalk = (() => {
   nextButton.addEventListener('click', () => { void go(scene + 1); });
   back.addEventListener('click', () => { void go(scene - 1); });
   forward.addEventListener('click', () => { void go(scene + 1); });
+  sideView.addEventListener('click', () => {
+    const item = hotspots.find(target => target.scene === scene);
+    if (item) openDetail(item);
+  });
   for (const item of hotspots) document.getElementById(item.id).addEventListener('click', () => openDetail(item));
   window.addEventListener('resize', layout);
   document.addEventListener('keydown', event => {
