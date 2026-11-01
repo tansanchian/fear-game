@@ -4,12 +4,11 @@ const CorridorEffects = (() => {
   const dimLayer = document.getElementById('corridor-dim');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const cues = {
-    laughter: { id: 'laughter', src: 'assets/children-laughter.mp3', volume: .12, caption: 'Faint children’s laughter echoes nearby.' },
-    buzz: { id: 'buzz', src: 'assets/electrical-buzz.mp3', volume: .13, caption: 'A faint electrical buzz comes from beside the flat.' },
+    laughter: { id: 'laughter', src: 'assets/children-laughter.mp3', volume: .12, caption: 'Faint children’s laughter echoes nearby.', onStarted: () => Discovery.rememberEffect('children-laughter') },
+    buzz: { id: 'buzz', src: 'assets/electrical-buzz.mp3', volume: .13, caption: 'A faint electrical buzz comes from beside the flat.', onStarted: () => Discovery.rememberEffect('electrical-buzz') },
     voices: { id: 'voices', src: 'assets/behind-door-voices.mp3', volume: .16, caption: 'Muffled voices behind you, then a soft click.', onStarted: () => Discovery.rememberEffect('filming-voices') },
   };
   let context = { introActive: true, turning: false, artifact: null };
-  let laughterThisVisit = false;
   let dimAnimation = null;
   const eligible = () => Discovery.day() === 2 && !context.introActive && !context.turning && !context.artifact && !Discovery.isOpen() && !document.hidden;
 
@@ -33,7 +32,6 @@ const CorridorEffects = (() => {
     photographs.style.setProperty('--corridor-saturation', String(1 - .35 * level));
     photographs.style.setProperty('--corridor-brightness', String(1 - .06 * level));
     photographs.style.setProperty('--corridor-coolness', String(.10 * level));
-    if (context.introActive || Discovery.day() !== 2) laughterThisVisit = false;
     if (!eligible()) cancelDim();
     CorridorAudio.update(context);
   }
@@ -41,18 +39,16 @@ const CorridorEffects = (() => {
     CorridorAudio.discardRetry();
     // Cancel the local dip when leaving that viewpoint, while audio may trail off.
     if (to !== 4) cancelDim();
-    if (to === 1) laughterThisVisit = false;
     if (!eligible()) return;
 
     if (to === 4 && (Discovery.hasCollected('power') || Discovery.hasCollected('powerClose'))) {
       dimOnce();
-      CorridorAudio.trigger(cues.buzz);
+      if (!Discovery.hasEffect('electrical-buzz')) CorridorAudio.trigger(cues.buzz);
     } else if (from === 4 && to === 3 && Discovery.hasCollected('filmRequest') && !Discovery.hasEffect('filming-voices')) {
       CorridorAudio.trigger(cues.voices);
-    } else if ((from === 1 || to === 1) && !laughterThisVisit && Discovery.hasCollected('murderArticle')) {
-      // Arrival and its following departure are one passage. A newly read article
-      // instead arms the first departure, without making any sound while reading.
-      laughterThisVisit = true;
+    } else if ((from === 1 || to === 1) && Discovery.hasCollected('murderArticle') && !Discovery.hasEffect('children-laughter')) {
+      // Discovery only unlocks this cue. The first subsequent passage plays it,
+      // and successful playback is remembered for the rest of this run.
       CorridorAudio.trigger(cues.laughter);
     }
   }

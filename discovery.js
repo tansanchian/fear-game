@@ -4,7 +4,7 @@ const Discovery = (() => {
   const evidence = Object.fromEntries(Object.entries(DAY_CONTENT).flatMap(([day, content]) =>
     Object.entries(content.evidence).map(([id, entry]) => [id, { ...entry, day: Number(day) }])));
   const hotspotIds = new Set(Object.values(DAY_CONTENT).flatMap(content => Object.keys(content.hotspots)));
-  const effectIds = new Set(['power-dim', 'filming-voices']);
+  const effectIds = new Set(['power-dim', 'filming-voices', 'children-laughter', 'electrical-buzz']);
   const freshState = () => ({ day: 1, phase: 'exploring', pass: 1, direction: 1, collected: [], unread: [], inspected: [], effectsSeen: [], day2Steps: 0, soundEnabled: true, warningSeen: false, snapshot: null, hintSeen: false });
   let state = freshState();
   try {
