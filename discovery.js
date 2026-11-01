@@ -57,6 +57,7 @@ const Discovery = (() => {
     return typeof rule === 'number' || evidence[id]?.day === state.day ? id : null;
   }
   function exhausted() {
+    if (state.day === 2 && MemoryJourney.phase() === 'complete') return false;
     const limit = DAY_CONTENT[state.day].inspectionLimit;
     return Number.isInteger(limit) && state.inspected.length >= limit;
   }
@@ -71,7 +72,9 @@ const Discovery = (() => {
     const limit = DAY_CONTENT[state.day].inspectionLimit;
     if (Number.isInteger(limit) && limit - state.inspected.length <= 2 && !state.warningSeen) {
       state.warningSeen = true;
-      notify('It’s getting late. You have time to look at a couple more things before heading home.', 7500);
+      notify(state.day === 1
+        ? 'It’s getting late. You have time to look at a couple more things before heading home.'
+        : 'Something about this block stays on your mind. You wonder what you might find online.', 7500);
     }
     persist();
   }
@@ -106,7 +109,6 @@ const Discovery = (() => {
   }
   function render({ introActive, busy, artifact, position, doorPromptOpen, inspecting }) {
     button.disabled = busy;
-    document.getElementById('memory-prompt').hidden = state.day !== 2 || state.pass < 3 || state.phase !== 'exploring' || introActive || busy || Boolean(artifact) || doorPromptOpen || inspecting || position !== 4;
     const canShowHint = state.day === 1 && state.phase === 'exploring' && !exhausted() && !introActive && !busy && !artifact && !doorPromptOpen && position === 4 && state.pass === 1;
     if (canShowHint && !state.hintSeen) {
       hintVisible = true;
@@ -116,11 +118,15 @@ const Discovery = (() => {
     if (!canShowHint) hintVisible = false;
     prompt.hidden = !hintVisible;
     updateBadge();
-    if (state.phase === 'exploring' && exhausted() && !introActive && !busy && (!artifact || artifact === 'flat' || artifact === 'map') && !inspecting && !dialog.open) {
-      state.phase = 'reflection';
-      persist();
+    if (state.phase === 'exploring' && exhausted() && !introActive && !busy && (!artifact || artifact === 'flat' || artifact === 'map') && !inspecting && !dialog.open && !conversationDialog.open) {
+      if (state.day === 1) { state.phase = 'reflection'; persist(); }
+      else if (MemoryJourney.phase() === 'idle') MemoryJourney.advance('prompt');
     }
     if (state.phase !== 'exploring' && !busy) showDayTransition();
+    if (state.day === 2 && MemoryJourney.active() && !busy) {
+      clearTimeout(toastTimer); toast.hidden = true;
+      MemoryTransition.sync();
+    }
   }
   function renderNotebook() {
     const groups = [...new Set(state.collected.map(id => `${evidence[id].day}:${evidence[id].group}`))];
@@ -179,7 +185,7 @@ const Discovery = (() => {
     document.getElementById('notebook-close').focus();
   }
   function open() {
-    if (resetting || button.disabled || dialog.open || conversationDialog.open) return;
+    if (resetting || button.disabled || dialog.open || conversationDialog.open || MemoryJourney.active()) return;
     returnFocus = document.activeElement;
     selected = null; detail.hidden = true; list.hidden = false;
     renderNotebook(); dialog.showModal();
@@ -206,7 +212,7 @@ const Discovery = (() => {
   document.getElementById('new-game').addEventListener('click', () => {
     resetting = true;
     state = freshState();
-    try { sessionStorage.removeItem('concrete-memories.imagined.v1'); } catch {}
+    MemoryJourney.reset();
     persist(); window.location.reload();
   });
   function showDayTransition() {
@@ -260,7 +266,7 @@ const Discovery = (() => {
     },
     soundEnabled: () => state.soundEnabled,
     setSoundEnabled(enabled) { state.soundEnabled = Boolean(enabled); persist(); },
-    day: () => state.day, isOpen: () => dialog.open || dayDialog.open || conversationDialog.open || state.phase !== 'exploring',
+    day: () => state.day, isOpen: () => dialog.open || dayDialog.open || conversationDialog.open || MemoryJourney.active() || state.phase !== 'exploring',
 
     init(config) { api = config; updateBadge(); return state.snapshot; } };
 })();

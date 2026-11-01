@@ -1,0 +1,20 @@
+.memory-transition { width: min(1120px, calc(100% - 32px)); max-height: calc(100svh - 32px); padding: 24px; border: 1px solid #dce6dc; border-radius: 18px; background: #f5f5ee; color: #18392c; overflow: auto; }
+.memory-transition::backdrop { background: #06130ff0; backdrop-filter: blur(12px); }
+.memory-transition[data-stage="prompt"] { width: min(440px, calc(100% - 32px)); }
+.memory-transition h2 { margin: 8px 0 16px; font-size: 22px; }
+.memory-transition p { font-size: 14px; line-height: 1.65; }
+.memory-transition button { font: inherit; cursor: pointer; }
+.memory-transition button:focus-visible { outline: 3px solid #ad7829; outline-offset: 3px; }
+.memory-transition .prompt-action { border: 0; padding: 13px 18px; }
+#phone-video { display: block; width: 100%; height: min(65svh, 720px); object-fit: contain; background: #09110e; border-radius: 10px; }
+.phone-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+.phone-secondary { border: 1px solid #a7b9ad; background: transparent; color: #214b38; border-radius: 8px; padding: 10px 14px; }
+.phone-post-scroll { overflow: auto; max-height: 65svh; background: #17221e; border-radius: 8px; }
+#phone-post-image { display: block; width: 100%; max-height: 65svh; object-fit: contain; }
+#phone-post-image.is-enlarged { width: 1175px; max-width: none; max-height: none; }
+#phone-video-status { margin-bottom: 0; }
+@media (max-width: 600px) {
+  .memory-transition { padding: 16px; width: calc(100% - 20px); max-height: calc(100svh - 20px); }
+  .memory-transition h2 { font-size: 19px; }
+  .phone-actions .prompt-action { flex: 1; text-align: center; }
+}

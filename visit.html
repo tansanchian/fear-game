@@ -6,10 +6,11 @@
     <meta name="theme-color" content="#162523" />
     <meta name="description" content="Explore five viewpoints along a residential corridor, its floor plan, and the flat entrance." />
     <title>The Visit — Concrete Memories</title>
-    <link rel="stylesheet" href="corridor.css?v=20261101-atmosphere-mix" />
-    <link rel="stylesheet" href="scene.css?v=20261101-atmosphere-mix" />
-    <link rel="stylesheet" href="discovery.css?v=20261101-atmosphere-mix" />
-    <link rel="stylesheet" href="neighbour-conversation.css?v=20261101-atmosphere-mix" />
+    <link rel="stylesheet" href="corridor.css?v=20261101-memory-flow" />
+    <link rel="stylesheet" href="scene.css?v=20261101-memory-flow" />
+    <link rel="stylesheet" href="memory-transition.css?v=20261101-memory-flow" />
+    <link rel="stylesheet" href="discovery.css?v=20261101-memory-flow" />
+    <link rel="stylesheet" href="neighbour-conversation.css?v=20261101-memory-flow" />
   </head>
   <body>
     <main class="explorer is-intro" id="explorer">
@@ -144,11 +145,28 @@
       <div class="discovery-toast" id="discovery-toast" role="status" hidden></div>
       <audio id="corridor-audio" preload="none"></audio>
       <div class="sound-caption glass" id="sound-caption" role="status" aria-live="polite" hidden></div>
-      <section class="journey-prompt glass" id="memory-prompt" aria-labelledby="memory-prompt-title" hidden>
-        <span class="eyebrow" id="memory-prompt-title">A LINGERING THOUGHT</span>
-        <p>You try to picture this block with no one living here. An empty corridor begins to take shape in your mind.</p>
-        <a class="prompt-action" href="hallucination.html?start=1">Follow the thought <span aria-hidden="true">→</span></a>
-      </section>
+      <dialog class="memory-transition" id="memory-transition" aria-labelledby="memory-transition-title">
+        <span class="eyebrow">A LINGERING THOUGHT</span>
+        <h2 id="memory-transition-title">A question that won’t leave you</h2>
+        <section id="memory-stage-prompt">
+          <p>The details you’ve noticed keep coming back to you. Before going any further, you decide to look up the block.</p>
+          <button class="prompt-action" id="phone-search" type="button">Search on your phone</button>
+        </section>
+        <section id="memory-stage-phone" hidden>
+          <video id="phone-video" src="assets/hallucination_transition.mp4" poster="assets/hallucination-phone-poster.jpg" controls playsinline preload="metadata" aria-label="Taking out your phone to search for the block"></video>
+          <p id="phone-video-status" role="status">You search for stories about this place.</p>
+          <div class="phone-actions"><button class="prompt-action" id="phone-read-post" type="button">Read the post</button></div>
+        </section>
+        <section id="memory-stage-post" hidden>
+          <div class="phone-post-scroll"><img id="phone-post-image" alt="An online post about the Toa Payoh ritual murders, with portraits and discussion" /></div>
+          <div id="phone-post-error" role="alert" hidden><p>The post could not load. Try again, or put the phone away to continue.</p><button class="phone-secondary" id="phone-post-retry" type="button">Try again</button></div>
+          <p>You look up from the screen, but the story stays with you. For a moment, you imagine the block empty.</p>
+          <div class="phone-actions">
+            <button class="phone-secondary" id="phone-post-zoom" type="button" aria-pressed="false">Enlarge image</button>
+            <button class="prompt-action" id="phone-put-away" type="button">Put phone away</button>
+          </div>
+        </section>
+      </dialog>
       <dialog class="day-transition" id="day-transition" aria-labelledby="day-transition-title" aria-describedby="day-transition-copy">
         <span class="eyebrow" id="day-transition-label">DAY 1 · EVENING</span>
         <h2 id="day-transition-title">Time to head home</h2>
@@ -193,11 +211,13 @@
       </dialog>
       <div class="sr-only" id="announcement" role="status" aria-live="polite"></div>
     </main>
-    <script src="day-content.js?v=20261101-atmosphere-mix"></script>
-    <script src="discovery.js?v=20261101-atmosphere-mix"></script>
-    <script src="corridor-audio.js?v=20261101-atmosphere-mix"></script>
-    <script src="corridor-effects.js?v=20261101-atmosphere-mix"></script>
-    <script src="neighbour-conversation.js?v=20261101-atmosphere-mix"></script>
-    <script src="app.js?v=20261101-atmosphere-mix"></script>
+    <script src="memory-journey.js?v=20261101-memory-flow"></script>
+    <script src="day-content.js?v=20261101-memory-flow"></script>
+    <script src="discovery.js?v=20261101-memory-flow"></script>
+    <script src="corridor-audio.js?v=20261101-memory-flow"></script>
+    <script src="corridor-effects.js?v=20261101-memory-flow"></script>
+    <script src="neighbour-conversation.js?v=20261101-memory-flow"></script>
+    <script src="memory-transition.js?v=20261101-memory-flow"></script>
+    <script src="app.js?v=20261101-memory-flow"></script>
   </body>
 </html>

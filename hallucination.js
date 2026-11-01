@@ -1,6 +1,13 @@
 // A separate imagined sequence: it never records evidence or spends day inspections.
 const MemoryWalk = (() => {
   const storageKey = 'concrete-memories.imagined.v1';
+  const url = new URL(window.location.href);
+  if (!MemoryJourney.persistent() && url.searchParams.has('start')) {
+    for (const phase of ['prompt', 'phone', 'post', 'walk']) MemoryJourney.advance(phase);
+  }
+  if (MemoryJourney.phase() !== 'walk') { location.replace('visit.html'); return; }
+  const visited = new Set();
+  const explored = () => [0, 1, 2, 3, 4].every(stop => visited.has(stop));
   const root = document.getElementById('memory');
   const view = document.getElementById('view');
   const photo = document.getElementById('view-photo');
@@ -33,13 +40,20 @@ const MemoryWalk = (() => {
   let detailOpener = null;
   const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const source = index => index === -1 ? 'assets/hallucination-lobby.jpg' : `assets/hallucination-stop-${String(index + 1).padStart(2, '0')}.jpg`;
-  function save() { try { sessionStorage.setItem(storageKey, JSON.stringify({ scene })); } catch {} }
-  const url = new URL(window.location.href);
+  function save() { try { sessionStorage.setItem(storageKey, JSON.stringify({ scene, visited: [...visited] })); } catch {} }
   if (url.searchParams.has('start')) {
     try { sessionStorage.removeItem(storageKey); } catch {}
-    url.searchParams.delete('start'); history.replaceState(null, '', url);
+    if (MemoryJourney.persistent()) { url.searchParams.delete('start'); history.replaceState(null, '', url); }
   } else {
-    try { const saved = JSON.parse(sessionStorage.getItem(storageKey)); if (Number.isInteger(saved?.scene) && saved.scene >= -2 && saved.scene <= 4) scene = saved.scene; } catch {}
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(storageKey));
+      if (Number.isInteger(saved?.scene) && saved.scene >= -2 && saved.scene <= 4) {
+        scene = saved.scene;
+        for (const stop of Array.isArray(saved.visited) ? saved.visited : []) {
+          if (Number.isInteger(stop) && stop >= 0 && stop <= 4) visited.add(stop);
+        }
+      }
+    } catch {}
   }
   function layout() {
     if (scene === -2) return;
@@ -62,7 +76,7 @@ const MemoryWalk = (() => {
     arrival.hidden = scene !== -2; photo.hidden = scene === -2;
     prompt.hidden = busy || (scene >= 0 && scene < 4);
     nextButton.hidden = scene === 4;
-    document.getElementById('scene-exit').hidden = scene !== 4;
+    document.getElementById('scene-exit').hidden = scene !== 4 || !explored();
     nextButton.disabled = busy || (scene === -2 && !ready);
     back.hidden = scene < 0; back.disabled = busy;
     forward.hidden = scene < 0 || scene === 4; forward.disabled = busy;
@@ -70,7 +84,7 @@ const MemoryWalk = (() => {
     for (const item of hotspots) document.getElementById(item.id).hidden = busy || item.scene !== scene;
     document.getElementById('scene-label').textContent = scene === -2 ? 'AN IMAGINED MEMORY' : scene === -1 ? 'THE LIFT LOBBY' : 'A FADING IMPRESSION';
     document.getElementById('scene-title').textContent = scene === -2 ? ready ? 'The doors are open' : 'The doors are opening' : scene === -1 ? 'The lift looks different' : 'The image begins to fade';
-    document.getElementById('scene-copy').textContent = scene === -2 ? 'In your mind, the block becomes a place everyone has left behind.' : scene === -1 ? 'The familiar doors give way to an older lift. Its floor display catches your eye.' : 'You have been picturing a place emptied of its residents. Take another look, or return to the corridor.';
+    document.getElementById('scene-copy').textContent = scene === -2 ? 'In your mind, the block becomes a place everyone has left behind.' : scene === -1 ? 'The familiar doors give way to an older lift. Its floor display catches your eye.' : explored() ? 'You have been picturing a place emptied of its residents. The familiar corridor slowly comes back into focus.' : 'There is more of this place to explore. Walk back through the corridor before returning.';
     nextButton.textContent = scene === -2 ? 'Step out of the lift' : 'Walk into the corridor';
     layout();
   }
@@ -81,7 +95,7 @@ const MemoryWalk = (() => {
     catch { ready = true; render(); announcement.textContent = 'The lift video is paused. You can step out to continue.'; }
   }
   async function go(next) {
-    if (busy || dialog.open || !Number.isInteger(next) || next < -1 || next > 4 || next === scene || (scene === -2 && !ready)) return;
+    if (busy || dialog.open || !Number.isInteger(next) || next < -1 || next > 4 || Math.abs(next - scene) !== 1 || (scene === -2 && !ready)) return;
     busy = true; error.hidden = true; render();
     const preload = new Image(); preload.src = source(next);
     try { await preload.decode(); }
@@ -96,9 +110,10 @@ const MemoryWalk = (() => {
     render();
     const incoming = view.animate([{ opacity: 0, transform: next > old ? 'scale(.97)' : 'scale(1.04)' }, { opacity: 1, transform: 'scale(1)' }], { duration, fill: 'forwards', easing: 'ease-out' });
     out.cancel(); await incoming.finished.catch(() => {}); incoming.cancel();
+    if (scene >= 0) visited.add(scene);
     busy = false; render(); save();
     announcement.textContent = scene === -1 ? 'The lift looks different. Inspect its display or enter the corridor.' : `Along the imagined corridor. View ${scene + 1}.`;
-    (scene === -1 ? nextButton : scene === 4 ? document.getElementById('scene-exit') : forward).focus({ preventScroll: true });
+    (scene === -1 ? nextButton : scene === 4 ? explored() ? document.getElementById('scene-exit') : back : forward).focus({ preventScroll: true });
   }
   function openDetail(item) {
     if (busy || dialog.open || item.scene !== scene) return;
@@ -123,6 +138,13 @@ const MemoryWalk = (() => {
   detailImage.addEventListener('error', () => { if (dialog.open && !detailImage.hidden) document.getElementById('detail-error').hidden = false; });
   arrival.addEventListener('ended', () => { ready = true; arrival.pause(); render(); });
   arrival.addEventListener('error', () => { ready = true; render(); announcement.textContent = 'The opening video could not load. You can still step out of the lift.'; });
+  document.getElementById('scene-exit').addEventListener('click', async () => {
+    if (busy || dialog.open || scene !== 4 || !explored()) return;
+    if (!MemoryJourney.advance('complete')) return;
+    busy = true; render(); save();
+    await root.animate([{ opacity: 1 }, { opacity: 0 }], { duration: reduced() ? 1 : 450, fill: 'forwards' }).finished.catch(() => {});
+    location.replace(MemoryJourney.persistent() ? 'visit.html' : 'visit.html?memory=complete');
+  });
   nextButton.addEventListener('click', () => { void go(scene + 1); });
   back.addEventListener('click', () => { void go(scene - 1); });
   forward.addEventListener('click', () => { void go(scene + 1); });
@@ -139,7 +161,7 @@ const MemoryWalk = (() => {
     else {
       photo.src = source(scene); backdrop.src = photo.src;
       photo.alt = scene === -1 ? 'An older lift in an unfamiliar lobby' : `View ${scene + 1} along the empty corridor`;
-      try { await photo.decode(); } catch { error.hidden = false; }
+      try { await photo.decode(); if (scene >= 0) visited.add(scene); save(); } catch { error.hidden = false; }
       render();
     }
   }

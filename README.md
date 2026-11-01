@@ -12,7 +12,13 @@ The pages follow this order: `index.html` → `act-1.html` → `agent.html` → 
 
 ## Imagined corridor
 
-`hallucination.html` is the abandoned-block sequence, styled by `hallucination.css` and controlled by `hallucination.js`. For now, “Follow the thought” appears at the final Day 2 stop after the return walks. It is a temporary bridge while the phone search and stories are still to be added. Those scenes can later lead to `hallucination.html?start=1`, which starts the sequence afresh. Opening `hallucination.html` without that parameter resumes its saved viewpoint.
+After **six distinct Day 2 inspections**, the player finishes their current note, image or conversation before a phone-search prompt appears. Repeat inspections, walking and notebook review do not count. With two inspections remaining, a subtle thought about searching online appears; there is no visible counter.
+
+“Search on your phone” plays `assets/hallucination_transition.mp4`. When the clip ends (or the player selects “Read the post”), it opens `assets/hallucination_reddit.png`, with image enlargement for reading. “Put phone away” or Escape from the post fades into `hallucination.html`. There is no optional corridor-end shortcut. Video controls remain available if autoplay is blocked; reduced-motion mode leaves the clip paused. Failed media loads offer a way to continue, and the post can be retried.
+
+`memory-transition.js` and `memory-transition.css` handle these scenes. `memory-journey.js` shares their progress with the imagined corridor using `concrete-memories.memory-journey.v1`: idle → prompt → phone → post → walk → complete. Refresh resumes the current stage (the phone clip restarts if interrupted). Reopening the visit during an unfinished imagined walk resumes that walk. Browser navigation itself is not blocked. New game resets the sequence.
+
+`hallucination.html` is the abandoned-block sequence, styled by `hallucination.css` and controlled by `hallucination.js`. The phone handoff starts it at the lift; later visits resume its saved viewpoint. Direct entry without an active sequence returns to the real visit.
 
 The original lift-door opening plays and pauses. “Step out of the lift” transitions to an unfamiliar lift lobby, where a short prompt points out the change. The floor display is clickable and plays `hallucination_lift_close.mp4`. “Walk into the corridor” leads through five distinct stills with quick walking transitions, forward/back buttons and up/down arrow keys.
 
@@ -23,7 +29,7 @@ The original lift-door opening plays and pauses. “Step out of the lift” tran
 | Corridor stop 3 | Void deck photograph, through the outdoor opening |
 | Corridor stop 5 | Closed gate photograph, by the yellow gate sign |
 
-Each side scene has Back and Escape support. Videos have native playback controls and pause when closed. The final stop offers a return to the real corridor; the return link is also available throughout. Day progress, evidence and inspection allowance are unaffected. This imagined sequence uses a separate session-storage key, cleared by New game. Reduced-motion mode skips automatic video playback and shortens transitions. Images retain their full framing so mobile users can reach the same hotspots.
+Each side scene has Back and Escape support. Videos have native playback controls and pause when closed. The return button appears only at the final stop after all five corridor viewpoints have been visited; there is no return shortcut elsewhere. Players may backtrack and inspect side scenes, whose Back buttons close only that detail. Returning restores the real corridor position and notebook. Day 2 exploration can then continue without triggering the phone sequence again. This imagined sequence uses a separate session-storage key, cleared by New game. Reduced-motion mode skips automatic video playback and shortens transitions. Images retain their full framing so mobile users can reach the same hotspots.
 
 `hallucination-stop-01.jpg` through `hallucination-stop-05.jpg` were extracted from `hallucination_corridor.mp4` at 0.5, 5, 9.5, 14 and 16.8 seconds. The final frame precedes the passerby visible later in the source. `hallucination-lobby.jpg` comes from `hallucination_lift.mp4` at 1.5 seconds. The two detail-video posters are first-frame extracts. The source clips and the gate/void-deck uploads are preserved. Hotspot locations and side-scene mappings are in `hallucination.js`.
 
@@ -37,7 +43,7 @@ After the eighth inspection, the player can finish reading. Closing the last not
 
 Day 2 starts with fresh inspections, reveal progress and camera state. **Day 1 artifacts are no longer interactable**, whether collected or missed. The notebook retains collected Day 1 entries with day labels; missed evidence is never added. The floor plan and flat entrance remain shared navigation. Physical objects already in the base photographs stay visible.
 
-The separate artifact sets and inspection limits are configured in `day-content.js`. Day 2 currently has six dummy objects, a newspaper article, a neighbour conversation and no cutoff. To add an artifact, give it a unique ID in that day's `evidence`, register its button and reveal pass in `hotspots`, and add its image/view and hotspot coordinates in `app.js` and `visit.html`. Dummy objects only need a numeric hotspot rule and a scene hotspot. Never reuse a Day 1 evidence ID for different Day 2 content: notebook images must remain accurate.
+The separate artifact sets and inspection limits are configured in `day-content.js`. Day 2 currently has six dummy objects, a newspaper article and a neighbour conversation. Its `inspectionLimit: 6` starts the phone/imagined-corridor sequence; after completing that sequence, the remaining Day 2 objects can be explored freely. To add an artifact, give it a unique ID in that day's `evidence`, register its button and reveal pass in `hotspots`, and add its image/view and hotspot coordinates in `app.js` and `visit.html`. Dummy objects only need a numeric hotspot rule and a scene hotspot. Never reuse a Day 1 evidence ID for different Day 2 content: notebook images must remain accurate.
 
 The active day, story phase, inspection history, warning and notebook survive refreshes in the same tab. Refresh during the final image keeps it readable; refresh during a story card returns to that card. Older saves retain their discoveries and count already recorded evidence as inspected. “New game” resets both days and the notebook.
 
