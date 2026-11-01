@@ -131,7 +131,7 @@ const MemoryWalk = (() => {
   }
   async function go(next) {
     if (GameEnding.active() || busy || dialog.open || notebookDialog.open || !Number.isInteger(next) || next < -1 || next > 4 || Math.abs(next - scene) !== 1 || (scene === -2 && !ready)) return;
-    MemoryAtmosphere.stop();
+    MemoryAtmosphere.moving();
     busy = true; error.hidden = true; render();
     const preload = new Image(); preload.src = source(next);
     try { await preload.decode(); }

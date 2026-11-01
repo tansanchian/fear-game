@@ -5,10 +5,10 @@ const MemoryAtmosphere = (() => {
   const buttons = ['memory-sound', 'detail-sound'].map(id => document.getElementById(id));
   const captions = ['memory-sound-caption', 'detail-sound-caption'].map(id => document.getElementById(id));
   const cues = {
-    'read-article1': { src: 'assets/memory-radio.mp3', volume: .25, rate: 1, scope: 'reading', caption: 'A dry rustle, then a thin burst of radio static.' },
-    'read-article2': { src: 'assets/memory-radio.mp3', volume: .22, rate: .85, scope: 'reading', caption: 'A low radio-like murmur fades into static.' },
-    'past-article1': { src: 'assets/memory-footsteps.mp3', volume: .28, rate: 1, scope: 'walking', caption: 'A footstep echoes behind you. The corridor is empty.' },
-    'past-article2': { src: 'assets/memory-footsteps.mp3', volume: .24, rate: .9, scope: 'walking', caption: 'Another footstep, just after yours. Then silence.' },
+    'read-article1': { src: 'assets/memory-radio.mp3?v=20261102-stronger-cues', volume: .55, rate: 1, scope: 'reading', caption: 'Paper crackles. A radio-like murmur cuts through the silence, then dissolves into static.' },
+    'read-article2': { src: 'assets/memory-radio.mp3?v=20261102-stronger-cues', volume: .52, rate: .85, scope: 'reading', caption: 'A low radio-like murmur swells, breaks into static, and falls quiet.' },
+    'past-article1': { src: 'assets/memory-footsteps.mp3?v=20261102-stronger-cues', volume: .65, rate: 1, scope: 'walking', caption: 'Three slow footsteps echo behind you. The corridor is empty.' },
+    'past-article2': { src: 'assets/memory-footsteps.mp3?v=20261102-stronger-cues', volume: .60, rate: .9, scope: 'walking', caption: 'Heavy footsteps follow yours. The last echo hangs in the corridor.' },
   };
   let enabled = true;
   try { enabled = JSON.parse(sessionStorage.getItem('concrete-memories.discovery.v1'))?.soundEnabled !== false; } catch {}
@@ -34,6 +34,12 @@ const MemoryAtmosphere = (() => {
     version += 1; cue = null; blocked = false; starting = false;
     audio.pause(); delete audio.dataset.cue;
     dipAnimation?.cancel(); caption(''); renderButtons();
+  }
+  function moving() {
+    dipAnimation?.cancel();
+    // Let an audible footstep sequence finish across subsequent walking steps.
+    // Failed or pending attempts still expire when the player leaves the area.
+    if (!cue || cue.scope !== 'walking' || blocked || starting || audio.paused) stop();
   }
   async function play() {
     if (!enabled || !eligible() || starting) return;
@@ -92,7 +98,7 @@ const MemoryAtmosphere = (() => {
   window.addEventListener('pagehide', stop);
   matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', event => { if (event.matches) dipAnimation?.cancel(); });
   return {
-    init(config) { api = config; renderButtons(); }, stop, trigger, dip,
+    init(config) { api = config; renderButtons(); }, stop, moving, trigger, dip,
     soundEnabled: () => enabled,
     validEffect: id => Object.hasOwn(cues, id) || ['dim-memoryArticle1', 'dim-memoryArticle2'].includes(id),
     grade(count) {
