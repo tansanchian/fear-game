@@ -38,6 +38,13 @@ const Discovery = (() => {
 
   function persist() {
     try { sessionStorage.setItem(storageKey, JSON.stringify(state)); } catch { /* In-memory fallback. */ }
+    if (typeof ParticipantData !== 'undefined') ParticipantData.update({
+      day: state.day,
+      notebook: [...state.collected],
+      inspected: [...state.inspected],
+      effectsSeen: [...state.effectsSeen],
+      corridor: { phase: state.phase, pass: state.pass, direction: state.direction, day2Steps: state.day2Steps },
+    });
   }
   function save(snapshot) { if (resetting) return; state.snapshot = snapshot; persist(); }
   function available(id) {
@@ -65,6 +72,7 @@ const Discovery = (() => {
     const key = inspectionId(id);
     if (!key || !canInspect(id) || state.inspected.includes(key)) return;
     state.inspected.push(key);
+    if (typeof ParticipantData !== 'undefined') ParticipantData.track('item_inspected', { id: key, day: state.day });
     const limit = DAY_CONTENT[state.day].inspectionLimit;
     if (Number.isInteger(limit) && limit - state.inspected.length <= 2 && !state.warningSeen) {
       state.warningSeen = true;
@@ -91,6 +99,7 @@ const Discovery = (() => {
     state.collected.push(id);
     state.unread.push(id);
     persist();
+    if (typeof ParticipantData !== 'undefined') ParticipantData.track('notebook_item_added', { id, day: state.day });
     updateBadge();
     notify(id === 'powerClose' ? 'Notebook updated · Meter number' : `Added to notebook · ${evidence[id].title}`);
     inspect(id);
@@ -102,6 +111,7 @@ const Discovery = (() => {
     } else if (state.pass === 2 && from === 0 && to === 1) {
       state.pass = 3; state.direction = 1;
     }
+    if (typeof ParticipantData !== 'undefined') ParticipantData.track('corridor_moved', { day: state.day, from: from + 1, to: to + 1, pass: state.pass });
   }
   function render({ introActive, busy, artifact, position, doorPromptOpen, inspecting }) {
     button.disabled = busy;
@@ -122,6 +132,7 @@ const Discovery = (() => {
   function open() {
     if (resetting || button.disabled || dialog.open || conversationDialog.open || doorDialog.open || MemoryJourney.active()) return;
     notebook.open();
+    if (typeof ParticipantData !== 'undefined') ParticipantData.track('notebook_opened', { day: state.day, items: state.collected.length });
     state.unread = []; persist(); updateBadge();
     api.refresh();
   }
@@ -169,6 +180,7 @@ const Discovery = (() => {
       dayDialog.close();
       state = { ...freshState(), day: 2, collected: state.collected, unread: state.unread, soundEnabled: state.soundEnabled };
       persist();
+      if (typeof ParticipantData !== 'undefined') ParticipantData.track('day_started', { day: 2 });
       resetting = false;
       nextButton.disabled = false;
       api.restartDay();

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101412" />
+    <title>Response Dashboard — Concrete Memories</title>
+    <link rel="stylesheet" href="dashboard.css?v=20261102-participants" />
+  </head>
+  <body>
+    <main class="dashboard-shell">
+      <header class="dashboard-header">
+        <div><p class="eyebrow">CONCRETE MEMORIES</p><h1>Response dashboard</h1><p class="dashboard-intro">A consolidated view of participant journeys saved in this browser.</p></div>
+        <div class="dashboard-actions">
+          <button id="export-json" type="button">Export JSON</button>
+          <label class="import-button">Import JSON<input id="import-json" type="file" accept="application/json,.json" /></label>
+        </div>
+      </header>
+
+      <p class="dashboard-status" id="dashboard-status" role="status"></p>
+
+      <section class="metrics" aria-label="Response summary">
+        <article><span>Responses</span><strong id="metric-total">0</strong></article>
+        <article><span>Completed</span><strong id="metric-complete">0</strong></article>
+        <article><span>Would buy</span><strong id="metric-buy">0</strong></article>
+        <article><span>Would not buy</span><strong id="metric-pass">0</strong></article>
+        <article><span>Average notebook</span><strong id="metric-notebook">0</strong></article>
+      </section>
+
+      <section class="decision-panel" aria-labelledby="decision-title">
+        <div class="section-heading"><div><p class="eyebrow">FINAL DECISION</p><h2 id="decision-title">What participants chose</h2></div><span id="decision-caption"></span></div>
+        <div class="decision-bar" aria-hidden="true"><span id="buy-bar"></span><span id="pass-bar"></span></div>
+        <div class="decision-key"><span><i class="buy-dot"></i>Buy</span><span><i class="pass-dot"></i>Do not buy</span></div>
+      </section>
+
+      <section aria-labelledby="responses-title">
+        <div class="section-heading"><div><p class="eyebrow">INDIVIDUAL JOURNEYS</p><h2 id="responses-title">Participant responses</h2></div><label class="filter-label">Show <select id="response-filter"><option value="all">All responses</option><option value="complete">Completed only</option><option value="in-progress">In progress only</option></select></label></div>
+        <p class="empty-state" id="empty-state">No responses have been recorded in this browser yet.</p>
+        <div class="response-list" id="response-list"></div>
+      </section>
+    </main>
+    <template id="response-template">
+      <article class="response-card">
+        <header><div><h3 class="response-name"></h3><p class="response-meta"></p></div><span class="response-status"></span></header>
+        <div class="response-grid">
+          <section><h4>Final choice</h4><p class="response-choice"></p></section>
+          <section><h4>Notebook</h4><p class="response-notebook-count"></p><ul class="tag-list response-notebook"></ul></section>
+          <section class="response-comment-section"><h4>Comment</h4><blockquote class="response-comment"></blockquote></section>
+          <details><summary>Activity journey</summary><ol class="activity-list"></ol></details>
+        </div>
+      </article>
+    </template>
+    <script src="participant-data.js?v=20261102-participants"></script>
+    <script src="dashboard.js?v=20261102-participants"></script>
+  </body>
+</html>

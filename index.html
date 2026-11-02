@@ -4,12 +4,32 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Concrete Memories</title>
-    <link rel="stylesheet" href="styles.css?v=20261101-intro" />
+    <link rel="stylesheet" href="styles.css?v=20261102-participants" />
   </head>
   <body>
     <main>
       <h1>Concrete Memories</h1>
-      <a class="button" href="intro.html">Start</a>
+      <form class="start-form" id="start-form">
+        <label for="participant-name">Before you begin, what should we call you?</label>
+        <input id="participant-name" name="participantName" type="text" maxlength="80" autocomplete="name" required placeholder="Your name" />
+        <button class="button" type="submit">Start</button>
+        <p class="start-note">Your interactions and final reflection will be recorded for this project.</p>
+        <p class="start-error" id="start-error" role="alert" hidden></p>
+      </form>
     </main>
+    <script src="participant-data.js?v=20261102-participants"></script>
+    <script>
+      document.getElementById('start-form').addEventListener('submit', event => {
+        event.preventDefault();
+        const error = document.getElementById('start-error');
+        try {
+          ParticipantData.start(event.currentTarget.elements.participantName.value);
+          location.href = 'intro.html';
+        } catch (problem) {
+          error.textContent = problem.message;
+          error.hidden = false;
+        }
+      });
+    </script>
   </body>
 </html>

@@ -92,12 +92,14 @@ const GameEnding = (() => {
     const choice = form.elements.choice.value;
     if (!['buy', 'pass'].includes(choice)) return;
     state = { stage: 'done', choice, thoughts: thoughts.value.slice(0, 1200) };
+    if (typeof ParticipantData !== 'undefined') ParticipantData.finish(choice, state.thoughts);
     save(); MemoryJourney.advance('complete'); stopRing(); show();
   });
   document.getElementById('ending-restart').addEventListener('click', () => {
     if (state.stage !== 'done' || restarting) return;
     restarting = true; stopRing(); MemoryJourney.reset();
     try { sessionStorage.removeItem('concrete-memories.discovery.v1'); } catch {}
+    if (typeof ParticipantData !== 'undefined') ParticipantData.endRun();
     location.replace('index.html');
   });
   dialog.addEventListener('cancel', event => event.preventDefault());

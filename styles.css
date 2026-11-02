@@ -43,6 +43,52 @@ main:not(.listing-page) h1 {
   background: white;
 }
 
+.start-form {
+  display: grid;
+  width: min(100%, 360px);
+  gap: 12px;
+  text-align: left;
+}
+
+.start-form label {
+  color: #ddd;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.start-form input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 13px;
+  border: 1px solid #777;
+  border-radius: 0;
+  color: white;
+  background: #111;
+  font: inherit;
+}
+
+.start-form input:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 3px;
+}
+
+.start-form .button {
+  min-height: 48px;
+  background: black;
+  font: inherit;
+  cursor: pointer;
+}
+
+.start-note,
+.start-error {
+  margin: 0;
+  color: #999;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.start-error { color: #ffb1b1; }
+
 .listing-page {
   width: min(100%, 1180px);
   margin: 0 auto;

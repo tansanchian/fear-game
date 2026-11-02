@@ -10,6 +10,14 @@ The visit page uses a shared version query on its scripts and styles to avoid mi
 
 The pages follow this order: `index.html` → `intro.html` → `act-1.html` → `agent.html` → `visit.html`. The introduction establishes the two-day decision and explains movement, interactive objects and the notebook. The landing, introduction, listing, and agent pages use `styles.css`; the corridor explorer uses `corridor.css` and `scene.css`.
 
+## Participant responses and dashboard
+
+The landing page asks for a participant name before starting. Each run is stored as one JSON record in browser `localStorage` under `concrete-memories.responses.v1`. The record includes the participant name, start and completion times, notebook discoveries, inspected corridor items, imagined-corridor notes, final buy/pass choice, optional written comment, and a compact activity timeline. The current run ID stays in `sessionStorage`, so different tabs can keep their own active run while contributing to the same browser database.
+
+Open `dashboard.html` to view totals, the buy/pass split, average notebook size, comments and individual journeys. The dashboard can export the full JSON database and import files from other devices; imports merge by response ID and retain the newest copy.
+
+GitHub Pages is static and cannot append to a JSON file on the server. The current implementation therefore collects responses only in the browser being used. To collect automatically from participants on different devices, connect the methods in `participant-data.js` to a hosted database or form endpoint. The response shape and dashboard can remain unchanged.
+
 ## Imagined corridor
 
 After **six distinct Day 2 inspections**, the player finishes their current note, image or conversation before a clickable Reddit post preview appears. Repeat inspections, walking and notebook review do not count. With two Day 2 inspections remaining, a subtle thought about searching online appears; there is no visible counter.

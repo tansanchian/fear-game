@@ -58,7 +58,14 @@ const MemoryWalk = (() => {
   let imageRequest = 0;
   const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const source = index => index === -1 ? 'assets/hallucination-lobby.jpg' : `assets/hallucination-stop-${String(index + 1).padStart(2, '0')}.jpg`;
-  function save() { if (MemoryJourney.phase() === 'idle') return; try { sessionStorage.setItem(storageKey, JSON.stringify({ scene, visited: [...visited], collected: [...collected], effectsSeen: [...effectsSeen] })); } catch {} }
+  function save() {
+    if (MemoryJourney.phase() === 'idle') return;
+    try { sessionStorage.setItem(storageKey, JSON.stringify({ scene, visited: [...visited], collected: [...collected], effectsSeen: [...effectsSeen] })); } catch {}
+    if (typeof ParticipantData !== 'undefined') ParticipantData.update({
+      imaginedNotebook: [...collected],
+      imaginedCorridor: { scene, visited: [...visited], effectsSeen: [...effectsSeen] },
+    });
+  }
   if (url.searchParams.has('start') && MemoryJourney.phase() === 'walk') {
     try { sessionStorage.removeItem(storageKey); } catch {}
     if (MemoryJourney.persistent()) { url.searchParams.delete('start'); history.replaceState(null, '', url); }
@@ -147,6 +154,7 @@ const MemoryWalk = (() => {
     const incoming = view.animate([{ opacity: 0, transform: next > old ? 'scale(.97)' : 'scale(1.04)' }, { opacity: 1, transform: 'scale(1)' }], { duration, fill: 'forwards', easing: 'ease-out' });
     out.cancel(); await incoming.finished.catch(() => {}); incoming.cancel();
     if (scene >= 0) visited.add(scene);
+    if (typeof ParticipantData !== 'undefined') ParticipantData.track('imagined_corridor_moved', { from: old, to: scene });
     busy = false; render(); save();
     announcement.textContent = scene === -1 ? 'The lift looks different. Inspect its display or enter the corridor.' : `Along the imagined corridor. View ${scene + 1}.`;
     for (const [id, stop, cue] of [['memoryArticle1', 1, 'past-article1'], ['memoryArticle2', 4, 'past-article2']]) {
@@ -187,6 +195,7 @@ const MemoryWalk = (() => {
     if (id) {
       const fresh = !collected.has(id);
       collected.add(id); save(); render();
+      if (fresh && typeof ParticipantData !== 'undefined') ParticipantData.track('imagined_notebook_item_added', { id });
       detailNote.textContent = `${fresh ? 'Added to notebook' : 'In your notebook'} · Imagined corridor`;
       detailNote.hidden = false;
       if (fresh && id !== 'memoryArticle2Close') MemoryAtmosphere.trigger(id === 'memoryArticle1' ? 'read-article1' : 'read-article2');
