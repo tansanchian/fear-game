@@ -13,20 +13,21 @@ button:focus-visible, a:focus-visible { outline: 3px solid #e8b75d; outline-offs
 #view-photo { filter: saturate(var(--memory-saturation, 1)) brightness(var(--memory-brightness, 1)); transition: filter 4s ease; }
 #memory-dim { position: absolute; background: radial-gradient(ellipse at 50% 45%, #09232544, #021516); opacity: 0; pointer-events: none; }
 .glass { background: rgba(249,250,244,.94); border: 1px solid #ffffffb8; box-shadow: 0 8px 30px #10291e26; backdrop-filter: blur(14px); }
-.scene-prompt { position: absolute; bottom: 28px; left: 24px; width: min(330px, calc(100% - 48px)); padding: 20px; border-radius: 18px; z-index: 3; }
+.scene-prompt { position: absolute; bottom: 28px; left: 24px; width: min(330px, calc(100% - 48px)); padding: 20px; border: 1px solid white; border-radius: 0; z-index: 3; color: white; background: rgba(0,0,0,.88); box-shadow: none; backdrop-filter: none; }
 #memory[data-scene="end"] .scene-prompt { bottom: 90px; }
+.scene-prompt .eyebrow { color: white; }
 .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0; color: #222; }
 h1 { margin: 8px 0; font-size: 20px; line-height: 1.25; }
 .scene-prompt p { font-size: 13px; line-height: 1.6; margin: 8px 0 16px; }
 .action { display: block; border: 0; width: 100%; border-radius: 9px; padding: 12px; text-align: center; background: #245e43; color: white; text-decoration: none; font-size: 12px; font-weight: 750; }
 .action:disabled { opacity: .55; cursor: wait; }
-.back-button { position: absolute; bottom: 24px; left: 24px; width: 48px; height: 48px; border-radius: 14px; font-size: 26px; color: #245e43; z-index: 4; }
-.forward-button { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 58px; height: 58px; border-radius: 50%; background: #245e43e6; color: white; font-size: 42px; line-height: 1; z-index: 4; }
+.scene-prompt .action { border: 1px solid white; border-radius: 0; color: white; background: black; }
+.scene-prompt .action:hover, .scene-prompt .action:focus-visible { color: black; background: white; }
+.back-button { position: absolute; bottom: 24px; left: 24px; width: 48px; height: 48px; border: 1px solid white; border-radius: 0; font-size: 26px; color: white; background: rgba(0,0,0,.88); box-shadow: none; backdrop-filter: none; z-index: 4; }
+.forward-button { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 58px; height: 58px; border: 1px solid white; border-radius: 0; background: rgba(0,0,0,.88); box-shadow: none; backdrop-filter: none; color: white; font-size: 42px; line-height: 1; z-index: 4; }
+.back-button:hover, .back-button:focus-visible, .forward-button:hover, .forward-button:focus-visible { color: black; background: white; }
 .forward-button span { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); padding: 7px 10px; border: 1px solid white; border-radius: 0; background: #000e; color: white; font-size: 12px; font-weight: 700; white-space: nowrap; text-transform: none; letter-spacing: 0; }
-.walk-hint { position: absolute; right: 24px; top: 84px; margin: 0; padding: 12px 15px; border-radius: 12px; max-width: 300px; font-size: 12px; pointer-events: none; z-index: 3; }
-.memory-tools { position: absolute; left: 24px; top: 24px; display: flex; gap: 8px; z-index: 5; }
-.memory-tools button { border-radius: 12px; padding: 12px 15px; min-height: 48px; color: #245e43; font-size: 13px; }
-.memory-tools button:disabled { opacity: .6; cursor: wait; }
+.walk-hint { position: absolute; right: 24px; top: 84px; margin: 0; padding: 12px 15px; border: 1px solid white; border-radius: 0; max-width: 300px; color: white; background: rgba(0,0,0,.88); box-shadow: none; backdrop-filter: none; font-size: 12px; pointer-events: none; z-index: 3; }
 #memory-notebook { top: 24px; right: 24px; border: 1px solid white; border-radius: 0; color: white; background: rgba(0,0,0,.88); box-shadow: none; backdrop-filter: none; }
 #memory-notebook:hover, #memory-notebook:focus-visible { color: black; background: white; }
 .newspaper-hotspot img { position: absolute; left: 50%; top: 50%; width: var(--paper-width); height: var(--paper-height); object-fit: fill; transform: translate(-50%, -50%) perspective(260px) rotateX(37deg) rotateZ(-12deg); filter: sepia(.25) brightness(.85) contrast(.92); box-shadow: 2px 3px 3px #0007; pointer-events: none; }
@@ -59,8 +60,6 @@ h1 { margin: 8px 0; font-size: 20px; line-height: 1.25; }
   .scene-prompt h1 { font-size: 18px; }
   .scene-prompt p { margin-bottom: 10px; font-size: 12px; }
   .back-button { bottom: 18px; left: 12px; }
-  .memory-tools { top: 12px; left: 12px; }
-  .memory-tools button { padding: 10px 13px; }
   #memory-notebook { top: 12px; right: 12px; }
   .walk-hint { top: 134px; left: 12px; right: auto; max-width: calc(100% - 24px); font-size: 11px; }
   #memory[data-scene="end"] .scene-prompt { bottom: 78px; }
@@ -74,7 +73,6 @@ h1 { margin: 8px 0; font-size: 20px; line-height: 1.25; }
 #memory[data-ending] .forward-button,
 #memory[data-ending] .memory-hotspot,
 #memory[data-ending] #memory-notebook,
-#memory[data-ending] .memory-tools,
 #memory[data-ending] .walk-hint { display: none; }
 #game-ending { width: min(490px, calc(100% - 28px)); max-height: calc(100svh - 28px); padding: 28px; border: 1px solid #ffffffa3; border-radius: 20px; background: #f5f5ee; color: #203a30; overflow: auto; box-shadow: 0 24px 80px #0004; }
 #game-ending::backdrop { background: #081510b8; backdrop-filter: blur(10px); }

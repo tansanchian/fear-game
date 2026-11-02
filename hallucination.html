@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#172923" />
   <title>An Imagined Memory — Concrete Memories</title>
-  <link rel="stylesheet" href="discovery.css?v=20261102-plain-ui" />
-  <link rel="stylesheet" href="hallucination.css?v=20261102-notebook-ui" />
+  <link rel="stylesheet" href="discovery.css?v=20261102-clean-notebook" />
+  <link rel="stylesheet" href="hallucination.css?v=20261102-black-ui" />
 </head>
 <body>
   <main id="memory" aria-label="Explore an imagined, abandoned block">
@@ -23,9 +23,7 @@
       <button class="memory-hotspot" id="gate-hotspot" type="button" aria-label="Inspect the closed gate" data-hint="Inspect gate" hidden><span aria-hidden="true">＋</span></button>
       <button class="memory-hotspot newspaper-hotspot" id="article-two-hotspot" type="button" aria-label="Read the newspaper page" data-hint="Read newspaper" hidden><img src="assets/hallucination-article-page-blurred.png" alt="" draggable="false" /></button>
     </div>
-    <div class="memory-tools" id="memory-tools">
-      <button class="glass" id="memory-sound" type="button" aria-pressed="true">Sound on</button>
-    </div>
+    <button id="memory-sound" type="button" aria-pressed="true" hidden>Sound on</button>
     <button class="notebook-button glass" id="memory-notebook" type="button" aria-label="Notebook" aria-haspopup="dialog">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 3h14v18H5V3Zm4 0v18M12 8h4M12 12h4" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
       <span class="notebook-label">Notebook</span>
@@ -45,7 +43,7 @@
       <div id="detail-tools" class="detail-tools" hidden>
         <button id="detail-crop" type="button" hidden>View article close-up</button>
         <button id="detail-zoom" type="button" aria-pressed="false">Enlarge image</button>
-        <button id="detail-sound" type="button" aria-pressed="true">Sound on</button>
+        <button id="detail-sound" type="button" aria-pressed="true" hidden>Sound on</button>
       </div>
       <p id="detail-loading" role="status" hidden>Loading the image…</p>
       <p id="detail-note" hidden></p>
@@ -91,7 +89,7 @@
       </section>
     </dialog>
       <dialog class="notebook" id="notebook" aria-labelledby="notebook-title">
-        <header class="notebook-header"><div><span class="eyebrow">Field notes</span><h2 id="notebook-title">Your notebook</h2><p id="notebook-summary"></p></div><button id="notebook-close" type="button" aria-label="Close notebook">×</button></header>
+        <header class="notebook-header"><div><h2 id="notebook-title">Your notebook</h2><p id="notebook-summary"></p></div><button id="notebook-close" type="button" aria-label="Close notebook">×</button></header>
         <p id="notebook-empty">You did not record any evidence during your visit.</p>
         <div class="notebook-list" id="notebook-list"></div>
         <section id="notebook-detail" hidden aria-label="Recorded artifact">
@@ -101,7 +99,6 @@
           <div class="notebook-image-scroll" tabindex="0" aria-label="Artifact image; scroll to inspect when enlarged"><img id="notebook-photo" alt="" /></div>
           <div id="notebook-transcript" class="notebook-transcript" hidden></div>
         </section>
-        <footer class="notebook-footer"><span>Only discoveries recorded during your visit appear here.</span></footer>
       </dialog>
     <p class="sr-only" id="memory-announcement" role="status" aria-live="polite"></p>
   </main>
@@ -114,6 +111,6 @@
   <script src="notebook-view.js?v=20261102-plain-ui"></script>
   <script src="memory-atmosphere.js?v=20261102-confused-walk"></script>
   <script src="game-ending.js?v=20261102-required-story"></script>
-  <script src="hallucination.js?v=20261102-confused-walk"></script>
+  <script src="hallucination.js?v=20261102-black-ui-confused-walk"></script>
 </body>
 </html>

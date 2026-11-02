@@ -140,12 +140,6 @@ const Discovery = (() => {
   document.getElementById('journey-action').addEventListener('click', () => {
     if (!prompt.hidden) void api.walkBack();
   });
-  document.getElementById('new-game').addEventListener('click', () => {
-    resetting = true;
-    state = freshState();
-    MemoryJourney.reset();
-    persist(); window.location.reload();
-  });
   function showDayTransition() {
     prompt.hidden = true;
     clearTimeout(toastTimer);

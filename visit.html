@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="corridor.css?v=20261102-plain-ui" />
     <link rel="stylesheet" href="scene.css?v=20261102-plain-ui" />
     <link rel="stylesheet" href="memory-transition.css?v=20261102-plain-ui" />
-    <link rel="stylesheet" href="discovery.css?v=20261102-plain-ui" />
+    <link rel="stylesheet" href="discovery.css?v=20261102-clean-notebook" />
     <link rel="stylesheet" href="neighbour-conversation.css?v=20261102-plain-ui" />
     <link rel="stylesheet" href="door-encounter.css?v=20261102-plain-ui" />
   </head>
@@ -164,7 +164,7 @@
         </div>
       </dialog>
       <dialog class="notebook" id="notebook" aria-labelledby="notebook-title">
-        <header class="notebook-header"><div><span class="eyebrow">Field notes</span><h2 id="notebook-title">Your notebook</h2><p id="notebook-summary"></p></div><button id="notebook-close" type="button" aria-label="Close notebook">×</button></header>
+        <header class="notebook-header"><div><h2 id="notebook-title">Your notebook</h2><p id="notebook-summary"></p></div><button id="notebook-close" type="button" aria-label="Close notebook">×</button></header>
         <p id="notebook-empty">Nothing recorded yet. Inspect papers and other evidence along the corridor to add them here.</p>
         <div class="notebook-list" id="notebook-list"></div>
         <section id="notebook-detail" hidden aria-label="Recorded artifact">
@@ -174,7 +174,6 @@
           <div class="notebook-image-scroll" tabindex="0" aria-label="Artifact image; scroll to inspect when enlarged"><img id="notebook-photo" alt="" /></div>
           <div id="notebook-transcript" class="notebook-transcript" hidden></div>
         </section>
-        <footer class="notebook-footer"><span>Saved for this tab. New game clears your discoveries.</span><button id="new-game" type="button">New game</button></footer>
       </dialog>
       <dialog id="neighbour-conversation" class="neighbour-conversation" aria-labelledby="neighbour-conversation-title">
         <div class="neighbour-layout">
@@ -214,7 +213,7 @@
     <script src="day-content.js?v=20261102-plain-ui"></script>
     <script src="artifact-content.js?v=20261102-confused-walk"></script>
     <script src="notebook-view.js?v=20261102-plain-ui"></script>
-    <script src="discovery.js?v=20261102-plain-ui"></script>
+    <script src="discovery.js?v=20261102-clean-notebook"></script>
     <script src="corridor-audio.js?v=20261102-plain-ui"></script>
     <script src="corridor-effects.js?v=20261102-plain-ui"></script>
     <script src="neighbour-conversation.js?v=20261102-plain-ui"></script>

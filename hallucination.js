@@ -114,7 +114,6 @@ const MemoryWalk = (() => {
     back.hidden = scene < 0; back.disabled = busy;
     forward.hidden = scene < 0 || scene === 4; forward.disabled = busy;
     document.getElementById('walk-hint').hidden = scene < 0 || scene === 4 || busy;
-    document.getElementById('memory-tools').hidden = scene < 0;
     memoryNotebook.hidden = scene < 0;
     memoryNotebook.disabled = busy;
     for (const item of hotspots) document.getElementById(item.id).hidden = busy || item.scene !== scene;

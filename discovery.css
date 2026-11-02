@@ -27,14 +27,11 @@
 .notebook-entry small { font-size: 11px; color: #627567; line-height: 1.5; }
 .notebook-tools, .notebook-variants { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 .notebook-tools { justify-content: space-between; }
-.notebook-tools button, .notebook-variants button, .notebook-footer button { background: #edf1e7; border: 1px solid #cdd9c7; border-radius: 8px; padding: 10px 12px; font-size: 12px; }
+.notebook-tools button, .notebook-variants button { background: #edf1e7; border: 1px solid #cdd9c7; border-radius: 8px; padding: 10px 12px; font-size: 12px; }
 .notebook-variants [aria-pressed="true"] { background: #24583f; color: white; }
 .notebook-image-scroll { max-height: 55svh; overflow: auto; background: #dfe4da; border-radius: 8px; }
 #notebook-photo { display: block; margin: auto; max-width: 100%; max-height: 55svh; object-fit: contain; }
 #notebook-photo.is-enlarged { max-width: none; max-height: none; width: max(100%, 960px); margin: 0; }
-.notebook-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; border-top: 1px solid #d5ddcf; margin-top: 24px; padding-top: 16px; }
-.notebook-footer span { font-size: 11px; color: #627567; }
-.notebook-footer button { flex: none; }
 .journey-prompt[hidden], .discovery-toast[hidden], #notebook-badge[hidden], .notebook [hidden] { display: none; }
 @media (max-width: 600px) {
   .notebook-button { top: 12px; right: 64px; width: 42px; padding: 10px; }
