@@ -14,9 +14,9 @@ The pages follow this order: `index.html` → `intro.html` → `act-1.html` → 
 
 The landing page asks for a participant name before starting. Each run records the participant name, start and completion times, notebook discoveries, inspected corridor items, imagined-corridor notes, final buy/pass choice, optional written comment, and a compact activity timeline.
 
-On completion, `participant-data.js` sends the full response to the shared Supabase `game_responses` table and keeps a browser-local backup. Public visitors have insert-only access: they cannot retrieve, alter or delete anyone’s responses. Failed submissions remain marked as pending in the local backup.
+During a playthrough, the active response exists only as temporary tab state so it can survive page-to-page navigation. On completion, `participant-data.js` sends the full response to the shared Supabase `game_responses` table. There is no browser-local response database. If submission fails, the ending screen shows a retry button while that tab remains open. Public visitors have insert-only access: they cannot retrieve, alter or delete anyone’s responses.
 
-Open `dashboard.html` and sign in with a project-member Supabase account to retrieve shared responses, view totals, the buy/pass split, average notebook size, comments and individual journeys, or export the full dataset as JSON. Follow `SUPABASE_SETUP.md` to create and configure the free project. Never put a Supabase secret or `service_role` key in the website.
+Open `dashboard.html` and sign in with a project-member Supabase account to retrieve shared responses and view totals, the buy/pass split, average notebook size, comments and individual journeys. Follow `SUPABASE_SETUP.md` to create and configure the free project. Never put a Supabase secret or `service_role` key in the website.
 
 ## Imagined corridor
 

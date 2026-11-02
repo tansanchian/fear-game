@@ -21,4 +21,4 @@ The public website uses only the publishable key. Never add the `service_role`, 
 - Signed-out visitors cannot read, update or delete responses.
 - Signed-in Supabase users can read responses for the private dashboard.
 - No browser receives the Supabase service-role key.
-- The browser keeps a local backup and marks failed network submissions as pending.
+- The browser keeps only temporary in-tab progress until the completed response reaches Supabase.

@@ -105,13 +105,5 @@
   });
   logout.addEventListener('click', () => { setToken(''); responses = []; login.hidden = false; content.hidden = true; logout.hidden = true; status.textContent = 'Signed out.'; });
   filter.addEventListener('change', render);
-  document.getElementById('export-json').addEventListener('click', () => {
-    if (content.hidden) return;
-    const database = { version: 1, exportedAt: new Date().toISOString(), responses };
-    const blob = new Blob([JSON.stringify(database, null, 2)], { type: 'application/json' });
-    const link = document.createElement('a'); link.href = URL.createObjectURL(blob);
-    link.download = `concrete-memories-responses-${new Date().toISOString().slice(0, 10)}.json`;
-    link.click(); URL.revokeObjectURL(link.href);
-  });
   loadResponses().catch(error => { status.textContent = error.message; login.hidden = false; content.hidden = true; });
 })();

@@ -1,4 +1,4 @@
-// The final phone call and reflection stay in this tab; nothing is submitted online.
+// The final decision is submitted to the shared Supabase response table.
 const GameEnding = (() => {
   const key = 'concrete-memories.ending.v1';
   const dialog = document.getElementById('game-ending');
@@ -8,6 +8,8 @@ const GameEnding = (() => {
   const title = document.getElementById('ending-title');
   const replaySound = document.getElementById('ending-play-ring');
   const notebookButton = document.getElementById('ending-notebook');
+  const submissionStatus = document.getElementById('ending-submission-status');
+  const retrySubmission = document.getElementById('ending-retry-submit');
   const evidence = Object.fromEntries(Object.entries(DAY_CONTENT).flatMap(([day, content]) =>
     Object.entries(content.evidence).map(([id, entry]) => [id, { ...entry, day: Number(day) }])));
   Object.assign(evidence, IMAGINED_EVIDENCE);
@@ -36,6 +38,16 @@ const GameEnding = (() => {
   const active = () => ['ending', 'complete'].includes(MemoryJourney.phase());
   function save() { try { sessionStorage.setItem(key, JSON.stringify(state)); } catch {} }
   function stopRing() { ringtone.pause(); ringtone.currentTime = 0; replaySound.hidden = true; }
+  function showSubmission(result) {
+    const remoteStatus = typeof ParticipantData !== 'undefined' ? ParticipantData.current()?.remoteStatus : '';
+    const submitted = result?.ok || remoteStatus === 'submitted';
+    const failed = result && !result.ok;
+    const submitting = !failed && (remoteStatus === 'submitting' || remoteStatus === 'in-progress' || !remoteStatus);
+    submissionStatus.textContent = submitted ? 'Your response was submitted.'
+      : submitting ? 'Submitting your response…'
+        : 'Your response could not be submitted. Check your connection and try again.';
+    retrySubmission.hidden = submitted || submitting;
+  }
   function soundEnabled() {
     if (typeof MemoryAtmosphere !== 'undefined') return MemoryAtmosphere.soundEnabled();
     try { return JSON.parse(sessionStorage.getItem('concrete-memories.discovery.v1'))?.soundEnabled !== false; }
@@ -63,6 +75,7 @@ const GameEnding = (() => {
         ? 'You tell your wife you would buy the flat.' : 'You tell your wife you would not buy the flat.';
       document.getElementById('ending-thoughts-summary').textContent = state.thoughts;
       document.getElementById('ending-reflection').hidden = !state.thoughts.trim();
+      showSubmission();
     }
     if (!dialog.open) dialog.showModal();
     (state.stage === 'call' ? document.getElementById('ending-answer')
@@ -86,14 +99,25 @@ const GameEnding = (() => {
     state.thoughts = thoughts.value.slice(0, 1200);
     save();
   });
-  form.addEventListener('submit', event => {
+  form.addEventListener('submit', async event => {
     event.preventDefault();
     if (state.stage !== 'decision' || !form.reportValidity()) return;
     const choice = form.elements.choice.value;
     if (!['buy', 'pass'].includes(choice)) return;
     state = { stage: 'done', choice, thoughts: thoughts.value.slice(0, 1200) };
-    if (typeof ParticipantData !== 'undefined') ParticipantData.finish(choice, state.thoughts);
     save(); MemoryJourney.advance('complete'); stopRing(); show();
+    const result = typeof ParticipantData !== 'undefined'
+      ? await ParticipantData.finish(choice, state.thoughts)
+      : { ok: false, reason: 'unavailable' };
+    showSubmission(result);
+  });
+  retrySubmission.addEventListener('click', async () => {
+    retrySubmission.hidden = true;
+    submissionStatus.textContent = 'Submitting your response…';
+    const result = typeof ParticipantData !== 'undefined'
+      ? await ParticipantData.submit()
+      : { ok: false, reason: 'unavailable' };
+    showSubmission(result);
   });
   document.getElementById('ending-restart').addEventListener('click', () => {
     if (state.stage !== 'done' || restarting) return;

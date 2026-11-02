@@ -1,65 +1,39 @@
-// Browser-local JSON response store. This works on static hosting such as GitHub Pages.
-// Export the dashboard data to combine responses collected on different devices.
+// One active playthrough is kept temporarily in this tab, then submitted to Supabase.
 const ParticipantData = (() => {
-  const databaseKey = 'concrete-memories.responses.v1';
-  const runKey = 'concrete-memories.current-response.v1';
-
-  const emptyDatabase = () => ({ version: 1, updatedAt: null, responses: [] });
+  const runKey = 'concrete-memories.current-response.v2';
   const cleanName = value => String(value || '').trim().replace(/\s+/g, ' ').slice(0, 80);
   const now = () => new Date().toISOString();
   const makeId = () => globalThis.crypto?.randomUUID?.() || `run-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
-  function readDatabase() {
-    try {
-      const value = JSON.parse(localStorage.getItem(databaseKey));
-      return value && value.version === 1 && Array.isArray(value.responses) ? value : emptyDatabase();
-    } catch { return emptyDatabase(); }
-  }
-
-  function writeDatabase(database) {
-    database.updatedAt = now();
-    localStorage.setItem(databaseKey, JSON.stringify(database));
-    return database;
-  }
-
-  function currentId() {
-    try { return sessionStorage.getItem(runKey) || ''; }
-    catch { return ''; }
-  }
-
   function current() {
-    const id = currentId();
-    return id ? readDatabase().responses.find(response => response.id === id) || null : null;
+    try {
+      const value = JSON.parse(sessionStorage.getItem(runKey));
+      return value && typeof value.id === 'string' ? value : null;
+    } catch { return null; }
+  }
+
+  function write(response) {
+    try { sessionStorage.setItem(runKey, JSON.stringify(response)); }
+    catch { /* The story remains playable if session storage is unavailable. */ }
+    return response;
   }
 
   function start(name) {
     const participantName = cleanName(name);
     if (!participantName) throw new Error('Please enter a name.');
     const startedAt = now();
-    const response = {
+    return write({
       id: makeId(), participantName, startedAt, updatedAt: startedAt, completedAt: null,
       status: 'in-progress', currentPage: 'index.html', day: 1,
       notebook: [], imaginedNotebook: [], inspected: [], effectsSeen: [],
       ending: { choice: '', comment: '' },
       activity: [{ at: startedAt, type: 'game_started', detail: {} }],
-    };
-    const database = readDatabase();
-    database.responses.push(response);
-    writeDatabase(database);
-    sessionStorage.setItem(runKey, response.id);
-    return response;
+    });
   }
 
   function update(changes = {}) {
-    const id = currentId();
-    if (!id) return null;
-    const database = readDatabase();
-    const index = database.responses.findIndex(response => response.id === id);
-    if (index < 0) return null;
-    const previous = database.responses[index];
-    database.responses[index] = { ...previous, ...changes, id, updatedAt: now() };
-    writeDatabase(database);
-    return database.responses[index];
+    const previous = current();
+    return previous ? write({ ...previous, ...changes, id: previous.id, updatedAt: now() }) : null;
   }
 
   function track(type, detail = {}) {
@@ -78,17 +52,6 @@ const ParticipantData = (() => {
     track('page_viewed', { page: name });
   }
 
-  function finish(choice, comment) {
-    const completedAt = now();
-    const response = update({
-      status: 'complete', completedAt,
-      ending: { choice: choice === 'buy' ? 'buy' : 'pass', comment: String(comment || '').slice(0, 1200) },
-    });
-    track('game_completed', { choice: response?.ending.choice || choice });
-    if (response) void submit(response.id);
-    return response;
-  }
-
   function configuration() {
     const config = window.SUPABASE_CONFIG || {};
     const url = String(config.url || '').replace(/\/$/, '');
@@ -96,13 +59,25 @@ const ParticipantData = (() => {
     return { url, publishableKey, ready: /^https:\/\/.+\.supabase\.co$/.test(url) && publishableKey.length > 20 };
   }
 
-  async function submit(id = currentId()) {
+  async function finish(choice, comment) {
+    const completedAt = now();
+    const response = update({
+      status: 'complete', completedAt, remoteStatus: 'submitting',
+      ending: { choice: choice === 'buy' ? 'buy' : 'pass', comment: String(comment || '').slice(0, 1200) },
+    });
+    track('game_completed', { choice: response?.ending.choice || choice });
+    return submit();
+  }
+
+  async function submit() {
     const config = configuration();
-    if (!config.ready || !id) return { ok: false, reason: 'not-configured' };
-    const database = readDatabase();
-    const response = database.responses.find(item => item.id === id);
-    if (!response || response.status !== 'complete' || response.remoteStatus === 'submitted') return { ok: false, reason: 'not-ready' };
+    const response = current();
+    if (!config.ready) return { ok: false, reason: 'not-configured' };
+    if (!response || response.status !== 'complete') return { ok: false, reason: 'not-ready' };
+    if (response.remoteStatus === 'submitted') return { ok: true, reason: 'already-submitted' };
+    update({ remoteStatus: 'submitting', remoteError: '' });
     try {
+      const latest = current();
       const result = await fetch(`${config.url}/rest/v1/game_responses`, {
         method: 'POST', keepalive: true,
         headers: {
@@ -112,21 +87,19 @@ const ParticipantData = (() => {
           Prefer: 'return=minimal',
         },
         body: JSON.stringify({
-          id: response.id,
-          participant_name: response.participantName,
-          started_at: response.startedAt,
-          completed_at: response.completedAt,
-          ending_choice: response.ending.choice,
-          response,
+          id: latest.id,
+          participant_name: latest.participantName,
+          started_at: latest.startedAt,
+          completed_at: latest.completedAt,
+          ending_choice: latest.ending.choice,
+          response: latest,
         }),
       });
       if (!result.ok && result.status !== 409) throw new Error(`Submission failed (${result.status})`);
-      response.remoteStatus = 'submitted'; response.remoteSubmittedAt = now(); response.updatedAt = now();
-      writeDatabase(database);
+      update({ remoteStatus: 'submitted', remoteSubmittedAt: now(), remoteError: '' });
       return { ok: true };
     } catch (error) {
-      response.remoteStatus = 'pending'; response.remoteError = String(error.message || error); response.updatedAt = now();
-      writeDatabase(database);
+      update({ remoteStatus: 'failed', remoteError: String(error.message || error) });
       return { ok: false, reason: 'network', error };
     }
   }
@@ -135,19 +108,5 @@ const ParticipantData = (() => {
     try { sessionStorage.removeItem(runKey); } catch {}
   }
 
-  function importDatabase(value) {
-    const incoming = value?.version === 1 && Array.isArray(value.responses) ? value.responses : Array.isArray(value) ? value : null;
-    if (!incoming) throw new Error('This is not a Concrete Memories response file.');
-    const database = readDatabase();
-    const byId = new Map(database.responses.map(response => [response.id, response]));
-    for (const response of incoming) {
-      if (!response || typeof response.id !== 'string' || typeof response.participantName !== 'string') continue;
-      const existing = byId.get(response.id);
-      if (!existing || String(response.updatedAt || '') > String(existing.updatedAt || '')) byId.set(response.id, response);
-    }
-    database.responses = [...byId.values()];
-    return writeDatabase(database);
-  }
-
-  return { readDatabase, current, start, update, track, page, finish, endRun, importDatabase, configuration, submit };
+  return { current, start, update, track, page, finish, endRun, configuration, submit };
 })();
