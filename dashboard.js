@@ -92,7 +92,8 @@
 
   document.getElementById('login-form').addEventListener('submit', async event => {
     event.preventDefault(); status.textContent = 'Signing in…';
-    const fields = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const fields = new FormData(form);
     try {
       const result = await fetch(`${config.url}/auth/v1/token?grant_type=password`, {
         method: 'POST', headers: { apikey: config.publishableKey, 'Content-Type': 'application/json' },
@@ -100,7 +101,7 @@
       });
       const data = await result.json();
       if (!result.ok || !data.access_token) throw new Error(data.error_description || data.msg || 'Sign-in failed.');
-      setToken(data.access_token); event.currentTarget.reset(); await loadResponses(data.access_token);
+      setToken(data.access_token); form.reset(); await loadResponses(data.access_token);
     } catch (error) { status.textContent = error.message; }
   });
   logout.addEventListener('click', () => { setToken(''); responses = []; login.hidden = false; content.hidden = true; logout.hidden = true; status.textContent = 'Signed out.'; });
