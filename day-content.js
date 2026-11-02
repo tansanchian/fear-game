@@ -20,7 +20,7 @@ const DAY_CONTENT = {
     // Day 2 has its own evidence and incidental objects.
     inspectionLimit: 6,
     evidence: {
-      murderArticle: { pass: 1, group: 'murderArticle', title: 'Newspaper article', description: 'A newspaper report on the discovery of a boy’s body and a suspected ritual killing.', location: 'Stop 2 · On the corridor floor' },
+      murderArticle: { pass: 1, group: 'murderArticle', title: 'Torn newspaper fragment', description: 'A torn piece of newspaper found on the floor. The surviving headline reports the discovery of a boy’s body; beside it, a subheading mentions a ritual killing theory after religious objects were recovered. The rest of the page is missing.', location: 'Stop 2 · On the corridor floor' },
       neighbourConversation: { pass: 1, group: 'neighbourConversation', title: 'A new neighbour', description: 'A newly arrived resident has invited a feng shui master to help arrange her home before she settles in.', location: 'Stop 4 · At the neighbour’s door' },
       doorChant: { pass: 1, group: 'doorChant', title: 'Sounds behind the door', description: 'As you lean towards the gate to peek inside the viewing unit, you hear low, repetitive chanting. It sounds thin and muffled, as though coming from a television or radio further inside. You cannot make out the words or tell where it is coming from. Uneasy, you step back and decide not to enter.', location: 'Stop 5 · At the viewing unit’s gate' },
     },

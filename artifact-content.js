@@ -45,9 +45,9 @@ const ARTIFACT_CONTENT = {
     position: 1,
   },
   murderArticle: {
-    image: 'assets/ritual_newspaper.png',
-    title: 'NEWSPAPER ARTICLE',
-    alt: 'The Sunday Times front page reporting the discovery of a boy’s body and a suspected ritual killing',
+    image: 'assets/day2-torn-newspaper.png',
+    title: 'TORN NEWSPAPER FRAGMENT',
+    alt: 'A worn, torn newspaper fragment with the headline Cops find body of battered boy and a subheading about a ritual killing theory after religious objects were recovered; names remain redacted',
     position: 1,
   },
   flat: {

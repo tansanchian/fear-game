@@ -6,12 +6,12 @@
     <meta name="theme-color" content="#162523" />
     <meta name="description" content="Explore five viewpoints along a residential corridor, its floor plan, and the flat entrance." />
     <title>The Visit — Concrete Memories</title>
-    <link rel="stylesheet" href="corridor.css?v=20261102-imagined-papers" />
-    <link rel="stylesheet" href="scene.css?v=20261102-imagined-papers" />
-    <link rel="stylesheet" href="memory-transition.css?v=20261102-imagined-papers" />
-    <link rel="stylesheet" href="discovery.css?v=20261102-imagined-papers" />
-    <link rel="stylesheet" href="neighbour-conversation.css?v=20261102-imagined-papers" />
-    <link rel="stylesheet" href="door-encounter.css?v=20261102-imagined-papers" />
+    <link rel="stylesheet" href="corridor.css?v=20261102-torn-paper-hints" />
+    <link rel="stylesheet" href="scene.css?v=20261102-torn-paper-hints" />
+    <link rel="stylesheet" href="memory-transition.css?v=20261102-torn-paper-hints" />
+    <link rel="stylesheet" href="discovery.css?v=20261102-torn-paper-hints" />
+    <link rel="stylesheet" href="neighbour-conversation.css?v=20261102-torn-paper-hints" />
+    <link rel="stylesheet" href="door-encounter.css?v=20261102-torn-paper-hints" />
   </head>
   <body>
     <main class="explorer is-intro" id="explorer">
@@ -42,7 +42,7 @@
             <button class="scene-hotspot" id="day2-hanging-clothes" type="button" aria-label="Inspect the hanging clothes" data-hint="Hanging clothes" hidden></button>
             <button class="scene-hotspot" id="day2-plants-stop4" type="button" aria-label="Inspect the plants" data-hint="Plants" hidden></button>
             <button class="scene-hotspot" id="day2-railing-pots" type="button" aria-label="Inspect the potted objects along the railing" data-hint="Potted objects" hidden></button>
-            <button class="scene-hotspot scene-prop newspaper-prop" id="day2-murder-article" type="button" aria-label="Read the newspaper article" data-hint="Read newspaper" hidden><img src="assets/ritual_newspaper.png" alt="" draggable="false" /></button>
+            <button class="scene-hotspot scene-prop newspaper-prop" id="day2-murder-article" type="button" aria-label="Read the torn newspaper fragment" data-hint="Read torn paper" hidden><img src="assets/day2-torn-newspaper.png" alt="" draggable="false" /></button>
             <button class="scene-hotspot" id="day2-neighbour-door" type="button" aria-label="Talk to the neighbour at this door" data-hint="Talk to neighbour" hidden><span class="neighbour-door-cue" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h14v11H9l-4 4V4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 8h6M9 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Talk to neighbour</span></button>
           </div>
         </div>
@@ -143,8 +143,9 @@
       </button>
       <div class="journey-prompt glass" id="journey-prompt" hidden>
         <span class="eyebrow">TAKE ANOTHER LOOK</span>
-        <p>You might notice new items on another walk along the corridor.</p>
+        <p>There may be more to notice.</p>
         <button class="prompt-action" id="journey-action" type="button">Keep exploring</button>
+        <p class="journey-hint">Walk all the way back, then retrace your steps. Familiar spots may reveal new details over time.</p>
       </div>
       <div class="discovery-toast" id="discovery-toast" role="status" hidden></div>
       <audio id="corridor-audio" preload="none"></audio>
@@ -236,16 +237,16 @@
       </dialog>
       <audio id="door-chant-audio" src="assets/door-chant.mp3" preload="metadata"></audio>
     </main>
-    <script src="memory-journey.js?v=20261102-imagined-papers"></script>
-    <script src="day-content.js?v=20261102-imagined-papers"></script>
-    <script src="artifact-content.js?v=20261102-imagined-papers"></script>
-    <script src="notebook-view.js?v=20261102-imagined-papers"></script>
-    <script src="discovery.js?v=20261102-imagined-papers"></script>
-    <script src="corridor-audio.js?v=20261102-imagined-papers"></script>
-    <script src="corridor-effects.js?v=20261102-imagined-papers"></script>
-    <script src="neighbour-conversation.js?v=20261102-imagined-papers"></script>
-    <script src="door-encounter.js?v=20261102-imagined-papers"></script>
-    <script src="memory-transition.js?v=20261102-imagined-papers"></script>
-    <script src="app.js?v=20261102-imagined-papers"></script>
+    <script src="memory-journey.js?v=20261102-torn-paper-hints"></script>
+    <script src="day-content.js?v=20261102-torn-paper-hints"></script>
+    <script src="artifact-content.js?v=20261102-torn-paper-hints"></script>
+    <script src="notebook-view.js?v=20261102-torn-paper-hints"></script>
+    <script src="discovery.js?v=20261102-torn-paper-hints"></script>
+    <script src="corridor-audio.js?v=20261102-torn-paper-hints"></script>
+    <script src="corridor-effects.js?v=20261102-torn-paper-hints"></script>
+    <script src="neighbour-conversation.js?v=20261102-torn-paper-hints"></script>
+    <script src="door-encounter.js?v=20261102-torn-paper-hints"></script>
+    <script src="memory-transition.js?v=20261102-torn-paper-hints"></script>
+    <script src="app.js?v=20261102-torn-paper-hints"></script>
   </body>
 </html>

@@ -3,6 +3,7 @@
 #notebook-badge { border-radius: 20px; background: #246247; color: white; min-width: 20px; padding: 3px; font-size: 10px; }
 .journey-prompt { position: absolute; bottom: 94px; left: 24px; z-index: 5; width: 270px; border-radius: 16px; padding: 14px; }
 .journey-prompt p { font-size: 13px; line-height: 1.5; margin: 8px 0 12px; }
+.journey-prompt .journey-hint { margin: 12px 0 0; padding-top: 10px; border-top: 1px solid #cdd9cf; font-size: 11px; line-height: 1.45; color: #4e665a; }
 .journey-prompt .prompt-action { font-size: 11px; }
 .journey-prompt a.prompt-action { text-decoration: none; }
 .discovery-toast { position: absolute; z-index: 9; left: 50%; top: 85px; transform: translateX(-50%); width: max-content; max-width: calc(100% - 32px); background: #193f31; color: white; padding: 12px 18px; border-radius: 12px; box-shadow: 0 5px 25px #0003; font-size: 13px; pointer-events: none; }
@@ -39,7 +40,7 @@
   .notebook-button { top: 12px; right: 64px; width: 42px; padding: 10px; }
   .notebook-label { display: none; }
   #notebook-badge { position: absolute; right: -7px; top: -6px; text-align: center; }
-  .journey-prompt { left: 12px; bottom: 78px; width: min(270px, calc(100% - 82px)); }
+  .journey-prompt { left: 70px; bottom: 12px; width: min(320px, calc(100% - 82px)); }
   .discovery-toast { top: auto; bottom: 150px; font-size: 12px; }
   .sound-caption { bottom: 104px; }
   .notebook { padding: 18px; border-radius: 16px; }

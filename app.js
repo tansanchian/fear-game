@@ -429,7 +429,7 @@ async function openArtifact(kind) {
   corridorStage.setAttribute('aria-hidden', 'true');
   artifactStage.setAttribute('aria-hidden', 'false');
   render();
-  announcement.textContent = kind === 'map' ? 'Showing the floor plan.' : kind === 'flyer' ? 'Showing the nearby listing flyer.' : kind === 'murderArticle' ? 'Showing the newspaper article.' : kind === 'power' ? 'Showing the power box.' : 'Showing the flat entrance.';
+  announcement.textContent = kind === 'map' ? 'Showing the floor plan.' : kind === 'flyer' ? 'Showing the nearby listing flyer.' : kind === 'murderArticle' ? 'Showing the torn newspaper fragment.' : kind === 'power' ? 'Showing the power box.' : 'Showing the flat entrance.';
   window.setTimeout(() => {
     turning = false;
     Discovery.record(kind);
@@ -657,7 +657,9 @@ function restartDay() {
 }
 
 async function startExplorer() {
-  const saved = Discovery.init({ artifacts, refresh: render, restartDay });
+  const saved = Discovery.init({ artifacts, refresh: render, restartDay,
+    async walkBack() { await transitionTo(position - 1); if (!backButton.disabled) backButton.focus(); },
+  });
   if (saved && Number.isInteger(saved.position) && saved.position >= 0 && saved.position < stops.length && saved.introActive === false) {
     position = saved.position;
     activeFrame.src = stops[position].image;

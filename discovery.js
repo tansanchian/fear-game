@@ -5,7 +5,7 @@ const Discovery = (() => {
     Object.entries(content.evidence).map(([id, entry]) => [id, { ...entry, day: Number(day) }])));
   const hotspotIds = new Set(Object.values(DAY_CONTENT).flatMap(content => Object.keys(content.hotspots)));
   const effectIds = new Set(['power-dim', 'filming-voices', 'children-laughter', 'electrical-buzz']);
-  const freshState = () => ({ day: 1, phase: 'exploring', pass: 1, direction: 1, collected: [], unread: [], inspected: [], effectsSeen: [], day2Steps: 0, soundEnabled: true, warningSeen: false, snapshot: null, hintSeen: false });
+  const freshState = () => ({ day: 1, phase: 'exploring', pass: 1, direction: 1, collected: [], unread: [], inspected: [], effectsSeen: [], day2Steps: 0, soundEnabled: true, warningSeen: false, snapshot: null });
   let state = freshState();
   try {
     const saved = JSON.parse(sessionStorage.getItem(storageKey));
@@ -20,7 +20,7 @@ const Discovery = (() => {
         effectsSeen: day === 2 && Array.isArray(saved.effectsSeen) ? [...new Set(saved.effectsSeen.filter(id => effectIds.has(id)))] : [],
         day2Steps: day === 2 && Number.isInteger(saved.day2Steps) ? Math.max(0, Math.min(8, saved.day2Steps)) : 0,
         unread: (Array.isArray(saved.unread) ? saved.unread : []).filter(id => collected.includes(id)),
-        snapshot: saved.snapshot, hintSeen: saved.hintSeen === true || saved.pass > 1, warningSeen: saved.warningSeen === true };
+        snapshot: saved.snapshot, warningSeen: saved.warningSeen === true };
 
     }
   } catch { /* Storage can be unavailable; the current run still works. */ }
@@ -34,7 +34,6 @@ const Discovery = (() => {
   let api;
   let toastTimer;
   let notebook;
-  let hintVisible = false;
   let resetting = false;
 
   function persist() {
@@ -106,14 +105,9 @@ const Discovery = (() => {
   }
   function render({ introActive, busy, artifact, position, doorPromptOpen, inspecting }) {
     button.disabled = busy;
-    const canShowHint = state.day === 1 && state.phase === 'exploring' && !exhausted() && !introActive && !busy && !artifact && !doorPromptOpen && position === 4 && state.pass === 1;
-    if (canShowHint && !state.hintSeen) {
-      hintVisible = true;
-      state.hintSeen = true;
-      persist();
-    }
-    if (!canShowHint) hintVisible = false;
-    prompt.hidden = !hintVisible;
+    // Return on every visit to the end on either day, including restored saves.
+    // Reading and story transitions take precedence over the navigation reminder.
+    prompt.hidden = state.phase !== 'exploring' || exhausted() || MemoryJourney.active() || introActive || busy || Boolean(artifact) || doorPromptOpen || inspecting || position !== 4 || dialog.open || conversationDialog.open || doorDialog.open;
     updateBadge();
     if (state.phase === 'exploring' && exhausted() && !introActive && !busy && (!artifact || artifact === 'flat' || artifact === 'map') && !inspecting && !dialog.open && !conversationDialog.open && !doorDialog.open) {
       if (state.day === 1) { state.phase = 'reflection'; persist(); }
@@ -133,9 +127,7 @@ const Discovery = (() => {
   }
   button.addEventListener('click', open);
   document.getElementById('journey-action').addEventListener('click', () => {
-    hintVisible = false;
-    prompt.hidden = true;
-    document.getElementById('back-button').focus();
+    if (!prompt.hidden) void api.walkBack();
   });
   document.getElementById('new-game').addEventListener('click', () => {
     resetting = true;
