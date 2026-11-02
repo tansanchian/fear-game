@@ -34,7 +34,7 @@ const MemoryWalk = (() => {
   const announcement = document.getElementById('memory-announcement');
   const details = {
     display: { type: 'video', source: 'assets/hallucination_lift_close.mp4', poster: 'assets/hallucination-display-poster.jpg', title: 'The floor display', alt: 'Close-up of the unfamiliar lift display' },
-    chair: { type: 'video', source: 'assets/hallucination_chair.mp4', poster: 'assets/hallucination-chair-poster.jpg', title: 'The courtyard seat', alt: 'A courtyard seat overgrown with plants' },
+    chair: { type: 'image', source: 'assets/hallucination-chair-poster.jpg', title: 'The courtyard seat', alt: 'A courtyard seat overgrown with plants' },
     deck: { type: 'image', source: 'assets/hallucination_void_deck.jpg', title: 'The void deck', alt: 'An empty seating area with fallen leaves and debris' },
     gate: { type: 'image', source: 'assets/hallucination_gate.jpg', title: 'The closed gate', alt: 'A metal gate with a yellow no-entry sign' },
     article1: { type: 'image', artifact: 'memoryArticle1' },
