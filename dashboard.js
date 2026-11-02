@@ -40,12 +40,6 @@
     const completed = responses.filter(response => response.status === 'complete');
     const buys = completed.filter(response => response.ending?.choice === 'buy').length;
     const passes = completed.filter(response => response.ending?.choice === 'pass').length;
-    const notebookTotal = responses.reduce((sum, response) => sum + new Set([...(response.notebook || []), ...(response.imaginedNotebook || [])]).size, 0);
-    document.getElementById('metric-total').textContent = responses.length;
-    document.getElementById('metric-complete').textContent = completed.length;
-    document.getElementById('metric-buy').textContent = buys;
-    document.getElementById('metric-pass').textContent = passes;
-    document.getElementById('metric-notebook').textContent = responses.length ? (notebookTotal / responses.length).toFixed(1) : '0';
     const decided = buys + passes;
     document.getElementById('buy-bar').style.width = `${decided ? buys / decided * 100 : 0}%`;
     document.getElementById('pass-bar').style.width = `${decided ? passes / decided * 100 : 0}%`;

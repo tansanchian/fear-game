@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#000000" />
     <title>Response Dashboard — Concrete Memories</title>
-    <link rel="stylesheet" href="dashboard.css?v=20261102-plain-ui" />
+    <link rel="stylesheet" href="dashboard.css?v=20261102-plain-ui-2" />
   </head>
   <body>
     <main class="dashboard-shell">
@@ -30,14 +30,6 @@
       </section>
 
       <div id="dashboard-content" hidden>
-
-      <section class="metrics" aria-label="Response summary">
-        <article><span>Responses</span><strong id="metric-total">0</strong></article>
-        <article><span>Completed</span><strong id="metric-complete">0</strong></article>
-        <article><span>Would buy</span><strong id="metric-buy">0</strong></article>
-        <article><span>Would not buy</span><strong id="metric-pass">0</strong></article>
-        <article><span>Average notebook</span><strong id="metric-notebook">0</strong></article>
-      </section>
 
       <section class="decision-panel" aria-labelledby="decision-title">
         <div class="section-heading"><div><p class="eyebrow">Final decision</p><h2 id="decision-title">What participants chose</h2></div><span id="decision-caption"></span></div>
@@ -65,6 +57,6 @@
     </template>
     <script src="supabase-config.js?v=20261102-supabase"></script>
     <script src="participant-data.js?v=20261102-supabase"></script>
-    <script src="dashboard.js?v=20261102-supabase-login-fix"></script>
+    <script src="dashboard.js?v=20261102-no-summary"></script>
   </body>
 </html>
