@@ -10,14 +10,27 @@
   <body>
     <main class="dashboard-shell">
       <header class="dashboard-header">
-        <div><p class="eyebrow">CONCRETE MEMORIES</p><h1>Response dashboard</h1><p class="dashboard-intro">A consolidated view of participant journeys saved in this browser.</p></div>
+        <div><p class="eyebrow">CONCRETE MEMORIES</p><h1>Response dashboard</h1><p class="dashboard-intro">A consolidated view of participant journeys submitted to the shared project database.</p></div>
         <div class="dashboard-actions">
           <button id="export-json" type="button">Export JSON</button>
-          <label class="import-button">Import JSON<input id="import-json" type="file" accept="application/json,.json" /></label>
+          <button id="dashboard-logout" type="button" hidden>Sign out</button>
         </div>
       </header>
 
       <p class="dashboard-status" id="dashboard-status" role="status"></p>
+
+      <section class="dashboard-login" id="dashboard-login" aria-labelledby="login-title" hidden>
+        <p class="eyebrow">PRIVATE DASHBOARD</p>
+        <h2 id="login-title">Sign in to view responses</h2>
+        <p>Use the project-member account created in Supabase. Participants do not need an account.</p>
+        <form id="login-form">
+          <label>Email<input name="email" type="email" autocomplete="username" required /></label>
+          <label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
+          <button type="submit">Sign in</button>
+        </form>
+      </section>
+
+      <div id="dashboard-content" hidden>
 
       <section class="metrics" aria-label="Response summary">
         <article><span>Responses</span><strong id="metric-total">0</strong></article>
@@ -38,6 +51,7 @@
         <p class="empty-state" id="empty-state">No responses have been recorded in this browser yet.</p>
         <div class="response-list" id="response-list"></div>
       </section>
+      </div>
     </main>
     <template id="response-template">
       <article class="response-card">
@@ -50,7 +64,8 @@
         </div>
       </article>
     </template>
-    <script src="participant-data.js?v=20261102-participants"></script>
-    <script src="dashboard.js?v=20261102-participants"></script>
+    <script src="supabase-config.js?v=20261102-supabase"></script>
+    <script src="participant-data.js?v=20261102-supabase"></script>
+    <script src="dashboard.js?v=20261102-supabase"></script>
   </body>
 </html>

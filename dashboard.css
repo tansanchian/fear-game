@@ -12,6 +12,13 @@ h2 { margin: 5px 0 0; font-size: clamp(1.45rem, 3vw, 2.2rem); }
 .dashboard-actions button, .import-button, select { padding: 11px 14px; border: 1px solid #526057; border-radius: 7px; background: #18201c; color: white; cursor: pointer; }
 .import-button input { position: absolute; width: 1px; height: 1px; opacity: 0; }
 .dashboard-status { min-height: 20px; margin: 18px 0; font-size: 13px; }
+.dashboard-login { width: min(460px, 100%); margin: 50px auto; padding: 28px; border: 1px solid #303b35; border-radius: 14px; background: #151b18; }
+.dashboard-login h2 { margin-bottom: 10px; }
+.dashboard-login > p:not(.eyebrow) { color: var(--muted); line-height: 1.6; }
+.dashboard-login form { display: grid; gap: 14px; margin-top: 22px; }
+.dashboard-login label { display: grid; gap: 7px; color: #c6cec9; font-size: 12px; }
+.dashboard-login input { min-height: 44px; padding: 0 11px; border: 1px solid #526057; border-radius: 7px; background: #0f1411; color: white; }
+.dashboard-login button { min-height: 44px; border: 1px solid #739883; border-radius: 7px; background: #315f43; color: white; cursor: pointer; }
 .metrics { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 26px 0 42px; }
 .metrics article { min-height: 130px; padding: 19px; border: 1px solid #303b35; border-radius: 12px; background: #151b18; }
 .metrics span { color: var(--muted); font-size: 12px; }

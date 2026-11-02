@@ -12,11 +12,11 @@ The pages follow this order: `index.html` → `intro.html` → `act-1.html` → 
 
 ## Participant responses and dashboard
 
-The landing page asks for a participant name before starting. Each run is stored as one JSON record in browser `localStorage` under `concrete-memories.responses.v1`. The record includes the participant name, start and completion times, notebook discoveries, inspected corridor items, imagined-corridor notes, final buy/pass choice, optional written comment, and a compact activity timeline. The current run ID stays in `sessionStorage`, so different tabs can keep their own active run while contributing to the same browser database.
+The landing page asks for a participant name before starting. Each run records the participant name, start and completion times, notebook discoveries, inspected corridor items, imagined-corridor notes, final buy/pass choice, optional written comment, and a compact activity timeline.
 
-Open `dashboard.html` to view totals, the buy/pass split, average notebook size, comments and individual journeys. The dashboard can export the full JSON database and import files from other devices; imports merge by response ID and retain the newest copy.
+On completion, `participant-data.js` sends the full response to the shared Supabase `game_responses` table and keeps a browser-local backup. Public visitors have insert-only access: they cannot retrieve, alter or delete anyone’s responses. Failed submissions remain marked as pending in the local backup.
 
-GitHub Pages is static and cannot append to a JSON file on the server. The current implementation therefore collects responses only in the browser being used. To collect automatically from participants on different devices, connect the methods in `participant-data.js` to a hosted database or form endpoint. The response shape and dashboard can remain unchanged.
+Open `dashboard.html` and sign in with a project-member Supabase account to retrieve shared responses, view totals, the buy/pass split, average notebook size, comments and individual journeys, or export the full dataset as JSON. Follow `SUPABASE_SETUP.md` to create and configure the free project. Never put a Supabase secret or `service_role` key in the website.
 
 ## Imagined corridor
 

@@ -85,7 +85,50 @@ const ParticipantData = (() => {
       ending: { choice: choice === 'buy' ? 'buy' : 'pass', comment: String(comment || '').slice(0, 1200) },
     });
     track('game_completed', { choice: response?.ending.choice || choice });
+    if (response) void submit(response.id);
     return response;
+  }
+
+  function configuration() {
+    const config = window.SUPABASE_CONFIG || {};
+    const url = String(config.url || '').replace(/\/$/, '');
+    const publishableKey = String(config.publishableKey || '');
+    return { url, publishableKey, ready: /^https:\/\/.+\.supabase\.co$/.test(url) && publishableKey.length > 20 };
+  }
+
+  async function submit(id = currentId()) {
+    const config = configuration();
+    if (!config.ready || !id) return { ok: false, reason: 'not-configured' };
+    const database = readDatabase();
+    const response = database.responses.find(item => item.id === id);
+    if (!response || response.status !== 'complete' || response.remoteStatus === 'submitted') return { ok: false, reason: 'not-ready' };
+    try {
+      const result = await fetch(`${config.url}/rest/v1/game_responses`, {
+        method: 'POST', keepalive: true,
+        headers: {
+          apikey: config.publishableKey,
+          Authorization: `Bearer ${config.publishableKey}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify({
+          id: response.id,
+          participant_name: response.participantName,
+          started_at: response.startedAt,
+          completed_at: response.completedAt,
+          ending_choice: response.ending.choice,
+          response,
+        }),
+      });
+      if (!result.ok && result.status !== 409) throw new Error(`Submission failed (${result.status})`);
+      response.remoteStatus = 'submitted'; response.remoteSubmittedAt = now(); response.updatedAt = now();
+      writeDatabase(database);
+      return { ok: true };
+    } catch (error) {
+      response.remoteStatus = 'pending'; response.remoteError = String(error.message || error); response.updatedAt = now();
+      writeDatabase(database);
+      return { ok: false, reason: 'network', error };
+    }
   }
 
   function endRun() {
@@ -106,5 +149,5 @@ const ParticipantData = (() => {
     return writeDatabase(database);
   }
 
-  return { readDatabase, current, start, update, track, page, finish, endRun, importDatabase };
+  return { readDatabase, current, start, update, track, page, finish, endRun, importDatabase, configuration, submit };
 })();
