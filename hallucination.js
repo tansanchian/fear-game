@@ -120,10 +120,12 @@ const MemoryWalk = (() => {
     document.getElementById('memory-notebook').disabled = busy;
     for (const item of hotspots) document.getElementById(item.id).hidden = busy || item.scene !== scene;
     const side = hotspots.find(item => item.scene === scene);
-    sideView.hidden = busy || !side;
+    sideView.hidden = busy || !side || scene === -1;
     sideView.disabled = busy;
     if (side) sideView.textContent = `↗ ${document.getElementById(side.id).getAttribute('aria-label')}`;
-    document.getElementById('scene-label').textContent = scene === -2 ? 'The doors open' : scene === -1 ? 'The lift lobby' : 'Further along';
+    const sceneLabel = document.getElementById('scene-label');
+    sceneLabel.hidden = scene === -1;
+    sceneLabel.textContent = scene === -2 ? 'The doors open' : 'Further along';
     document.getElementById('scene-title').textContent = scene === -2 ? ready ? 'The doors are open' : 'The doors are opening' : scene === -1 ? 'This landing feels unfamiliar' : 'The corridor falls quiet';
     document.getElementById('scene-copy').textContent = scene === -2 ? 'You expect the familiar landing, but the images from the post are still with you.' : scene === -1 ? 'You entered this lift only a moment ago. Now its doors and floor display look older. You step closer to make sense of them.' : explored() ? 'A newspaper lies near your feet. Look around a little longer, or continue towards the end of the corridor.' : 'There is more of this place to explore. Walk back through the corridor and take another look.';
     nextButton.textContent = scene === -2 ? 'Step out of the lift' : scene === 4 ? 'Continue to the end' : 'Walk into the corridor';

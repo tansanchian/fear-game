@@ -9,14 +9,12 @@ body { margin: 0; }
 #return-glimpse { opacity: 0; filter: saturate(.65); }
 .return-shade { position: absolute; inset: 0; background: linear-gradient(transparent 35%, #07150c66); pointer-events: none; }
 .return-story { position: absolute; left: 24px; bottom: 24px; width: min(390px, calc(100% - 48px)); max-height: calc(100% - 48px); overflow: auto; padding: 22px; border-radius: 18px; background: #f5f5eef2; border: 1px solid #ffffffb8; box-shadow: 0 8px 30px #10291e26; backdrop-filter: blur(14px); }
-.eyebrow { font-size: 12px; letter-spacing: 0; font-weight: 700; color: #222; }
 h1 { font-size: 22px; line-height: 1.25; margin: 10px 0; }
 p { font-size: 14px; line-height: 1.65; margin: 10px 0 18px; }
 #return-step { width: 100%; min-height: 46px; border: 0; border-radius: 9px; padding: 12px 14px; background: #245e43; color: white; font: inherit; font-size: 13px; font-weight: 650; cursor: pointer; }
 #return-step:hover { background: #317650; }
 #return-step:disabled { opacity: .65; cursor: wait; }
 #return-step:focus-visible { outline: 3px solid #ad7829; outline-offset: 4px; }
-.return-story .return-key-hint { font-size: 11px; margin: 12px 0 0; color: #587262; }
 #return-error { font-size: 12px; margin-bottom: 0; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 @media (max-width: 600px) {
