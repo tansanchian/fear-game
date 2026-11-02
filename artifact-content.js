@@ -39,7 +39,7 @@ const ARTIFACT_CONTENT = {
     position: 0,
   },
   flyer: {
-    image: 'assets/nearby-listing-flyer.svg',
+    image: 'assets/nearby-listing-flyer.svg?v=photo-embedded',
     title: 'Nearby listing',
     alt: 'For sale flyer for a nearby three-room flat with an asking price of $688,000',
     position: 1,

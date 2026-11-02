@@ -59,7 +59,7 @@
     <p id="memory-sound-caption" class="memory-sound-caption glass" role="status" hidden></p>
     <audio id="ending-ringtone" src="assets/phone-ring.mp3" preload="auto"></audio>
     <dialog id="game-ending" aria-labelledby="ending-title" closedby="none">
-      <span class="eyebrow" id="ending-label">Back to the present</span>
+      <span class="eyebrow" id="ending-label" hidden>Concrete Memories</span>
       <h2 id="ending-title" tabindex="-1">Your wife is calling</h2>
       <button class="ending-secondary" id="ending-notebook" type="button" aria-haspopup="dialog" hidden>Review notebook</button>
       <section id="ending-call">
@@ -70,22 +70,22 @@
         <button class="ending-secondary" id="ending-play-ring" type="button" hidden>Play ringtone</button>
       </section>
       <section id="ending-decision" hidden>
-        <blockquote>“So, what do you think of the house? Can you see us living there? Should we buy it?”<cite>Your wife</cite></blockquote>
+        <blockquote>“So, what do you think of the house? Can you see us living there? Should we buy it?”</blockquote>
         <form id="ending-form">
           <fieldset>
             <legend>What do you tell her?</legend>
             <label class="ending-option"><input id="ending-buy" name="choice" type="radio" value="buy" required /><span>I would buy it</span></label>
             <label class="ending-option"><input id="ending-pass" name="choice" type="radio" value="pass" required /><span>I would not buy it</span></label>
           </fieldset>
-          <label class="thoughts-label" for="ending-thoughts">Your thoughts <span>(optional)</span></label>
-          <textarea id="ending-thoughts" rows="4" maxlength="1200" placeholder="What influenced your decision? What stayed with you?"></textarea>
+          <label class="thoughts-label" for="ending-thoughts">What story would you tell your wife?</label>
+          <textarea id="ending-thoughts" rows="4" maxlength="1200" placeholder="What would you tell her about this home?" required></textarea>
           <button class="action" type="submit" id="ending-finish">Finish the story</button>
         </form>
       </section>
       <section id="ending-done" hidden>
         <p id="ending-choice-summary"></p>
         <p>The call brings your visit to a close. You leave the block with your own impression of what makes a place a home.</p>
-        <div id="ending-reflection" hidden><h3>Your thoughts</h3><p id="ending-thoughts-summary"></p></div>
+        <div id="ending-reflection" hidden><h3>Your story</h3><p id="ending-thoughts-summary"></p></div>
         <p class="ending-storage-note" id="ending-submission-status" role="status">Submitting your response…</p>
         <button class="ending-secondary" id="ending-retry-submit" type="button" hidden>Retry submission</button>
         <button class="ending-secondary" id="ending-restart" type="button">Play again</button>
@@ -111,10 +111,10 @@
   <script>ParticipantData.page('hallucination.html');</script>
   <script src="memory-journey.js?v=20261102-plain-ui"></script>
   <script src="day-content.js?v=20261102-plain-ui"></script>
-  <script src="artifact-content.js?v=20261102-plain-ui"></script>
+  <script src="artifact-content.js?v=20261102-flyer-photo"></script>
   <script src="notebook-view.js?v=20261102-plain-ui"></script>
   <script src="memory-atmosphere.js?v=20261102-plain-ui"></script>
-  <script src="game-ending.js?v=20261102-plain-ui"></script>
+  <script src="game-ending.js?v=20261102-required-story"></script>
   <script src="hallucination.js?v=20261102-notebook-ui"></script>
 </body>
 </html>

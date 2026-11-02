@@ -64,7 +64,9 @@ const GameEnding = (() => {
     document.getElementById('memory').dataset.ending = state.stage;
     for (const stage of ['call', 'decision', 'done']) document.getElementById(`ending-${stage}`).hidden = stage !== state.stage;
     title.textContent = state.stage === 'call' ? 'Your wife is calling' : state.stage === 'decision' ? 'Would you buy this home?' : 'The end';
-    document.getElementById('ending-label').textContent = state.stage === 'done' ? 'Concrete Memories' : 'Back to the present';
+    const endingLabel = document.getElementById('ending-label');
+    endingLabel.hidden = state.stage !== 'done';
+    endingLabel.textContent = 'Concrete Memories';
     notebookButton.hidden = state.stage === 'call';
     if (state.stage === 'decision') {
       thoughts.value = state.thoughts;

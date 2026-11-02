@@ -91,7 +91,6 @@ h1 { margin: 8px 0; font-size: 20px; line-height: 1.25; }
 .ending-option:has(input:checked) { background: #dde9de; border-color: #245e43; }
 .ending-option input { accent-color: #245e43; width: 18px; height: 18px; margin: 0; }
 .thoughts-label { display: block; }
-.thoughts-label span { font-weight: 400; color: #53705f; }
 #ending-thoughts { display: block; width: 100%; min-height: 100px; padding: 12px; border: 1px solid #a4bbaa; border-radius: 9px; background: #fffef9; color: #203a30; font: inherit; font-size: 16px; line-height: 1.5; resize: vertical; }
 #game-ending input:focus-visible, #ending-thoughts:focus-visible { outline: 3px solid #b78336; outline-offset: 3px; }
 .ending-secondary { padding: 11px 15px; margin-top: 12px; border: 1px solid #9fb7a6; border-radius: 9px; background: transparent; color: #245e43; font-size: 13px; }
