@@ -34,9 +34,10 @@ button, select, input { font: inherit; }
 
 h1 {
   margin: 8px 0 18px;
-  font-size: clamp(2.8rem, 7vw, 6rem);
+  font-size: clamp(1.35rem, 5vw, 4.5rem);
   line-height: .95;
   letter-spacing: -.045em;
+  white-space: nowrap;
 }
 
 h2 {
@@ -56,7 +57,8 @@ h2 {
 .response-meta,
 #decision-caption { color: var(--muted); }
 
-.dashboard-actions { display: flex; flex-wrap: wrap; gap: 9px; }
+.dashboard-actions { display: flex; flex-wrap: nowrap; gap: 9px; }
+.dashboard-actions button { white-space: nowrap; }
 
 .dashboard-actions button,
 select,
@@ -83,6 +85,9 @@ select,
   margin: 24px 0;
   font-size: 13px;
 }
+
+.dashboard-status:empty { display: none; }
+#dashboard-content { padding-top: 32px; }
 
 .dashboard-login {
   width: min(460px, 100%);
@@ -150,8 +155,6 @@ button:focus-visible {
 .decision-key i { width: 10px; height: 10px; border: 1px solid white; border-radius: 0; }
 .buy-dot { background: white; }
 .pass-dot { background: #777; }
-.filter-label { color: var(--muted); font-size: 12px; }
-.filter-label select { margin-left: 8px; }
 .response-list { display: grid; gap: 16px; margin-top: 22px; }
 
 .response-card {
@@ -163,17 +166,6 @@ button:focus-visible {
 
 .response-card h3 { margin: 0 0 8px; font-size: 1.35rem; }
 .response-meta { margin: 0; font-size: 12px; }
-
-.response-status {
-  padding: 7px 10px;
-  border: 1px solid var(--line);
-  border-radius: 0;
-  color: var(--muted);
-  background: black;
-  font-size: 11px;
-}
-
-.response-status.complete { border-color: white; color: white; background: black; }
 
 .response-grid {
   display: grid;

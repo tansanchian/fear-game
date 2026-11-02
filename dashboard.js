@@ -15,7 +15,6 @@
   const config = ParticipantData.configuration();
   const list = document.getElementById('response-list');
   const empty = document.getElementById('empty-state');
-  const filter = document.getElementById('response-filter');
   const status = document.getElementById('dashboard-status');
   const template = document.getElementById('response-template');
   const login = document.getElementById('dashboard-login');
@@ -37,20 +36,17 @@
   const setToken = token => { try { token ? sessionStorage.setItem(tokenKey, token) : sessionStorage.removeItem(tokenKey); } catch {} };
 
   function render() {
-    const completed = responses.filter(response => response.status === 'complete');
-    const buys = completed.filter(response => response.ending?.choice === 'buy').length;
-    const passes = completed.filter(response => response.ending?.choice === 'pass').length;
+    const buys = responses.filter(response => response.ending?.choice === 'buy').length;
+    const passes = responses.filter(response => response.ending?.choice === 'pass').length;
     const decided = buys + passes;
     document.getElementById('buy-bar').style.width = `${decided ? buys / decided * 100 : 0}%`;
     document.getElementById('pass-bar').style.width = `${decided ? passes / decided * 100 : 0}%`;
     document.getElementById('decision-caption').textContent = decided ? `${Math.round(buys / decided * 100)}% would buy · ${Math.round(passes / decided * 100)}% would not` : 'Waiting for completed responses';
-    const visible = responses.filter(response => filter.value === 'all' || response.status === filter.value);
-    list.replaceChildren(); empty.hidden = visible.length > 0;
-    for (const response of visible) {
+    list.replaceChildren(); empty.hidden = responses.length > 0;
+    for (const response of responses) {
       const card = template.content.firstElementChild.cloneNode(true);
       card.querySelector('.response-name').textContent = response.participantName;
       card.querySelector('.response-meta').textContent = `Started ${date(response.startedAt)}${response.completedAt ? ` · Finished ${date(response.completedAt)}` : ''}`;
-      const badge = card.querySelector('.response-status'); badge.textContent = response.status === 'complete' ? 'Complete' : 'In progress'; badge.classList.toggle('complete', response.status === 'complete');
       card.querySelector('.response-choice').textContent = choiceText(response.ending?.choice);
       const notes = [...new Set([...(response.notebook || []), ...(response.imaginedNotebook || [])])];
       card.querySelector('.response-notebook-count').textContent = `${notes.length} ${notes.length === 1 ? 'artifact' : 'artifacts'} recorded`;
@@ -65,7 +61,7 @@
 
   async function loadResponses(token = getToken()) {
     if (!config.ready) {
-      status.textContent = 'Supabase is not configured yet. Add the project URL and publishable key in supabase-config.js.';
+      status.textContent = 'The dashboard is not configured yet.';
       login.hidden = true; content.hidden = true; return;
     }
     if (!token) { login.hidden = false; content.hidden = true; logout.hidden = true; return; }
@@ -78,9 +74,9 @@
       status.textContent = 'Your dashboard session expired. Please sign in again.'; return;
     }
     if (!result.ok) throw new Error(`Could not load responses (${result.status}).`);
-    responses = (await result.json()).map(row => row.response).filter(Boolean);
+    responses = (await result.json()).map(row => row.response).filter(response => response?.status === 'complete');
     login.hidden = true; content.hidden = false; logout.hidden = false;
-    status.textContent = `${responses.length} shared ${responses.length === 1 ? 'response' : 'responses'} loaded from Supabase.`;
+    status.textContent = '';
     render();
   }
 
@@ -99,6 +95,5 @@
     } catch (error) { status.textContent = error.message; }
   });
   logout.addEventListener('click', () => { setToken(''); responses = []; login.hidden = false; content.hidden = true; logout.hidden = true; status.textContent = 'Signed out.'; });
-  filter.addEventListener('change', render);
   loadResponses().catch(error => { status.textContent = error.message; login.hidden = false; content.hidden = true; });
 })();
