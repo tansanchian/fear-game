@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#172923" />
   <title>An Imagined Memory — Concrete Memories</title>
   <link rel="stylesheet" href="discovery.css?v=20261102-clean-notebook" />
-  <link rel="stylesheet" href="hallucination.css?v=20261102-black-ui" />
+  <link rel="stylesheet" href="hallucination.css?v=20261102-display-pan" />
 </head>
 <body>
   <main id="memory" aria-label="Explore an imagined, abandoned block">
@@ -16,6 +16,13 @@
       <video id="arrival-video" src="assets/lift-opening.mp4" poster="assets/lift-inside.jpg" muted playsinline preload="auto" aria-label="The lift doors opening"></video>
       <div id="memory-dim" aria-hidden="true"></div>
     </div>
+    <section class="display-inspection" id="display-inspection" aria-label="The floor display" aria-hidden="true" hidden>
+      <video id="display-inspection-video" src="assets/hallucination_lift_close.mp4" poster="assets/hallucination-display-poster.jpg" muted playsinline preload="metadata" aria-label="Close-up of the unfamiliar lift display"></video>
+      <div class="display-inspection-return">
+        <span>The floor display</span>
+        <button id="display-inspection-back" type="button">← Back to lift lobby</button>
+      </div>
+    </section>
     <div class="memory-hotspots" id="memory-hotspots">
       <button class="memory-hotspot" id="display-hotspot" type="button" aria-label="Inspect the lift floor display" data-hint="Inspect floor display" hidden><span aria-hidden="true">＋</span></button>
       <button class="memory-hotspot route-hotspot" id="chair-hotspot" type="button" aria-label="Look into the courtyard" data-hint="Look into courtyard" hidden><span aria-hidden="true">↗</span></button>
@@ -111,6 +118,6 @@
   <script src="notebook-view.js?v=20261102-plain-ui"></script>
   <script src="memory-atmosphere.js?v=20261102-confused-walk"></script>
   <script src="game-ending.js?v=20261102-required-story"></script>
-  <script src="hallucination.js?v=20261102-black-ui-confused-walk"></script>
+  <script src="hallucination.js?v=20261102-display-pan"></script>
 </body>
 </html>

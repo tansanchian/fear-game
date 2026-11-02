@@ -20,6 +20,9 @@ const MemoryWalk = (() => {
   const back = document.getElementById('memory-back');
   const forward = document.getElementById('memory-forward');
   const memoryNotebook = document.getElementById('memory-notebook');
+  const displayInspection = document.getElementById('display-inspection');
+  const displayInspectionVideo = document.getElementById('display-inspection-video');
+  const displayInspectionBack = document.getElementById('display-inspection-back');
   const dialog = document.getElementById('memory-detail');
   const detailVideo = document.getElementById('detail-video');
   const detailImage = document.getElementById('detail-image');
@@ -33,7 +36,6 @@ const MemoryWalk = (() => {
   const error = document.getElementById('load-error');
   const announcement = document.getElementById('memory-announcement');
   const details = {
-    display: { type: 'video', source: 'assets/hallucination_lift_close.mp4', poster: 'assets/hallucination-display-poster.jpg', title: 'The floor display', alt: 'Close-up of the unfamiliar lift display' },
     chair: { type: 'image', source: 'assets/hallucination-chair-poster.jpg', title: 'The courtyard seat', alt: 'A courtyard seat overgrown with plants' },
     deck: { type: 'image', source: 'assets/hallucination_void_deck.jpg', title: 'The void deck', alt: 'An empty seating area with fallen leaves and debris' },
     gate: { type: 'image', source: 'assets/hallucination_gate.jpg', title: 'The closed gate', alt: 'A metal gate with a yellow no-entry sign' },
@@ -54,6 +56,7 @@ const MemoryWalk = (() => {
   let currentDetail = null;
   let currentArtifact = null;
   let imageRequest = 0;
+  let displayInspecting = false;
   const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const source = index => index === -1 ? 'assets/hallucination-lobby.jpg' : `assets/hallucination-stop-${String(index + 1).padStart(2, '0')}.jpg`;
   function save() {
@@ -107,16 +110,16 @@ const MemoryWalk = (() => {
   function render() {
     root.dataset.scene = scene === 4 ? 'end' : scene === -2 ? 'arrival' : scene === -1 ? 'lobby' : 'corridor';
     root.dataset.stop = String(scene);
-    arrival.hidden = scene !== -2; photo.hidden = scene === -2;
-    prompt.hidden = busy || (scene >= 0 && scene < 4);
+    arrival.hidden = displayInspecting || scene !== -2; photo.hidden = displayInspecting || scene === -2;
+    prompt.hidden = displayInspecting || busy || (scene >= 0 && scene < 4);
     nextButton.hidden = scene === 4 && !explored();
     nextButton.disabled = busy || (scene === -2 && !ready) || (scene === 4 && !explored());
-    back.hidden = scene < 0; back.disabled = busy;
-    forward.hidden = scene < 0 || scene === 4; forward.disabled = busy;
-    document.getElementById('walk-hint').hidden = scene < 0 || scene === 4 || busy;
-    memoryNotebook.hidden = scene < 0;
+    back.hidden = displayInspecting || scene < 0; back.disabled = busy;
+    forward.hidden = displayInspecting || scene < 0 || scene === 4; forward.disabled = busy;
+    document.getElementById('walk-hint').hidden = displayInspecting || scene < 0 || scene === 4 || busy;
+    memoryNotebook.hidden = displayInspecting || scene < 0;
     memoryNotebook.disabled = busy;
-    for (const item of hotspots) document.getElementById(item.id).hidden = busy || item.scene !== scene;
+    for (const item of hotspots) document.getElementById(item.id).hidden = displayInspecting || busy || item.scene !== scene;
     const sceneLabel = document.getElementById('scene-label');
     sceneLabel.hidden = scene === -1;
     sceneLabel.textContent = scene === -2 ? 'The doors open' : 'Further along';
@@ -133,7 +136,7 @@ const MemoryWalk = (() => {
     catch { ready = true; render(); announcement.textContent = 'The lift video is paused. You can step out to continue.'; }
   }
   async function go(next) {
-    if (GameEnding.active() || busy || dialog.open || notebookDialog.open || !Number.isInteger(next) || next < -1 || next > 4 || Math.abs(next - scene) !== 1 || (scene === -2 && !ready)) return;
+    if (GameEnding.active() || displayInspecting || busy || dialog.open || notebookDialog.open || !Number.isInteger(next) || next < -1 || next > 4 || Math.abs(next - scene) !== 1 || (scene === -2 && !ready)) return;
     MemoryAtmosphere.moving();
     busy = true; error.hidden = true; render();
     const preload = new Image(); preload.src = source(next);
@@ -158,7 +161,7 @@ const MemoryWalk = (() => {
     (scene === -1 || scene === 4 ? nextButton : forward).focus({ preventScroll: true });
   }
   function finishWalk() {
-    if (scene !== 4 || !explored() || busy || dialog.open || notebookDialog.open || GameEnding.active()) return;
+    if (scene !== 4 || !explored() || displayInspecting || busy || dialog.open || notebookDialog.open || GameEnding.active()) return;
     MemoryAtmosphere.stop();
     GameEnding.begin();
   }
@@ -193,8 +196,50 @@ const MemoryWalk = (() => {
       if (fresh && id === 'memoryArticle2') MemoryAtmosphere.trigger('read-article2');
     }
   }
+  async function openDisplayInspection(item) {
+    if (GameEnding.active() || displayInspecting || busy || dialog.open || notebookDialog.open || item.scene !== scene) return;
+    MemoryAtmosphere.stop();
+    displayInspecting = true; busy = true;
+    displayInspection.hidden = false; displayInspection.setAttribute('aria-hidden', 'false');
+    displayInspection.style.opacity = '0';
+    displayInspectionVideo.pause(); displayInspectionVideo.muted = true; displayInspectionVideo.volume = 0; displayInspectionVideo.currentTime = 0;
+    render();
+    const duration = reduced() ? 1 : 420;
+    const width = view.clientWidth, height = view.clientHeight;
+    const scale = Math.min(width / 848, height / 464);
+    const ox = (width - 848 * scale) / 2, oy = (height - 464 * scale) / 2;
+    const [x, y, w, h] = item.bounds;
+    const cx = ox + (x + w / 2) * scale, cy = oy + (y + h / 2) * scale;
+    const dx = width / 2 - cx, dy = height / 2 - cy;
+    const zoom = view.animate([
+      { opacity: 1, transform: 'translate(0, 0) scale(1)' },
+      { opacity: 0, transform: `translate(${dx}px, ${dy}px) scale(2.35)` },
+    ], { duration, fill: 'forwards', easing: 'cubic-bezier(.4,0,.2,1)' });
+    const reveal = displayInspection.animate([{ opacity: 0 }, { opacity: 1 }], { duration: Math.max(1, duration * .55), delay: duration * .45, fill: 'forwards', easing: 'ease-out' });
+    await Promise.all([zoom.finished.catch(() => {}), reveal.finished.catch(() => {})]);
+    zoom.cancel(); reveal.cancel(); view.style.opacity = '0'; displayInspection.style.opacity = '1';
+    busy = false; render();
+    try { await displayInspectionVideo.play(); } catch { /* The poster remains visible when autoplay is unavailable. */ }
+    announcement.textContent = 'Showing a silent close-up of the unfamiliar lift display.';
+    displayInspectionBack.focus({ preventScroll: true });
+  }
+  async function closeDisplayInspection() {
+    if (!displayInspecting || busy) return;
+    busy = true; displayInspectionVideo.pause(); render();
+    const duration = reduced() ? 1 : 280;
+    const fade = displayInspection.animate([{ opacity: 1 }, { opacity: 0 }], { duration, fill: 'forwards', easing: 'ease-in' });
+    view.style.opacity = '0';
+    const reveal = view.animate([{ opacity: 0, transform: 'scale(1.04)' }, { opacity: 1, transform: 'scale(1)' }], { duration, fill: 'forwards', easing: 'ease-out' });
+    await Promise.all([fade.finished.catch(() => {}), reveal.finished.catch(() => {})]);
+    fade.cancel(); reveal.cancel(); view.style.opacity = '';
+    displayInspection.hidden = true; displayInspection.setAttribute('aria-hidden', 'true'); displayInspection.style.opacity = '';
+    displayInspecting = false; busy = false; render();
+    announcement.textContent = 'Back at the lift lobby.';
+    document.getElementById('display-hotspot').focus({ preventScroll: true });
+  }
   function openDetail(item) {
     if (GameEnding.active() || busy || dialog.open || notebookDialog.open || item.scene !== scene) return;
+    if (item.detail === 'display') { void openDisplayInspection(item); return; }
     MemoryAtmosphere.stop();
     const target = details[item.detail];
     currentDetail = item; currentArtifact = target.artifact || null;
@@ -239,6 +284,8 @@ const MemoryWalk = (() => {
   });
   detailVideo.addEventListener('error', () => { if (dialog.open && !detailVideo.hidden && detailVideo.hasAttribute('src')) document.getElementById('detail-error').hidden = false; });
   detailImage.addEventListener('error', () => { if (dialog.open && !detailImage.hidden) document.getElementById('detail-error').hidden = false; });
+  displayInspectionVideo.addEventListener('volumechange', () => { displayInspectionVideo.muted = true; displayInspectionVideo.volume = 0; });
+  displayInspectionBack.addEventListener('click', () => { void closeDisplayInspection(); });
   arrival.addEventListener('ended', () => { ready = true; arrival.pause(); render(); });
   arrival.addEventListener('error', () => { ready = true; render(); announcement.textContent = 'The opening video could not load. You can still step out of the lift.'; });
   nextButton.addEventListener('click', () => { if (scene === 4) finishWalk(); else void go(scene + 1); });
@@ -251,11 +298,15 @@ const MemoryWalk = (() => {
   });
   window.addEventListener('resize', layout);
   document.addEventListener('keydown', event => {
+    if (displayInspecting) {
+      if (event.key === 'Escape') { event.preventDefault(); void closeDisplayInspection(); }
+      return;
+    }
     if (GameEnding.active() || dialog.open || notebookDialog.open || busy || event.target.closest('a')) return;
     if (event.key === 'ArrowUp' || event.key.toLowerCase() === 'w') { event.preventDefault(); if (scene === 4) finishWalk(); else void go(scene + 1); }
     if (event.key === 'ArrowDown' || event.key.toLowerCase() === 's') { event.preventDefault(); void go(scene - 1); }
   });
-  window.addEventListener('pagehide', () => { arrival.pause(); detailVideo.pause(); save(); });
+  window.addEventListener('pagehide', () => { arrival.pause(); detailVideo.pause(); displayInspectionVideo.pause(); save(); });
   async function start() {
     if (scene === -2) { backdrop.src = 'assets/lift-inside.jpg'; await playArrival(); }
     else {
