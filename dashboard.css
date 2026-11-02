@@ -212,10 +212,6 @@ button:focus-visible {
   font-size: 11px;
 }
 
-details { color: var(--muted); font-size: 12px; grid-column: 1 / -1; }
-summary { color: white; cursor: pointer; }
-.activity-list { max-height: 240px; margin: 13px 0 0; overflow: auto; padding-left: 24px; }
-.activity-list li { padding: 4px 0; line-height: 1.5; }
 .empty-state { padding: 40px 0; color: var(--muted); text-align: center; }
 
 @media (max-width: 850px) {
@@ -227,5 +223,5 @@ summary { color: white; cursor: pointer; }
   .dashboard-shell { padding-top: 30px; }
   .dashboard-header, .section-heading { display: grid; }
   .response-grid { grid-template-columns: 1fr; }
-  .response-comment-section, details { grid-column: 1; }
+  .response-comment-section { grid-column: 1; }
 }

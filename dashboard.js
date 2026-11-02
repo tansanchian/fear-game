@@ -4,13 +4,6 @@
     murderArticle: 'Torn newspaper fragment', neighbourConversation: 'A new neighbour', doorChant: 'Sounds behind the door',
     memoryArticle1: 'Old newspaper clipping', memoryArticle2: 'Trial report', memoryArticle2Close: 'Trial report close-up',
   };
-  const activityLabels = {
-    game_started: 'Started the game', page_viewed: 'Opened', item_inspected: 'Inspected an item',
-    notebook_item_added: 'Added an item to the notebook', notebook_opened: 'Opened the notebook',
-    corridor_moved: 'Moved along the corridor', day_started: 'Started the next day',
-    imagined_corridor_moved: 'Moved through the imagined corridor', imagined_notebook_item_added: 'Recorded an imagined artifact',
-    game_completed: 'Completed the story',
-  };
   const tokenKey = 'concrete-memories.supabase-dashboard-token.v1';
   const config = ParticipantData.configuration();
   const list = document.getElementById('response-list');
@@ -24,14 +17,6 @@
 
   const date = value => value ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : 'Not completed';
   const choiceText = choice => choice === 'buy' ? 'Would buy the flat' : choice === 'pass' ? 'Would not buy the flat' : 'No final choice yet';
-  const detailText = entry => {
-    const detail = entry.detail || {};
-    if (entry.type === 'page_viewed') return `${activityLabels[entry.type]} ${detail.page}`;
-    if (entry.type.includes('notebook_item')) return `${activityLabels[entry.type]}: ${labels[detail.id] || detail.id}`;
-    if (entry.type === 'item_inspected') return `${activityLabels[entry.type]}: ${detail.id}`;
-    if (entry.type === 'game_completed') return `${activityLabels[entry.type]}: ${choiceText(detail.choice)}`;
-    return activityLabels[entry.type] || entry.type.replaceAll('_', ' ');
-  };
   const getToken = () => { try { return sessionStorage.getItem(tokenKey) || ''; } catch { return ''; } };
   const setToken = token => { try { token ? sessionStorage.setItem(tokenKey, token) : sessionStorage.removeItem(tokenKey); } catch {} };
 
@@ -53,8 +38,6 @@
       const tags = card.querySelector('.response-notebook');
       for (const id of notes.length ? notes : ['None']) { const item = document.createElement('li'); item.textContent = labels[id] || id; tags.append(item); }
       card.querySelector('.response-comment').textContent = response.ending?.comment?.trim() || 'No comment submitted.';
-      const activity = card.querySelector('.activity-list');
-      for (const entry of response.activity || []) { const item = document.createElement('li'); item.textContent = `${date(entry.at)} — ${detailText(entry)}`; activity.append(item); }
       list.append(card);
     }
   }
