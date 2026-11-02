@@ -68,7 +68,7 @@ const ReturnWalk = (() => {
           ? 'For an instant, the walkway seems empty of plants and belongings. You blink, and the familiar details are there again.'
           : 'You know you are walking through an occupied block. Still, the empty version of it is becoming easier to picture. The lift is close now.';
     }
-    document.getElementById('return-label').textContent = state.stage === 'lift' ? 'BETWEEN FLOORS' : 'THE STORY STAYS WITH YOU';
+    document.getElementById('return-label').textContent = state.stage === 'lift' ? 'Between floors' : 'The story stays with you';
     document.getElementById('return-title').textContent = title;
     document.getElementById('return-copy').textContent = copy;
     button.textContent = !initialLoaded && !busy ? 'Try loading this view again'

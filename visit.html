@@ -6,12 +6,12 @@
     <meta name="theme-color" content="#162523" />
     <meta name="description" content="Explore five viewpoints along a residential corridor, its floor plan, and the flat entrance." />
     <title>The Visit — Concrete Memories</title>
-    <link rel="stylesheet" href="corridor.css?v=20261102-torn-paper-hints" />
-    <link rel="stylesheet" href="scene.css?v=20261102-torn-paper-hints" />
-    <link rel="stylesheet" href="memory-transition.css?v=20261102-torn-paper-hints" />
-    <link rel="stylesheet" href="discovery.css?v=20261102-torn-paper-hints" />
-    <link rel="stylesheet" href="neighbour-conversation.css?v=20261102-torn-paper-hints" />
-    <link rel="stylesheet" href="door-encounter.css?v=20261102-torn-paper-hints" />
+    <link rel="stylesheet" href="corridor.css?v=20261102-plain-ui" />
+    <link rel="stylesheet" href="scene.css?v=20261102-plain-ui" />
+    <link rel="stylesheet" href="memory-transition.css?v=20261102-plain-ui" />
+    <link rel="stylesheet" href="discovery.css?v=20261102-plain-ui" />
+    <link rel="stylesheet" href="neighbour-conversation.css?v=20261102-plain-ui" />
+    <link rel="stylesheet" href="door-encounter.css?v=20261102-plain-ui" />
   </head>
   <body>
     <main class="explorer is-intro" id="explorer">
@@ -63,7 +63,7 @@
         <img class="lift-frame" id="lift-frame-b" src="assets/lift-lobby.jpg" alt="Lift lobby with bicycles and a walkway ahead" aria-hidden="true" draggable="false" />
         <div class="intro-shade" aria-hidden="true"></div>
         <div class="lift-prompt glass" id="lift-prompt">
-          <span class="eyebrow" id="lift-prompt-location">INSIDE THE LIFT</span>
+          <span class="eyebrow" id="lift-prompt-location">Inside the lift</span>
           <strong id="lift-prompt-title">Lift doors ahead</strong>
           <button id="lift-next" class="prompt-action" type="button"><span id="lift-next-label">Step out of the lift</span><span aria-hidden="true">→</span></button>
         </div>
@@ -72,37 +72,16 @@
       <div class="map-prompt glass" id="map-prompt">
         <div class="prompt-heading">
           <span class="prompt-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2V6Zm6-2v14m6-12v14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          <div><span class="eyebrow">AT THE START</span><strong>Floor plan</strong></div>
+          <div><span class="eyebrow">At the start</span><strong>Floor plan</strong></div>
         </div>
         <button id="view-floor-plan" class="prompt-action" type="button">View floor plan <span aria-hidden="true">↗</span></button>
       </div>
 
-      <button class="icon-button glass info-button" id="info-button" type="button" aria-label="About this explorer" title="About this explorer">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 10.5V16.5M12 7.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-
-      <div class="view-controls glass" aria-label="View controls">
-        <button class="control-button" id="corridor-sound" type="button" aria-label="Mute ambient sound" aria-pressed="true" title="Sound on">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4V9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path id="sound-waves" d="M16 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path id="sound-slash" d="m3 3 18 18" stroke="currentColor" stroke-width="1.8" hidden/></svg>
-        </button>
-        <button class="control-button" id="zoom-in" type="button" aria-label="Zoom in" title="Zoom in">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
-        <button class="control-button" id="zoom-out" type="button" aria-label="Zoom out" title="Zoom out">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
-        <span class="control-divider" aria-hidden="true"></span>
-        <button class="control-button" id="reset-view" type="button" aria-label="Reset view" title="Reset view">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 11a8 8 0 1 1 2.2 6.5M4 16v-5h5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <button class="control-button" id="fullscreen" type="button" aria-label="Enter full screen" title="Full screen">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M4 15v5h5M20 15v5h-5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
+      <button id="corridor-sound" type="button" hidden aria-hidden="true"><span id="sound-waves"></span><span id="sound-slash" hidden></span></button>
 
       <button class="floor-arrow" id="floor-arrow" type="button" aria-label="Move forward along the corridor">
         <span class="floor-arrow-ring"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 15 6-6 6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <span class="floor-arrow-label">MOVE FORWARD</span>
+        <span class="floor-arrow-label">Move forward</span>
       </button>
 
       <button class="corridor-back glass" id="back-button" type="button" aria-label="Move back along the corridor" title="Move back" disabled>
@@ -112,7 +91,7 @@
       <div class="destination-card glass" id="destination-card" role="dialog" aria-modal="false" aria-labelledby="destination-title" hidden>
         <button class="destination-close" id="destination-close" type="button" aria-label="Dismiss flat prompt">×</button>
         <div class="destination-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 20V6.5L12 3l7 3.5V20M9 20v-5h6v5M8.5 8.5h.01M12 8.5h.01M15.5 8.5h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="destination-copy"><span class="eyebrow">FLAT ENTRANCE</span><strong id="destination-title">View this unit</strong></div>
+        <div class="destination-copy"><span class="eyebrow">Flat entrance</span><strong id="destination-title">View this unit</strong></div>
         <button id="see-flat" class="prompt-action" type="button">See the flat <span aria-hidden="true">↖</span></button>
       </div>
 
@@ -122,19 +101,10 @@
       </div>
 
       <div class="artifact-return glass" id="artifact-return" role="dialog" aria-modal="false" aria-labelledby="artifact-title" hidden>
-        <span class="eyebrow" id="artifact-title">FLOOR PLAN</span>
+        <span class="eyebrow" id="artifact-title">Floor plan</span>
         <button id="view-power-close" class="prompt-action" type="button" hidden>View number close-up <span aria-hidden="true">↗</span></button>
         <button id="return-to-corridor" class="prompt-action" type="button"><span id="return-icon" aria-hidden="true">→</span><span id="return-label">Continue to corridor</span></button>
         <button id="replay-lift" class="replay-action" type="button" hidden>← Back to lift lobby</button>
-      </div>
-
-      <div class="info-panel glass" id="info-panel" role="dialog" aria-modal="false" aria-labelledby="info-title" hidden>
-        <button class="info-close" id="info-close" type="button" aria-label="Close information">×</button>
-        <span class="eyebrow">ABOUT THIS EXPLORER</span>
-        <h2 id="info-title">Explore the corridor</h2>
-        <p id="visit-context" class="info-keys"></p>
-        <p>Start by stepping out of the lift, then view the floor plan and explore five corridor viewpoints. Hover over objects along the corridor to inspect them. At the last stop, click the unit door to view the flat or inspect the power box. Click the paper on the flat entrance to read it. Drag or zoom to inspect details.</p>
-        <p class="info-keys">Keyboard: <kbd>↑</kbd> forward <kbd>↓</kbd> back <kbd>←</kbd><kbd>→</kbd> look around <kbd>Esc</kbd> return</p>
       </div>
 
       <button class="notebook-button glass" id="notebook-button" type="button" aria-label="Notebook" aria-haspopup="dialog">
@@ -142,7 +112,7 @@
         <span class="notebook-label">Notebook</span><span id="notebook-badge" hidden></span>
       </button>
       <div class="journey-prompt glass" id="journey-prompt" hidden>
-        <span class="eyebrow">TAKE ANOTHER LOOK</span>
+        <span class="eyebrow">Take another look</span>
         <p>There may be more to notice.</p>
         <button class="prompt-action" id="journey-action" type="button">Keep exploring</button>
         <p class="journey-hint">Walk all the way back, then retrace your steps. Familiar spots may reveal new details over time.</p>
@@ -151,7 +121,7 @@
       <audio id="corridor-audio" preload="none"></audio>
       <div class="sound-caption glass" id="sound-caption" role="status" aria-live="polite" hidden></div>
       <dialog class="memory-transition" id="memory-transition" aria-labelledby="memory-transition-title" closedby="none">
-        <span class="eyebrow">ON YOUR PHONE</span>
+        <span class="eyebrow">On your phone</span>
         <h2 id="memory-transition-title">Something catches your eye</h2>
         <section id="memory-stage-preview">
           <p>You look up the block. One post catches your attention.</p>
@@ -183,7 +153,7 @@
         </section>
       </dialog>
       <dialog class="day-transition" id="day-transition" aria-labelledby="day-transition-title" aria-describedby="day-transition-copy">
-        <span class="eyebrow" id="day-transition-label">DAY 1 · EVENING</span>
+        <span class="eyebrow" id="day-transition-label">Day 1 · Evening</span>
         <h2 id="day-transition-title">Time to head home</h2>
         <p id="day-transition-copy"></p>
         <h3 id="day-notes-heading" hidden>In your notebook</h3>
@@ -194,7 +164,7 @@
         </div>
       </dialog>
       <dialog class="notebook" id="notebook" aria-labelledby="notebook-title">
-        <header class="notebook-header"><div><span class="eyebrow">FIELD NOTES</span><h2 id="notebook-title">Your notebook</h2><p id="notebook-summary"></p></div><button id="notebook-close" type="button" aria-label="Close notebook">×</button></header>
+        <header class="notebook-header"><div><span class="eyebrow">Field notes</span><h2 id="notebook-title">Your notebook</h2><p id="notebook-summary"></p></div><button id="notebook-close" type="button" aria-label="Close notebook">×</button></header>
         <p id="notebook-empty">Nothing recorded yet. Inspect papers and other evidence along the corridor to add them here.</p>
         <div class="notebook-list" id="notebook-list"></div>
         <section id="notebook-detail" hidden aria-label="Recorded artifact">
@@ -226,7 +196,7 @@
       </dialog>
       <div class="sr-only" id="announcement" role="status" aria-live="polite"></div>
       <dialog id="door-encounter" class="door-encounter" aria-labelledby="door-encounter-title" aria-describedby="door-encounter-copy">
-        <span class="eyebrow">AT THE THRESHOLD</span>
+        <span class="eyebrow">At the threshold</span>
         <h2 id="door-encounter-title">A closer look</h2>
         <p id="door-encounter-copy" aria-live="polite" aria-atomic="true"></p>
         <p id="door-encounter-status" class="door-encounter-status" role="status" hidden></p>
@@ -240,16 +210,16 @@
     <script src="supabase-config.js?v=20261102-supabase"></script>
     <script src="participant-data.js?v=20261102-supabase"></script>
     <script>ParticipantData.page('visit.html');</script>
-    <script src="memory-journey.js?v=20261102-torn-paper-hints"></script>
-    <script src="day-content.js?v=20261102-torn-paper-hints"></script>
-    <script src="artifact-content.js?v=20261102-torn-paper-hints"></script>
-    <script src="notebook-view.js?v=20261102-torn-paper-hints"></script>
-    <script src="discovery.js?v=20261102-torn-paper-hints"></script>
-    <script src="corridor-audio.js?v=20261102-torn-paper-hints"></script>
-    <script src="corridor-effects.js?v=20261102-torn-paper-hints"></script>
-    <script src="neighbour-conversation.js?v=20261102-torn-paper-hints"></script>
-    <script src="door-encounter.js?v=20261102-torn-paper-hints"></script>
-    <script src="memory-transition.js?v=20261102-torn-paper-hints"></script>
-    <script src="app.js?v=20261102-torn-paper-hints"></script>
+    <script src="memory-journey.js?v=20261102-plain-ui"></script>
+    <script src="day-content.js?v=20261102-plain-ui"></script>
+    <script src="artifact-content.js?v=20261102-plain-ui"></script>
+    <script src="notebook-view.js?v=20261102-plain-ui"></script>
+    <script src="discovery.js?v=20261102-plain-ui"></script>
+    <script src="corridor-audio.js?v=20261102-plain-ui"></script>
+    <script src="corridor-effects.js?v=20261102-plain-ui"></script>
+    <script src="neighbour-conversation.js?v=20261102-plain-ui"></script>
+    <script src="door-encounter.js?v=20261102-plain-ui"></script>
+    <script src="memory-transition.js?v=20261102-plain-ui"></script>
+    <script src="app.js?v=20261102-plain-ui"></script>
   </body>
 </html>

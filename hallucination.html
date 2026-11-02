@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#172923" />
   <title>An Imagined Memory — Concrete Memories</title>
-  <link rel="stylesheet" href="discovery.css?v=20261102-torn-paper-hints" />
-  <link rel="stylesheet" href="hallucination.css?v=20261102-torn-paper-hints" />
+  <link rel="stylesheet" href="discovery.css?v=20261102-plain-ui" />
+  <link rel="stylesheet" href="hallucination.css?v=20261102-plain-ui" />
 </head>
 <body>
   <main id="memory" aria-label="Explore an imagined, abandoned block">
@@ -29,7 +29,7 @@
       <button class="glass" id="memory-sound" type="button" aria-pressed="true">Sound on</button>
     </div>
     <section class="scene-prompt glass" id="scene-prompt" aria-labelledby="scene-title">
-      <span class="eyebrow" id="scene-label">THE DOORS OPEN</span>
+      <span class="eyebrow" id="scene-label">The doors open</span>
       <h1 id="scene-title">The doors are opening</h1>
       <p id="scene-copy">You expect the familiar landing, but the images from the post are still with you.</p>
       <button class="action" id="scene-next" type="button" disabled>Step out of the lift</button>
@@ -57,7 +57,7 @@
     <p id="memory-sound-caption" class="memory-sound-caption glass" role="status" hidden></p>
     <audio id="ending-ringtone" src="assets/phone-ring.mp3" preload="auto"></audio>
     <dialog id="game-ending" aria-labelledby="ending-title" closedby="none">
-      <span class="eyebrow" id="ending-label">BACK TO THE PRESENT</span>
+      <span class="eyebrow" id="ending-label">Back to the present</span>
       <h2 id="ending-title" tabindex="-1">Your wife is calling</h2>
       <button class="ending-secondary" id="ending-notebook" type="button" aria-haspopup="dialog" hidden>Review notebook</button>
       <section id="ending-call">
@@ -90,7 +90,7 @@
       </section>
     </dialog>
       <dialog class="notebook" id="notebook" aria-labelledby="notebook-title">
-        <header class="notebook-header"><div><span class="eyebrow">FIELD NOTES</span><h2 id="notebook-title">Your notebook</h2><p id="notebook-summary"></p></div><button id="notebook-close" type="button" aria-label="Close notebook">×</button></header>
+        <header class="notebook-header"><div><span class="eyebrow">Field notes</span><h2 id="notebook-title">Your notebook</h2><p id="notebook-summary"></p></div><button id="notebook-close" type="button" aria-label="Close notebook">×</button></header>
         <p id="notebook-empty">You did not record any evidence during your visit.</p>
         <div class="notebook-list" id="notebook-list"></div>
         <section id="notebook-detail" hidden aria-label="Recorded artifact">
@@ -107,12 +107,12 @@
   <script src="supabase-config.js?v=20261102-supabase"></script>
   <script src="participant-data.js?v=20261102-supabase"></script>
   <script>ParticipantData.page('hallucination.html');</script>
-  <script src="memory-journey.js?v=20261102-torn-paper-hints"></script>
-  <script src="day-content.js?v=20261102-torn-paper-hints"></script>
-  <script src="artifact-content.js?v=20261102-torn-paper-hints"></script>
-  <script src="notebook-view.js?v=20261102-torn-paper-hints"></script>
-  <script src="memory-atmosphere.js?v=20261102-torn-paper-hints"></script>
-  <script src="game-ending.js?v=20261102-torn-paper-hints"></script>
-  <script src="hallucination.js?v=20261102-torn-paper-hints"></script>
+  <script src="memory-journey.js?v=20261102-plain-ui"></script>
+  <script src="day-content.js?v=20261102-plain-ui"></script>
+  <script src="artifact-content.js?v=20261102-plain-ui"></script>
+  <script src="notebook-view.js?v=20261102-plain-ui"></script>
+  <script src="memory-atmosphere.js?v=20261102-plain-ui"></script>
+  <script src="game-ending.js?v=20261102-plain-ui"></script>
+  <script src="hallucination.js?v=20261102-plain-ui"></script>
 </body>
 </html>

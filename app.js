@@ -45,12 +45,7 @@ const returnIcon = document.getElementById('return-icon');
 const returnLabel = document.getElementById('return-label');
 const viewPowerCloseButton = document.getElementById('view-power-close');
 const replayButton = document.getElementById('replay-lift');
-const infoButton = document.getElementById('info-button');
-const infoPanel = document.getElementById('info-panel');
 const announcement = document.getElementById('announcement');
-const zoomInButton = document.getElementById('zoom-in');
-const zoomOutButton = document.getElementById('zoom-out');
-const fullscreenButton = document.getElementById('fullscreen');
 const sceneHotspots = [
   { button: document.getElementById('view-shoe-cabinet'), stop: 0, title: 'A shoe cabinet', bounds: { x: 382, y: 185, width: 118, height: 525 } },
   { button: document.getElementById('view-wooden-blocks'), stop: 0, title: 'Wooden blocks on the floor', bounds: { x: 515, y: 395, width: 58, height: 130 } },
@@ -121,8 +116,6 @@ function renderCamera() {
   corridorCamera.style.transform = `translate3d(${x}%, ${y}%, 0) scale(${corridorScale})`;
   artifactPhoto.style.transform = `translate3d(${x}%, ${y}%, 0) scale(${artifactScale})`;
   artifactHotspotLayer.style.transform = `translate3d(${x}%, ${y}%, 0) scale(${artifactScale})`;
-  zoomInButton.disabled = zoom >= maxZoom();
-  zoomOutButton.disabled = zoom <= 1;
 }
 
 function layoutSceneHotspots() {
@@ -215,12 +208,11 @@ function render() {
   const busy = transitioning || turning;
   explorer.dataset.day = String(Discovery.day());
   explorer.dataset.stop = String(position);
-  document.getElementById('visit-context').textContent = `Day ${Discovery.day()} · ${introActive ? 'Lift arrival' : `Corridor stop ${position + 1} of ${stops.length}`}`;
   if (position !== stops.length - 1) doorPromptOpen = false;
   if (notedObject && (busy || introActive || artifact || position !== notedObject.stop)) dismissObjectNote();
   explorer.classList.toggle('is-power-artifact', artifact === 'power' || artifact === 'powerClose');
   liftPrompt.hidden = busy || !introActive || (liftPosition === 0 && !liftReady);
-  liftPromptLocation.textContent = `DAY ${Discovery.day()} · ${liftPosition === 0 ? 'INSIDE THE LIFT' : 'LIFT LOBBY'}`;
+  liftPromptLocation.textContent = `Day ${Discovery.day()} · ${liftPosition === 0 ? 'Inside the lift' : 'Lift lobby'}`;
   liftPromptTitle.textContent = liftPosition === 0 ? 'The doors are open' : 'You are out of the lift';
   liftNextLabel.textContent = liftPosition === 0 ? 'Step out of the lift' : 'View floor plan';
   mapPrompt.hidden = busy || introActive || Boolean(artifact) || position !== 0;
@@ -237,8 +229,6 @@ function render() {
   returnLabel.textContent = fromIntro ? 'Continue to corridor' : artifact === 'powerClose' ? 'Back to power box' : artifact === 'filmRequest' ? 'Back to flat' : 'Back to corridor';
   backButton.disabled = busy || Boolean(artifact) || (introActive ? liftPosition === 0 : position === 0);
   floorArrow.disabled = busy || introActive || Boolean(artifact) || position === stops.length - 1;
-  document.querySelector('.view-controls').hidden = introActive;
-  infoButton.hidden = introActive;
   layoutSceneHotspots();
   if (artifact === 'flat') layoutArtifactHotspots();
   renderCamera();
@@ -521,7 +511,6 @@ function replayLift() {
   explorer.classList.add('is-intro');
   introStage.setAttribute('aria-hidden', 'false');
   artifactStage.setAttribute('aria-hidden', 'true');
-  infoPanel.hidden = true;
   render();
   window.setTimeout(() => { turning = false; render(); document.getElementById('lift-next').focus(); }, turnDuration());
   announcement.textContent = 'Returned to the lift lobby.';
@@ -556,26 +545,6 @@ filmRequestHotspot.addEventListener('click', () => { void showDetailView('filmRe
 peekDoorHotspot.addEventListener('click', () => DoorEncounter.open());
 returnButton.addEventListener('click', returnFromArtifact);
 replayButton.addEventListener('click', replayLift);
-zoomInButton.addEventListener('click', () => { dismissObjectNote(); zoom = Math.round(clamp(zoom + .2, 1, maxZoom()) * 10) / 10; renderCamera(); });
-zoomOutButton.addEventListener('click', () => { dismissObjectNote(); zoom = Math.round(clamp(zoom - .2, 1, maxZoom()) * 10) / 10; renderCamera(); });
-document.getElementById('reset-view').addEventListener('click', () => { dismissObjectNote(); zoom = 1; lookX = 0; lookY = 0; renderCamera(); });
-document.getElementById('info-button').addEventListener('click', () => { infoPanel.hidden = !infoPanel.hidden; });
-document.getElementById('info-close').addEventListener('click', () => { infoPanel.hidden = true; });
-
-fullscreenButton.addEventListener('click', async () => {
-  try {
-    if (document.fullscreenElement) await document.exitFullscreen();
-    else await explorer.requestFullscreen();
-  } catch {
-    announcement.textContent = 'Full screen is unavailable in this browser.';
-  }
-});
-document.addEventListener('fullscreenchange', () => {
-  const isFull = Boolean(document.fullscreenElement);
-  fullscreenButton.setAttribute('aria-label', isFull ? 'Exit full screen' : 'Enter full screen');
-  fullscreenButton.title = isFull ? 'Exit full screen' : 'Full screen';
-});
-
 scene.addEventListener('pointerdown', (event) => {
   if (event.button !== 0 || event.target.closest('button')) return;
   dismissObjectNote();
@@ -607,7 +576,6 @@ window.addEventListener('resize', () => requestAnimationFrame(refreshHotspotLayo
 
 document.addEventListener('keydown', (event) => {
   if (Discovery.isOpen()) return;
-  if (event.key === 'Escape' && !infoPanel.hidden) { infoPanel.hidden = true; return; }
   if (event.key === 'Escape' && !objectNote.hidden) { dismissObjectNote(true); return; }
   if (introActive) {
     if (event.key === 'ArrowUp' || event.key.toLowerCase() === 'w') { event.preventDefault(); if (liftPosition === 0) void moveLift(1); else void finishIntro(); }
@@ -640,7 +608,7 @@ function restartDay() {
   liftVideo.pause(); liftVideo.currentTime = 0;
   fromIntro = false; artifact = null; transitioning = false; turning = false;
   zoom = 1; lookX = 0; lookY = 0; savedView = null; pointer = null; notedObject = null; doorPromptOpen = false;
-  objectNote.hidden = true; infoPanel.hidden = true;
+  objectNote.hidden = true;
   scene.classList.remove('dragging');
   artifactPhoto.src = artifacts.map.image; artifactBackdrop.src = artifacts.map.image;
   artifactPhoto.alt = artifacts.map.alt; artifactPhoto.dataset.kind = 'map'; artifactTitle.textContent = artifacts.map.title;
@@ -706,11 +674,11 @@ window.addEventListener('pagehide', saveProgress);
 NeighbourConversation.init({
   refresh: render,
   canOpen: () => !introActive && !artifact && !transitioning && !turning && position === artifacts.neighbourConversation.position,
-  prepare: () => { dismissObjectNote(); infoPanel.hidden = true; },
+  prepare: () => { dismissObjectNote(); },
 });
 DoorEncounter.init({
   refresh: render,
   canOpen: () => !introActive && artifact === 'flat' && !transitioning && !turning && position === artifacts.flat.position,
-  prepare: () => { infoPanel.hidden = true; },
+  prepare: () => {},
 });
 void startExplorer();

@@ -1,5 +1,5 @@
 :root {
-  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   color: #172923;
   background: #172923;
   font-synthesis: none;
@@ -42,18 +42,19 @@ button:focus-visible { outline: 3px solid #e8b75d; outline-offset: 3px; }
 }
 
 .glass {
-  background: rgba(251, 251, 247, .93);
-  border: 1px solid rgba(255, 255, 255, .72);
-  box-shadow: 0 14px 42px rgba(15, 32, 27, .18), 0 2px 8px rgba(15, 32, 27, .09);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgba(0, 0, 0, .88);
+  border: 1px solid white;
+  box-shadow: none;
+  color: white;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
 .eyebrow {
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: .15em;
-  color: #4d7666;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: inherit;
 }
 
 .icon-button {
@@ -67,9 +68,6 @@ button:focus-visible { outline: 3px solid #e8b75d; outline-offset: 3px; }
 }
 
 .icon-button svg { width: 20px; height: 20px; }
-.info-button { position: absolute; z-index: 5; top: 24px; right: 24px; }
-.info-button[hidden], .view-controls[hidden] { display: none; }
-
 .lift-prompt {
   position: absolute;
   z-index: 4;
@@ -80,43 +78,13 @@ button:focus-visible { outline: 3px solid #e8b75d; outline-offset: 3px; }
   flex-direction: column;
   gap: 8px;
   padding: 12px;
-  border-radius: 16px;
+  border-radius: 0;
   animation: pop-in 360ms ease both;
 }
 
 .lift-prompt[hidden] { display: none; }
 .lift-prompt strong { font-size: 14px; }
 .lift-prompt .prompt-action { margin-top: 3px; }
-
-.view-controls {
-  position: absolute;
-  z-index: 5;
-  top: 50%;
-  right: 24px;
-  display: grid;
-  padding: 5px;
-  border-radius: 16px;
-  transform: translateY(-50%);
-}
-
-.control-button {
-  width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  border: 0;
-  border-radius: 11px;
-  background: transparent;
-  color: #24483d;
-  cursor: pointer;
-  transition: background .2s, transform .2s;
-}
-
-.control-button:hover:not(:disabled) { background: #e3eee8; }
-.control-button:active { transform: scale(.94); }
-.control-button:disabled { opacity: .35; cursor: default; }
-.control-button svg { width: 20px; height: 20px; }
-.control-divider { height: 1px; margin: 5px 6px; background: #d9e3dc; }
 
 .floor-arrow {
   position: absolute;
@@ -145,26 +113,22 @@ button:focus-visible { outline: 3px solid #e8b75d; outline-offset: 3px; }
   display: grid;
   place-items: center;
   border: 2px solid rgba(255, 255, 255, .95);
-  border-radius: 50%;
-  background: rgba(30, 85, 65, .72);
-  box-shadow: 0 0 0 9px rgba(255, 255, 255, .17), 0 8px 25px rgba(8, 27, 19, .3);
-  animation: pulse 2.5s ease-in-out infinite;
+  border-radius: 0;
+  background: rgba(0, 0, 0, .88);
+  box-shadow: none;
 }
 
 .floor-arrow-ring svg { width: 31px; height: 31px; }
 
 .floor-arrow-label {
-  padding: 5px 8px;
-  border-radius: 5px;
-  background: rgba(18, 41, 33, .68);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: .13em;
+  padding: 7px 10px;
+  border: 1px solid white;
+  border-radius: 0;
+  background: rgba(0, 0, 0, .88);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
   white-space: nowrap;
-}
-
-@keyframes pulse {
-  50% { box-shadow: 0 0 0 14px rgba(255, 255, 255, .08), 0 8px 25px rgba(8, 27, 19, .3); }
 }
 
 .corridor-back {
@@ -176,8 +140,8 @@ button:focus-visible { outline: 3px solid #e8b75d; outline-offset: 3px; }
   height: 50px;
   display: grid;
   place-items: center;
-  border-radius: 15px;
-  color: #235341;
+  border-radius: 0;
+  color: white;
   cursor: pointer;
   transition: opacity .2s, transform .2s;
 }
@@ -188,7 +152,7 @@ button:focus-visible { outline: 3px solid #e8b75d; outline-offset: 3px; }
 
 .map-prompt,
 .destination-card,
-.artifact-return { position: absolute; z-index: 5; padding: 12px; border-radius: 16px; }
+.artifact-return { position: absolute; z-index: 5; padding: 12px; border-radius: 0; }
 
 .map-prompt { top: 24px; left: 24px; width: 224px; animation: pop-in 360ms ease both; }
 .map-prompt[hidden],
@@ -212,9 +176,10 @@ button:focus-visible { outline: 3px solid #e8b75d; outline-offset: 3px; }
   flex: none;
   display: grid;
   place-items: center;
-  border-radius: 10px;
-  background: #e1ede7;
-  color: #22594b;
+  border: 1px solid white;
+  border-radius: 0;
+  background: black;
+  color: white;
 }
 
 .prompt-icon svg,
@@ -227,16 +192,16 @@ button:focus-visible { outline: 3px solid #e8b75d; outline-offset: 3px; }
   align-items: center;
   justify-content: space-between;
   padding: 0 12px;
-  border: 0;
-  border-radius: 9px;
-  background: #246247;
+  border: 1px solid white;
+  border-radius: 0;
+  background: black;
   color: white;
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 700;
   cursor: pointer;
 }
 
-.prompt-action:hover { background: #1d7851; }
+.prompt-action:hover { background: white; color: black; }
 .prompt-action span { font-size: 17px; }
 
 .destination-card {
@@ -255,14 +220,14 @@ button:focus-visible { outline: 3px solid #e8b75d; outline-offset: 3px; }
 .destination-copy { display: flex; flex-direction: column; gap: 3px; }
 .destination-copy strong { font-size: 12px; line-height: 1.2; }
 .destination-card .prompt-action { grid-column: 1 / -1; }
-.destination-close { position: absolute; top: 4px; right: 7px; border: 0; background: transparent; color: #587264; font-size: 21px; cursor: pointer; }
+.destination-close { position: absolute; top: 4px; right: 7px; border: 0; background: transparent; color: white; font-size: 21px; cursor: pointer; }
 
 .object-note {
   position: absolute;
   z-index: 6;
   width: 170px;
   padding: 13px 31px 13px 14px;
-  border-radius: 13px;
+  border-radius: 0;
   animation: pop-in 220ms ease both;
 }
 
@@ -315,21 +280,6 @@ button:focus-visible { outline: 3px solid #e8b75d; outline-offset: 3px; }
   to { opacity: 1; transform: translate(-50%, 0) scale(1); }
 }
 
-.info-panel {
-  position: absolute;
-  z-index: 8;
-  top: 79px;
-  right: 24px;
-  width: min(330px, calc(100vw - 48px));
-  padding: 20px 21px;
-  border-radius: 17px;
-}
-
-.info-panel[hidden] { display: none; }
-.info-panel h2 { font-size: 19px; letter-spacing: -.025em; margin: 7px 24px 10px 0; }
-.info-panel p { font-size: 13px; line-height: 1.55; color: #586b5e; margin: 0 0 12px; }
-.info-panel .info-keys { margin-bottom: 0; color: #355b48; }
-.info-close { position: absolute; top: 11px; right: 12px; border: 0; background: transparent; color: #587264; font-size: 26px; cursor: pointer; }
 kbd { display: inline-block; padding: 2px 5px; margin: 0 1px; border: 1px solid #cbdad0; border-radius: 4px; background: #f3f6f1; font: inherit; font-weight: 700; }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
@@ -338,16 +288,12 @@ kbd { display: inline-block; padding: 2px 5px; margin: 0 1px; border: 1px solid 
   .explorer { min-height: 0; }
   .lift-prompt { top: 12px; left: 12px; width: 218px; }
   .map-prompt { top: 12px; left: 12px; width: 218px; }
-  .info-button { top: 12px; right: 12px; }
-  .view-controls { top: 91px; right: 12px; transform: none; }
-  .control-button { width: 38px; height: 38px; }
   .floor-arrow { top: 56%; }
   .floor-arrow-ring { width: 56px; height: 56px; }
   .corridor-back { bottom: 12px; left: 12px; width: 45px; height: 45px; }
   .destination-card,
   .artifact-return { bottom: 16px; }
   .explorer.is-power-artifact .artifact-return { top: 12px; left: 12px; bottom: auto; }
-  .info-panel { top: 63px; right: 12px; }
 }
 
 @media (max-height: 620px) and (min-width: 601px) {

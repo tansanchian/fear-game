@@ -150,7 +150,7 @@ const Discovery = (() => {
     prompt.hidden = true;
     clearTimeout(toastTimer);
     toast.hidden = true;
-    document.getElementById('day-transition-label').textContent = state.phase === 'reflection' ? 'DAY 1 · EVENING' : 'LATER THAT EVENING';
+    document.getElementById('day-transition-label').textContent = state.phase === 'reflection' ? 'Day 1 · Evening' : 'Later that evening';
     document.getElementById('day-transition-title').textContent = state.phase === 'reflection' ? 'Time to head home' : 'An evening at home';
     document.getElementById('day-transition-copy').textContent = state.phase === 'reflection'
       ? 'After a day looking around, you know a little more about the block. But the details have left you with more questions, and a growing sense of unease. You decide to head home and talk it through with your wife.'
