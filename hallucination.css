@@ -43,6 +43,7 @@ h1 { margin: 8px 0; font-size: 20px; line-height: 1.25; }
 .route-hotspot > span { width: 42px; height: 42px; border-radius: 0; background: rgba(0,0,0,.88); box-shadow: none; font-size: 25px; }
 .memory-hotspot:hover, .memory-hotspot:focus-visible { background: #ffffff12; box-shadow: 0 0 0 2px #ffffffe0; }
 .memory-hotspot::after { content: attr(data-hint); position: absolute; top: calc(100% + 7px); left: 50%; transform: translateX(-50%); background: #173b2def; color: white; padding: 7px 9px; border-radius: 7px; font-size: 11px; white-space: nowrap; opacity: 0; pointer-events: none; }
+.artifact-hotspot::after { border: 1px solid white; border-radius: 0; background: rgba(0,0,0,.88); }
 .memory-hotspot:hover::after, .memory-hotspot:focus-visible::after { opacity: 1; }
 .load-error { position: absolute; bottom: 12px; right: 12px; padding: 12px; border-radius: 12px; max-width: 280px; font-size: 12px; z-index: 5; }
 #memory-detail { width: min(1100px, calc(100% - 32px)); max-height: calc(100svh - 32px); padding: 16px; border: 1px solid #ffffff4d; border-radius: 16px; background: #13251e; color: #fff; overflow: auto; }
