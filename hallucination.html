@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#172923" />
   <title>An Imagined Memory — Concrete Memories</title>
   <link rel="stylesheet" href="discovery.css?v=20261102-clean-notebook" />
-  <link rel="stylesheet" href="hallucination.css?v=20261102-display-pan" />
+  <link rel="stylesheet" href="hallucination.css?v=20261102-scene-pans" />
 </head>
 <body>
   <main id="memory" aria-label="Explore an imagined, abandoned block">
@@ -16,11 +16,12 @@
       <video id="arrival-video" src="assets/lift-opening.mp4" poster="assets/lift-inside.jpg" muted playsinline preload="auto" aria-label="The lift doors opening"></video>
       <div id="memory-dim" aria-hidden="true"></div>
     </div>
-    <section class="display-inspection" id="display-inspection" aria-label="The floor display" aria-hidden="true" hidden>
-      <video id="display-inspection-video" src="assets/hallucination_lift_close.mp4" poster="assets/hallucination-display-poster.jpg" muted playsinline preload="metadata" aria-label="Close-up of the unfamiliar lift display"></video>
-      <div class="display-inspection-return">
-        <span>The floor display</span>
-        <button id="display-inspection-back" type="button">← Back to lift lobby</button>
+    <section class="scene-inspection" id="scene-inspection" aria-label="Close-up view" aria-hidden="true" hidden>
+      <img id="scene-inspection-image" alt="" hidden />
+      <video id="scene-inspection-video" src="assets/hallucination_lift_close.mp4" poster="assets/hallucination-display-poster.jpg" muted playsinline preload="metadata" aria-label="Close-up of the unfamiliar lift display" hidden></video>
+      <div class="scene-inspection-return">
+        <span id="scene-inspection-title"></span>
+        <button id="scene-inspection-back" type="button">← Back</button>
       </div>
     </section>
     <div class="memory-hotspots" id="memory-hotspots">
@@ -118,6 +119,6 @@
   <script src="notebook-view.js?v=20261102-plain-ui"></script>
   <script src="memory-atmosphere.js?v=20261102-confused-walk"></script>
   <script src="game-ending.js?v=20261102-required-story"></script>
-  <script src="hallucination.js?v=20261102-display-pan"></script>
+  <script src="hallucination.js?v=20261102-scene-pans"></script>
 </body>
 </html>
