@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#172923" />
   <title>An Imagined Memory — Concrete Memories</title>
   <link rel="stylesheet" href="discovery.css?v=20261102-plain-ui" />
-  <link rel="stylesheet" href="hallucination.css?v=20261102-plain-ui" />
+  <link rel="stylesheet" href="hallucination.css?v=20261102-notebook-ui" />
 </head>
 <body>
   <main id="memory" aria-label="Explore an imagined, abandoned block">
@@ -25,9 +25,12 @@
       <button class="memory-hotspot newspaper-hotspot" id="article-two-hotspot" type="button" aria-label="Read the newspaper page" data-hint="Read newspaper" hidden><img src="assets/hallucination_artifact2.png" alt="" draggable="false" /></button>
     </div>
     <div class="memory-tools" id="memory-tools">
-      <button class="glass" id="memory-notebook" type="button" aria-haspopup="dialog">Notebook</button>
       <button class="glass" id="memory-sound" type="button" aria-pressed="true">Sound on</button>
     </div>
+    <button class="notebook-button glass" id="memory-notebook" type="button" aria-label="Notebook" aria-haspopup="dialog">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 3h14v18H5V3Zm4 0v18M12 8h4M12 12h4" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <span class="notebook-label">Notebook</span>
+    </button>
     <section class="scene-prompt glass" id="scene-prompt" aria-labelledby="scene-title">
       <span class="eyebrow" id="scene-label">The doors open</span>
       <h1 id="scene-title">The doors are opening</h1>
@@ -36,7 +39,6 @@
     </section>
     <button class="back-button glass" id="memory-back" type="button" aria-label="Move back" hidden>←</button>
     <button class="forward-button glass" id="memory-forward" type="button" aria-label="Move forward along the corridor" hidden>⌃<span>Move forward</span></button>
-    <button class="side-view-button glass" id="side-view-button" type="button" hidden></button>
     <p class="walk-hint glass" id="walk-hint" hidden>Look around. Papers, openings and gates may hold something.</p>
     <p class="load-error glass" id="load-error" role="alert" hidden>This view could not load. Please try again.</p>
     <dialog id="memory-detail" aria-labelledby="detail-title">
@@ -113,6 +115,6 @@
   <script src="notebook-view.js?v=20261102-plain-ui"></script>
   <script src="memory-atmosphere.js?v=20261102-plain-ui"></script>
   <script src="game-ending.js?v=20261102-plain-ui"></script>
-  <script src="hallucination.js?v=20261102-clean-lobby"></script>
+  <script src="hallucination.js?v=20261102-notebook-ui"></script>
 </body>
 </html>

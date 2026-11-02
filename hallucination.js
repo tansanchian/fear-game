@@ -19,7 +19,7 @@ const MemoryWalk = (() => {
   const nextButton = document.getElementById('scene-next');
   const back = document.getElementById('memory-back');
   const forward = document.getElementById('memory-forward');
-  const sideView = document.getElementById('side-view-button');
+  const memoryNotebook = document.getElementById('memory-notebook');
   const dialog = document.getElementById('memory-detail');
   const detailVideo = document.getElementById('detail-video');
   const detailImage = document.getElementById('detail-image');
@@ -117,12 +117,9 @@ const MemoryWalk = (() => {
     forward.hidden = scene < 0 || scene === 4; forward.disabled = busy;
     document.getElementById('walk-hint').hidden = scene < 0 || scene === 4 || busy;
     document.getElementById('memory-tools').hidden = scene < 0;
-    document.getElementById('memory-notebook').disabled = busy;
+    memoryNotebook.hidden = scene < 0;
+    memoryNotebook.disabled = busy;
     for (const item of hotspots) document.getElementById(item.id).hidden = busy || item.scene !== scene;
-    const side = hotspots.find(item => item.scene === scene);
-    sideView.hidden = busy || !side || scene === -1;
-    sideView.disabled = busy;
-    if (side) sideView.textContent = `↗ ${document.getElementById(side.id).getAttribute('aria-label')}`;
     const sceneLabel = document.getElementById('scene-label');
     sceneLabel.hidden = scene === -1;
     sceneLabel.textContent = scene === -2 ? 'The doors open' : 'Further along';
@@ -254,12 +251,8 @@ const MemoryWalk = (() => {
   nextButton.addEventListener('click', () => { if (scene === 4) finishWalk(); else void go(scene + 1); });
   back.addEventListener('click', () => { void go(scene - 1); });
   forward.addEventListener('click', () => { void go(scene + 1); });
-  sideView.addEventListener('click', () => {
-    const item = hotspots.find(target => target.scene === scene);
-    if (item) openDetail(item);
-  });
   for (const item of hotspots) document.getElementById(item.id).addEventListener('click', () => openDetail(item));
-  document.getElementById('memory-notebook').addEventListener('click', () => {
+  memoryNotebook.addEventListener('click', () => {
     if (busy || dialog.open || GameEnding.active()) return;
     MemoryAtmosphere.stop(); GameEnding.openNotebook();
   });

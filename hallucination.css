@@ -24,11 +24,11 @@ h1 { margin: 8px 0; font-size: 20px; line-height: 1.25; }
 .forward-button { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 58px; height: 58px; border-radius: 50%; background: #245e43e6; color: white; font-size: 42px; line-height: 1; z-index: 4; }
 .forward-button span { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); padding: 7px 10px; border: 1px solid white; border-radius: 0; background: #000e; color: white; font-size: 12px; font-weight: 700; white-space: nowrap; text-transform: none; letter-spacing: 0; }
 .walk-hint { position: absolute; right: 24px; top: 84px; margin: 0; padding: 12px 15px; border-radius: 12px; max-width: 300px; font-size: 12px; pointer-events: none; z-index: 3; }
-.side-view-button { position: absolute; top: 24px; right: 24px; z-index: 5; padding: 13px 16px; min-height: 48px; max-width: calc(100% - 48px); border-radius: 12px; color: #245e43; font-size: 13px; }
-.side-view-button:hover { background: #e6efe3; }
 .memory-tools { position: absolute; left: 24px; top: 24px; display: flex; gap: 8px; z-index: 5; }
 .memory-tools button { border-radius: 12px; padding: 12px 15px; min-height: 48px; color: #245e43; font-size: 13px; }
 .memory-tools button:disabled { opacity: .6; cursor: wait; }
+#memory-notebook { top: 24px; right: 24px; border: 1px solid white; border-radius: 0; color: white; background: rgba(0,0,0,.88); box-shadow: none; backdrop-filter: none; }
+#memory-notebook:hover, #memory-notebook:focus-visible { color: black; background: white; }
 .newspaper-hotspot img { position: absolute; left: 50%; top: 50%; width: var(--paper-width); height: var(--paper-height); object-fit: fill; transform: translate(-50%, -50%) perspective(260px) rotateX(37deg) rotateZ(-12deg); filter: sepia(.25) brightness(.85) contrast(.92); box-shadow: 2px 3px 3px #0007; pointer-events: none; }
 #article-two-hotspot img { transform: translate(-50%, -50%) perspective(260px) rotateX(32deg) rotateZ(13deg); }
 .memory-hotspot { position: absolute; background: transparent; border: 0; border-radius: 6px; color: white; pointer-events: auto; touch-action: manipulation; }
@@ -61,8 +61,8 @@ h1 { margin: 8px 0; font-size: 20px; line-height: 1.25; }
   .back-button { bottom: 18px; left: 12px; }
   .memory-tools { top: 12px; left: 12px; }
   .memory-tools button { padding: 10px 13px; }
+  #memory-notebook { top: 12px; right: 12px; }
   .walk-hint { top: 134px; left: 12px; right: auto; max-width: calc(100% - 24px); font-size: 11px; }
-  .side-view-button { top: 74px; right: 12px; max-width: calc(100% - 24px); }
   #memory[data-scene="end"] .scene-prompt { bottom: 78px; }
   #memory-detail { padding: 12px; }
 }
@@ -73,7 +73,7 @@ h1 { margin: 8px 0; font-size: 20px; line-height: 1.25; }
 #memory[data-ending] .back-button,
 #memory[data-ending] .forward-button,
 #memory[data-ending] .memory-hotspot,
-#memory[data-ending] .side-view-button,
+#memory[data-ending] #memory-notebook,
 #memory[data-ending] .memory-tools,
 #memory[data-ending] .walk-hint { display: none; }
 #game-ending { width: min(490px, calc(100% - 28px)); max-height: calc(100svh - 28px); padding: 28px; border: 1px solid #ffffffa3; border-radius: 20px; background: #f5f5ee; color: #203a30; overflow: auto; box-shadow: 0 24px 80px #0004; }
