@@ -52,16 +52,9 @@ h2 {
   letter-spacing: normal;
 }
 
-.dashboard-intro,
 .dashboard-status,
 .response-meta,
 #decision-caption { color: var(--muted); }
-
-.dashboard-intro {
-  max-width: 760px;
-  font-size: 1.05rem;
-  line-height: 1.6;
-}
 
 .dashboard-actions { display: flex; flex-wrap: wrap; gap: 9px; }
 
