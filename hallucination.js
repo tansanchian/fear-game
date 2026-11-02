@@ -37,7 +37,6 @@ const MemoryWalk = (() => {
     chair: { type: 'image', source: 'assets/hallucination-chair-poster.jpg', title: 'The courtyard seat', alt: 'A courtyard seat overgrown with plants' },
     deck: { type: 'image', source: 'assets/hallucination_void_deck.jpg', title: 'The void deck', alt: 'An empty seating area with fallen leaves and debris' },
     gate: { type: 'image', source: 'assets/hallucination_gate.jpg', title: 'The closed gate', alt: 'A metal gate with a yellow no-entry sign' },
-    article1: { type: 'image', artifact: 'memoryArticle1' },
     article2: { type: 'image', artifact: 'memoryArticle2' },
   };
   const hotspots = [
@@ -46,8 +45,7 @@ const MemoryWalk = (() => {
     { id: 'deck-hotspot', scene: 2, detail: 'deck', bounds: [735, 205, 80, 100] },
     // Inspect the gate before the final stop triggers the wife's phone call.
     { id: 'gate-hotspot', scene: 3, detail: 'gate', bounds: [280, 40, 58, 355] },
-    { id: 'article-one-hotspot', scene: 1, detail: 'article1', bounds: [348, 370, 74, 52] },
-    { id: 'article-two-hotspot', scene: 4, detail: 'article2', bounds: [376, 360, 60, 55] },
+    { id: 'article-two-hotspot', scene: 1, detail: 'article2', bounds: [348, 370, 64, 64] },
   ];
   let scene = -2;
   let busy = false;
@@ -124,9 +122,9 @@ const MemoryWalk = (() => {
     sceneLabel.hidden = scene === -1;
     sceneLabel.textContent = scene === -2 ? 'The doors open' : 'Further along';
     document.getElementById('scene-title').textContent = scene === -2 ? ready ? 'The doors are open' : 'The doors are opening' : scene === -1 ? 'This landing feels unfamiliar' : 'The corridor falls quiet';
-    document.getElementById('scene-copy').textContent = scene === -2 ? 'You expect the familiar landing, but the images from the post are still with you.' : scene === -1 ? 'You entered this lift only a moment ago. Now its doors and floor display look older. You step closer to make sense of them.' : explored() ? 'A newspaper lies near your feet. Look around a little longer, or continue towards the end of the corridor.' : 'There is more of this place to explore. Walk back through the corridor and take another look.';
+    document.getElementById('scene-copy').textContent = scene === -2 ? 'You expect the familiar landing, but the images from the post are still with you.' : scene === -1 ? 'You entered this lift only a moment ago. Now its doors and floor display look older. You step closer to make sense of them.' : explored() ? 'The empty corridor stretches ahead. Look around a little longer, or continue towards the end.' : 'There is more of this place to explore. Walk back through the corridor and take another look.';
     nextButton.textContent = scene === -2 ? 'Step out of the lift' : scene === 4 ? 'Continue to the end' : 'Walk into the corridor';
-    MemoryAtmosphere.grade(Number(collected.has('memoryArticle1')) + Number(collected.has('memoryArticle2')));
+    MemoryAtmosphere.grade(collected.has('memoryArticle2') ? 2 : 0);
     layout();
   }
   async function playArrival() {
@@ -156,12 +154,8 @@ const MemoryWalk = (() => {
     if (typeof ParticipantData !== 'undefined') ParticipantData.track('imagined_corridor_moved', { from: old, to: scene });
     busy = false; render(); save();
     announcement.textContent = scene === -1 ? 'The lift looks different. Inspect its display or enter the corridor.' : `Along the imagined corridor. View ${scene + 1}.`;
-    for (const [id, stop, cue] of [['memoryArticle1', 1, 'past-article1'], ['memoryArticle2', 4, 'past-article2']]) {
-      if (collected.has(id) && (old === stop || scene === stop)) {
-        MemoryAtmosphere.dip(`dim-${id}`);
-        if (MemoryAtmosphere.trigger(cue)) break;
-      }
-    }
+    if (collected.has('memoryArticle2') && (old === 1 || scene === 1)) MemoryAtmosphere.dip('dim-memoryArticle2');
+    MemoryAtmosphere.walked(old, scene);
     (scene === -1 || scene === 4 ? nextButton : forward).focus({ preventScroll: true });
   }
   function finishWalk() {
@@ -197,7 +191,7 @@ const MemoryWalk = (() => {
       if (fresh && typeof ParticipantData !== 'undefined') ParticipantData.track('imagined_notebook_item_added', { id });
       detailNote.textContent = `${fresh ? 'Added to notebook' : 'In your notebook'} · Imagined corridor`;
       detailNote.hidden = false;
-      if (fresh && id !== 'memoryArticle2Close') MemoryAtmosphere.trigger(id === 'memoryArticle1' ? 'read-article1' : 'read-article2');
+      if (fresh && id === 'memoryArticle2') MemoryAtmosphere.trigger('read-article2');
     }
   }
   function openDetail(item) {
